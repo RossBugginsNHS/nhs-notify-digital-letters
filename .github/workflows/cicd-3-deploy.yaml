@@ -21,14 +21,15 @@ on:
           description: "Install specific version"
 
 run-name: >-
-  ${{ inputs.include_prereleases != null && inputs.version != null
+  ${{ (inputs.include_prereleases != null
+    && inputs.version != null
     && format('Triggered Manually. Include prerelease: {0} Version: {1} By: @{2}',
               inputs.include_prereleases,
               inputs.version,
-              github.actor)
-    || format('Triggered by {0} ({1)}). Include prerelease: true Version: latest By: @{3}',
-    context.payload.workflow_run.name,
-    context.payload.workflow_run.id,
+              github.actor))
+    || format('Triggered by {0} ({1)}). Include prerelease: true Version: latest By: @{2}',
+    github.event.workflow_run.name,
+    github.event.workflow_run.id,
     github.actor) }}
 
 permissions:
