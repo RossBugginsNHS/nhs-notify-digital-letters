@@ -51,19 +51,25 @@ jobs:
           path: ./artifacts/jekyll-docs-${{ inputs.version }}
           name: jekyll-docs-${{ inputs.version }}
 
-      - name: "Create release"
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ inputs.version }}
-          release_name: ${{ inputs.version }}
-          body: |
-            Release of ${{ inputs.version }}
-          draft: false
-          prerelease: ${{ inputs.is_version_prerelease == 'true'}}
 
+      # - name: "Create release"
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ inputs.version }}
+      #     release_name: ${{ inputs.version }}
+      #     body: |
+      #       Release of ${{ inputs.version }}
+      #     draft: false
+      #     prerelease: ${{ inputs.is_version_prerelease == 'true'}}
+
+      - name: Draft Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release create "${{ inputs.version }}" --draft --title "${{ inputs.version }}" --notes "Release of ${{ inputs.version }}" --prerelease ${{ inputs.is_version_prerelease == 'true'}}
 
       - name: "Upload jeykll docs release asset"
         uses: actions/upload-release-asset@v1
@@ -74,3 +80,9 @@ jobs:
           asset_path: ./artifacts/jekyll-docs-${{ inputs.version }}/artifact.tar
           asset_name: jekyll-docs-${{ inputs.version }}.tar
           asset_content_type: "application/gzip"
+
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit "${{ inputs.version }}" --draft=false
