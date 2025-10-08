@@ -27,10 +27,9 @@ run-name: >-
               inputs.include_prereleases,
               inputs.version,
               github.actor))
-    || format('Triggered by {0} ({1)}). Include prerelease: true Version: latest By: @{2}',
+    || format('Triggered by {0} ({1}). Include prerelease: true Version: latest',
     github.event.workflow_run.name,
-    github.event.workflow_run.id,
-    github.actor) }}
+    github.event.workflow_run.display_title) }}
 
 permissions:
   contents: read
