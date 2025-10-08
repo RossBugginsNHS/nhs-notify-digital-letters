@@ -69,7 +69,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: gh release create "${{ inputs.version }}" --draft --title "${{ inputs.version }}" --notes "Release of ${{ inputs.version }}" --prerelease ${{ inputs.is_version_prerelease == 'true'}}
+        run: |
+          gh release create "${{ inputs.version }}" \
+          --draft \
+          --title "${{ inputs.version }}" \
+          --notes "Release of ${{ inputs.version }}" \
+          ${{ inputs.is_version_prerelease == 'true' && '--prerelease' || '' }}
 
       - name: "Upload jeykll docs release asset"
         uses: actions/upload-release-asset@v1
