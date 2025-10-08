@@ -73,6 +73,7 @@ jobs:
           gh release create \
           "${{ inputs.version }}" \
           --draft \
+          --latest \
           --title "${{ inputs.version }}" \
           --notes "Release of ${{ inputs.version }}" \
           ${{ inputs.is_version_prerelease == 'true' && '--prerelease' || '' }}
