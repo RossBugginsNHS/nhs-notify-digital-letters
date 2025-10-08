@@ -82,10 +82,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
+          cp ./artifacts/jekyll-docs-${{ inputs.version }}/artifact.tar $RUNNER_TEMP/jekyll-docs-${{ inputs.version }}.tar
           gh release upload \
           "${{ inputs.version }}" \
-          ./artifacts/jekyll-docs-${{ inputs.version }}/artifact.tar\
-          #jekyll-docs-${{ inputs.version }}.tar
+          $RUNNER_TEMP/jekyll-docs-${{ inputs.version }}.tar#jekyll-docs-${{ inputs.version }}
 
 
       # - name: "Upload jeykll docs release asset"
