@@ -1,7 +1,8 @@
 # NHS Notify Code Owners
 
 # Notify default owners
-#*                           @NHSDigital/nhs-notify-digital-letters
+*                           @NHSDigital/nhs-notify-digital-letters
+/docs/
 
 /.github/                   @NHSDigital/nhs-notify-digital-letters-admins
 *.code-workspace            @NHSDigital/nhs-notify-digital-letters-admins
