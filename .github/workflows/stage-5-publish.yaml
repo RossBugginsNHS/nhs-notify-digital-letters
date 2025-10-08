@@ -1,0 +1,76 @@
+name: "Publish stage"
+
+on:
+  workflow_call:
+    inputs:
+      build_datetime:
+        description: "Build datetime, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      build_timestamp:
+        description: "Build timestamp, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      build_epoch:
+        description: "Build epoch, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      nodejs_version:
+        description: "Node.js version, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      python_version:
+        description: "Python version, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      terraform_version:
+        description: "Terraform version, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      version:
+        description: "Version of the software, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+      is_version_prerelease:
+        description: "Is this a semantically versioned pre release, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
+jobs:
+  publish:
+    name: "Publish packages"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Get the artefacts 1"
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts/jekyll-docs-${{ inputs.version }}
+          name: jekyll-docs-${{ inputs.version }}
+
+      - name: "Create release"
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ inputs.version }}
+          release_name: ${{ inputs.version }}
+          body: |
+            Release of ${{ inputs.version }}
+          draft: false
+          prerelease: ${{ inputs.is_version_prerelease == 'true'}}
+
+
+      - name: "Upload jeykll docs release asset"
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: "${{ steps.create_release.outputs.upload_url }}"
+          asset_path: ./artifacts/jekyll-docs-${{ inputs.version }}/artifact.tar
+          asset_name: jekyll-docs-${{ inputs.version }}.tar
+          asset_content_type: "application/gzip"
