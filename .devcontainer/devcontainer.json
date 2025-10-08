@@ -90,9 +90,10 @@
   "image": "ghcr.io/nhsdigital/nhs-notify-template-repository:latest",
   "mounts": [
     "source=${localEnv:HOME}/.gnupg,target=/home/vscode/.gnupg,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+    "source=/usr/local/share/ca-certificates,target=/home/ca-certificates,type=bind,consistency=cached"
   ],
-  "name": "Jekyll",
+  "name": "NHS Notify Digital Letters",
   "postCreateCommand": "pipx install pre-commit && make config && echo 'export GPG_TTY=$TTY' | cat - ~/.zshrc > temp && mv temp ~/.zshrc",
   "runArgs": [
     "--platform=linux/amd64"
