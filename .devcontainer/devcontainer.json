@@ -94,7 +94,8 @@
     "source=/usr/local/share/ca-certificates,target=/home/ca-certificates,type=bind,consistency=cached"
   ],
   "name": "NHS Notify Digital Letters",
-  "postCreateCommand": "pipx install pre-commit && make config && echo 'export GPG_TTY=$TTY' | cat - ~/.zshrc > temp && mv temp ~/.zshrc",
+  "postCreateCommand": "echo 'export GPG_TTY=$TTY' | cat - ~/.zshrc > temp && mv temp ~/.zshrc && /workspaces/nhs-notify-digital-letters/scripts/devcontainer/postcreatecommand.sh",
+  "postStartCommand": "/workspaces/nhs-notify-digital-letters/scripts/devcontainer/poststartcommand.sh",
   "runArgs": [
     "--platform=linux/amd64"
   ]
