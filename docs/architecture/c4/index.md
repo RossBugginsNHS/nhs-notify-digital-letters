@@ -12,47 +12,62 @@ author: Ross Buggins
 
 ```mermaid
     C4Context
-      title System Context diagram for Internet Banking System
-      Enterprise_Boundary(b0, "BankBoundary0") {
-        Person(customerA, "Banking Customer A", "A customer of the bank, with personal bank accounts.")
-        Person(customerB, "Banking Customer B")
-        Person_Ext(customerC, "Banking Customer C", "desc")
+      title System Context diagram for NHS Notify Digital Letters
+      Person(citizen01, "Citizen")
 
-        Person(customerD, "Banking Customer D", "A customer of the bank, <br/> with personal bank accounts.")
+      Enterprise_Boundary(b1, "NHS in England") {
+         Enterprise_Boundary(b3, "NHS Trust in England") {
+           System_Ext(tie01, "TIE")
+         }
 
-        System(SystemAA, "Internet Banking System", "Allows customers to view information about their bank accounts, and make payments.")
+      Enterprise_Boundary(b0, "NHS England") {
 
-        Enterprise_Boundary(b1, "BankBoundary") {
+        Enterprise_Boundary(nhse01, "Core Services"){
+           System_Ext(pdm01, "PDM", "PDM - NHS Health Lake")
+           SystemDb_Ext(ndr01, "NDR", "NDR - NHS Document Store")
+        }
 
-          SystemDb_Ext(SystemE, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+        Enterprise_Boundary(nhse03, "Spine Services"){
+           System_Ext(pds01, "PDS")
+           System_Ext(mesh01, "Mesh")
+        }
 
-          System_Boundary(b2, "BankBoundary2") {
-            System(SystemA, "Banking System A")
-            System(SystemB, "Banking System B", "A system of the bank, with personal bank accounts. next line.")
-          }
+        Enterprise_Boundary(nhse04, "NHS Login"){
+           System_Ext(login01, "NHS Login")
+        }
 
-          System_Ext(SystemC, "E-mail system", "The internal Microsoft Exchange e-mail system.")
-          SystemDb(SystemD, "Banking System D Database", "A system of the bank, with personal bank accounts.")
+        Enterprise_Boundary(nhse02, "NHS App"){
+           System_Ext(nhsapp03, "NHS App", "Full App")
+           System_Ext(nhsapp01, "NHS App Messaging", "Inbox")
+           System_Ext(nhsapp02, "Digital Post Viewer", "Digital Viewing PDF")
+        }
 
-          Boundary(b3, "BankBoundary3", "boundary") {
-            SystemQueue(SystemF, "Banking System F Queue", "A system of the bank.")
-            SystemQueue_Ext(SystemG, "Banking System G Queue", "A system of the bank, with personal bank accounts.")
-          }
+
+        Enterprise_Boundary(notify01, "NHS Notify") {
+          System(notify02, "NotiFHIR")
+          System(notify03, "Core")
+          System(notify04, "Event Bus")
+          System(notify05, "Reporting")
+          System(notify06, "Suppliers")
+
         }
       }
+      }
 
-      BiRel(customerA, SystemAA, "Uses")
-      BiRel(SystemAA, SystemE, "Uses")
-      Rel(SystemAA, SystemC, "Sends e-mails", "SMTP")
-      Rel(SystemC, customerA, "Sends e-mails to")
+      System_Ext(print01, "Print Suplier")
+      System_Ext(sms01, "SMS Supplier")
 
-      UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
-      UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
-      UpdateRelStyle(SystemAA, SystemE, $textColor="blue", $lineColor="blue", $offsetY="-10")
-      UpdateRelStyle(SystemAA, SystemC, $textColor="blue", $lineColor="blue", $offsetY="-40", $offsetX="-50")
-      UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
+      Rel(tie01, mesh01, "Submits File", "MESH")
+      Rel(mesh01, notify02, "Retrieve File", "MESH")
 
-      UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+      Rel(print01, citizen01, "Send Letter", "Snail Mail")
+      Rel(nhsapp01, citizen01, "Send App Message", "NHSApp Message")
+      Rel(sms01, citizen01, "Send SMS", "SMS")
+
+      Rel(nhsapp03, login01, "Login", "auth")
+
+
+
 
 
 
