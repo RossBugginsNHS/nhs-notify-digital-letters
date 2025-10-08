@@ -8,6 +8,10 @@
       "name": "Application Source Code",
       "path": "./src"
     },
+        {
+      "name": "Schemas",
+      "path": "./schemas"
+    },
     {
       "name": "Docs",
       "path": "./docs"

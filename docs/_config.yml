@@ -38,7 +38,7 @@ plugins:
   - jekyll-feed
   - jemoji
 
-color_scheme: nhs
+#color_scheme: nhs
 mermaid:
   # Version of mermaid library
   # Pick an available version from https://cdn.jsdelivr.net/npm/mermaid/
@@ -73,6 +73,9 @@ nav_external_links:
     url: https://github.com/NHSDigital/software-engineering-quality-framework
     hide_icon: false # set to true to hide the external link icon - defaults to false
     opens_in_new_tab: false # set to true to open this link in a new tab - defaults to false
+
+sass:
+  quiet_deps: true
 
 callouts:
   warning:
