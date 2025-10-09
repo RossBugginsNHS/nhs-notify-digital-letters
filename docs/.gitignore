@@ -8,3 +8,4 @@ vendor
 node_modules
 _config.version.yml
 schemas
+_data/schema

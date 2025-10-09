@@ -2,14 +2,16 @@ BASE_URL ?= "/"
 VERSION ?= ""
 SCHEMA_PATTERN = *.schema.json
 SCHEMA_DOCS_PATTERN = *.md
+SCHEMA_YAML_DOCS_PATTERN= *.yaml
 SCHEMA_BASE_INPUT_DIR = ../schemas
-SCHEMA_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output
-SCHEMA_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/docs
+SCHEMA_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/schemas
+SCHEMA_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/docs/md
+SCHEMA_YAML_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/docs/yaml
 BASE_OUTPUT_DIR = _site
 BASE_DOCS_OUTPUT_DIR = schemas
 SCHEMA_OUTPUT_DIR = $(BASE_OUTPUT_DIR)/schemas
 SCHEMA_DOCS_OUTPUT_DIR = $(BASE_DOCS_OUTPUT_DIR)
-
+SCHEMA_YAML_DOCS_OUTPUT_DIR = _data/schema
 SHELL = /bin/bash
 
 default: install
@@ -29,7 +31,7 @@ define baseurlparam =
 $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
 endef
 
-build: build-schemas copy-schema-docs build-docs copy-schemas show-build-output
+build: build-schemas copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
 
 build-docs: version
 	npm run build $(baseurlparam)
@@ -47,6 +49,15 @@ copy-schema-docs:
 	@echo "Output in $(SCHEMA_DOCS_OUTPUT_DIR):"
 	@find $(SCHEMA_DOCS_OUTPUT_DIR) -type f -name "*" | sort
 
+
+copy-schema-yaml-docs:
+	mkdir -p $(SCHEMA_YAML_DOCS_OUTPUT_DIR)
+	@echo "Finding schema YAML docs files..."
+	@find $(SCHEMA_YAML_DOCS_INPUT_DIR) -name "$(SCHEMA_YAML_DOCS_PATTERN)" -print
+	@echo "Copying schema YAML docs files..."
+	rsync -av --include="*/" --include="$(SCHEMA_YAML_DOCS_PATTERN)" --exclude="*" $(SCHEMA_YAML_DOCS_INPUT_DIR)/ $(SCHEMA_YAML_DOCS_OUTPUT_DIR)/
+	@echo "Output in $(SCHEMA_YAML_DOCS_OUTPUT_DIR):"
+	@find $(SCHEMA_YAML_DOCS_OUTPUT_DIR) -type f -name "*" | sort
 
 copy-schemas:
 	mkdir -p $(SCHEMA_OUTPUT_DIR)
@@ -69,6 +80,7 @@ clean-docs:
 clean-schemas:
 	rm -rf $(SCHEMA_OUTPUT_DIR)
 	rm -rf $(SCHEMA_DOCS_OUTPUT_DIR)
+	rm -rf $(SCHEMA_YAML_DOCS_OUTPUT_DIR)
 
 debug: version
 	npm run debug

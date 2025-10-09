@@ -32,6 +32,7 @@ collections:
     output: true
     sort_by: order
 
+
 # Build settings
 theme: just-the-docs
 plugins:
@@ -86,6 +87,7 @@ callouts:
     color: blue
 
 
+
 defaults:
   - scope:
       path: "schemas"
@@ -95,6 +97,15 @@ defaults:
       is_not_draft: false
       parent: Schemas
 
+      owner: NHS Notify
+      author: NHS Notify
+      last_modified_date: 2025-01-01
+  - scope:
+      path: ""
+      type: "schema"
+    values:
+      layout: "page"
+      is_not_draft: false
       owner: NHS Notify
       author: NHS Notify
       last_modified_date: 2025-01-01
