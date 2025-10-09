@@ -26,5 +26,5 @@ runs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: "/schemas/output/"
+        path: "schemas/output/"
         name: schemas-${{ inputs.version }}
