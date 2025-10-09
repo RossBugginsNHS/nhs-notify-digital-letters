@@ -45,25 +45,18 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v4
 
-      - name: "Get the artefacts 1"
+      - name: "Get artifacts: jekyll docs"
         uses: actions/download-artifact@v4
         with:
           path: ./artifacts/jekyll-docs-${{ inputs.version }}
           name: jekyll-docs-${{ inputs.version }}
 
+      - name: "Get artifacts: schema"
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts/schemas-${{ inputs.version }}
+          name: schemas-${{ inputs.version }}
 
-      # - name: "Create release"
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ inputs.version }}
-      #     release_name: ${{ inputs.version }}
-      #     body: |
-      #       Release of ${{ inputs.version }}
-      #     draft: false
-      #     prerelease: ${{ inputs.is_version_prerelease == 'true'}}
 
       - name: Draft Release
         env:
@@ -88,16 +81,16 @@ jobs:
           "${{ inputs.version }}" \
           $RUNNER_TEMP/jekyll-docs-${{ inputs.version }}.tar#jekyll-docs-${{ inputs.version }}
 
+      - name: "Upload schema release asset"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cp ./artifacts/schemas-${{ inputs.version }}/artifact.tar $RUNNER_TEMP/schemas-${{ inputs.version }}.tar
+          gh release upload \
+          "${{ inputs.version }}" \
+          $RUNNER_TEMP/schemas-${{ inputs.version }}.tar#schemas-${{ inputs.version }}
 
-      # - name: "Upload jeykll docs release asset"
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: "${{ steps.create_release.outputs.upload_url }}"
-      #     asset_path: ./artifacts/jekyll-docs-${{ inputs.version }}/artifact.tar
-      #     asset_name: jekyll-docs-${{ inputs.version }}.tar
-      #     asset_content_type: "application/gzip"
 
       - name: Publish Release
         env:
