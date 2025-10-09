@@ -1,5 +1,9 @@
 BASE_URL ?= "/"
 VERSION ?= ""
+SCHEMA_PATTERN = *.schema.json
+SCHEMA_INPUT_DIR = ../schemas
+BASE_OUTPUT_DIR = _site
+SCHEMA_OUTPUT_DIR = $(BASE_OUTPUT_DIR)/schemas
 SHELL = /bin/bash
 
 default: install
@@ -19,15 +23,26 @@ define baseurlparam =
 $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
 endef
 
-build: version build-schemas
+build: build-docs build-schemas show-build-output
+
+build-docs: version
 	npm run build $(baseurlparam)
 
 build-schemas: clean-schemas
-	mkdir -p _site/schemas
-	find ../schemas -name "*.schema.json" -exec cp {} _site/schemas/ \;
+	mkdir -p $(SCHEMA_OUTPUT_DIR)
+	@echo "Finding schema files..."
+	@find $(SCHEMA_INPUT_DIR) -name "$(SCHEMA_PATTERN)" -print
+	@echo "Copying schema files..."
+	rsync -av --include="*/" --include="$(SCHEMA_PATTERN)" --exclude="*" $(SCHEMA_INPUT_DIR)/ $(SCHEMA_OUTPUT_DIR)/
+	@echo "Output in $(SCHEMA_OUTPUT_DIR):"
+	@find $(SCHEMA_OUTPUT_DIR) -type f -name "*" | sort
+
+show-build-output:
+	@echo "Build output in $(BASE_OUTPUT_DIR):"
+	@find $(BASE_OUTPUT_DIR) -type f -name "*" | sort
 
 clean-schemas:
-	rm -rf _site/schemas
+	rm -rf $(SCHEMA_OUTPUT_DIR)
 
 debug: version
 	npm run debug
