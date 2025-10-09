@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Poller - C4 Code
-parent:  MESH - C4 Component
+title: Notify Client - C4 Code
+parent:  Notifier - C4 Component
 nav_order: 1
 has_children: true
 is_not_draft: false
