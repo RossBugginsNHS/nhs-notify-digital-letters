@@ -1,7 +1,8 @@
 BASE_URL ?= "/"
 VERSION ?= ""
 SCHEMA_PATTERN = *.schema.json
-SCHEMA_INPUT_DIR = ../schemas
+SCHEMA_BASE_INPUT_DIR = ../schemas
+SCHEMA_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output
 BASE_OUTPUT_DIR = _site
 SCHEMA_OUTPUT_DIR = $(BASE_OUTPUT_DIR)/schemas
 SHELL = /bin/bash
@@ -29,6 +30,7 @@ build-docs: version
 	npm run build $(baseurlparam)
 
 build-schemas: clean-schemas
+	(cd $(SCHEMA_BASE_INPUT_DIR) && make config && make build)
 	mkdir -p $(SCHEMA_OUTPUT_DIR)
 	@echo "Finding schema files..."
 	@find $(SCHEMA_INPUT_DIR) -name "$(SCHEMA_PATTERN)" -print
