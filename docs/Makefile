@@ -19,8 +19,15 @@ define baseurlparam =
 $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
 endef
 
-build: version
+build: version build-schemas
 	npm run build $(baseurlparam)
+
+build-schemas: clean-schemas
+	mkdir -p _site/schemas
+	find ../schemas -name "*.schema.json" -exec cp {} _site/schemas/ \;
+
+clean-schemas:
+	rm -rf _site/schemas
 
 debug: version
 	npm run debug
