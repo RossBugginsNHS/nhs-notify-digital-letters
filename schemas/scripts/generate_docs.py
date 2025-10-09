@@ -31,8 +31,8 @@ def generate_schema_docs(src_dir, docs_dir):
     for yaml_file in yaml_files:
         generate_single_doc(yaml_file, src_path, docs_path)
 
-    # Generate index file
-    generate_index(yaml_files, src_path, docs_path)
+    # Generate hierarchical index files
+    generate_hierarchical_indices(yaml_files, src_path, docs_path)
 
 
 def generate_single_doc(yaml_file, src_path, docs_path):
@@ -193,6 +193,139 @@ def generate_property_doc(prop_name, prop_def):
         content += "\n".join(details) + "\n\n"
 
     return content
+
+
+def generate_hierarchical_indices(yaml_files, src_path, docs_path):
+    """Generate hierarchical index files for all directories containing schemas."""
+    # Get all unique directories that contain schema files
+    directories = set()
+    schemas_by_dir = {}
+
+    for yaml_file in yaml_files:
+        rel_path = yaml_file.relative_to(src_path)
+        dir_path = rel_path.parent
+
+        # Add this directory and all parent directories
+        current_dir = dir_path
+        while True:
+            directories.add(current_dir)
+            if current_dir == Path('.'):
+                break
+            current_dir = current_dir.parent
+
+        # Group schemas by their immediate directory
+        dir_key = str(dir_path) if dir_path != Path('.') else 'root'
+        if dir_key not in schemas_by_dir:
+            schemas_by_dir[dir_key] = []
+        schemas_by_dir[dir_key].append(rel_path)
+
+    # Generate index file for each directory
+    for directory in directories:
+        generate_directory_index(directory, schemas_by_dir, src_path, docs_path, directories)
+
+
+def generate_directory_index(directory, schemas_by_dir, src_path, docs_path, all_directories):
+    """Generate an index file for a specific directory."""
+    # Determine the index file path
+    if directory == Path('.'):
+        index_file = docs_path / "index.md"
+        dir_title = "Schema Documentation"
+        dir_key = 'root'
+    else:
+        index_file = docs_path / directory / "index.md"
+        dir_title = f"Schema Documentation - {directory.name}"
+        dir_key = str(directory)
+
+    # Ensure directory exists
+    index_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Get parent directory for navigation
+    parent_dir = directory.parent if directory != Path('.') else None
+    parent_link = ""
+    if parent_dir is not None:
+        if parent_dir == Path('.'):
+            parent_link = "[↑ Parent Directory](../index.md)"
+        else:
+            # Calculate relative path to parent index
+            depth = len(directory.parts)
+            parent_path = "../" * depth + str(parent_dir) + "/index.md"
+            parent_link = f"[↑ Parent Directory]({parent_path})"
+
+    # Start building content
+    content = f"""---
+title: "{dir_title}"
+description: "Index of schema documentation in {directory if directory != Path('.') else 'root directory'}"
+generated: "{datetime.now().isoformat()}"
+directory: "{directory}"
+---
+
+# {dir_title}
+
+"""
+
+    # Add parent navigation
+    if parent_link:
+        content += f"{parent_link}\n\n"
+
+    # Add schemas in this directory
+    schemas_in_dir = schemas_by_dir.get(dir_key, [])
+    if schemas_in_dir:
+        content += "## Schemas in this directory\n\n"
+        for schema_path in sorted(schemas_in_dir):
+            doc_path = schema_path.with_suffix('.md')
+            schema_name = schema_path.stem.replace('.schema', '')
+
+            # Calculate relative path from current index to schema
+            if directory == Path('.'):
+                rel_doc_path = str(doc_path)
+            else:
+                rel_doc_path = str(doc_path.relative_to(directory))
+
+            content += f"- [{schema_name}]({rel_doc_path})\n"
+        content += "\n"
+
+    # Add subdirectories
+    subdirs = []
+    for other_dir in all_directories:
+        if other_dir != directory and other_dir != Path('.'):
+            # Check if other_dir is a child of current directory
+            try:
+                if directory == Path('.'):
+                    # Root directory - check for immediate children
+                    if len(other_dir.parts) == 1:
+                        subdirs.append(other_dir)
+                else:
+                    # Non-root directory - check if it's an immediate child
+                    if other_dir.parent == directory:
+                        subdirs.append(other_dir)
+            except ValueError:
+                # Not a relative path
+                continue
+
+    if subdirs:
+        content += "## Subdirectories\n\n"
+        for subdir in sorted(subdirs):
+            if directory == Path('.'):
+                subdir_link = f"{subdir}/index.md"
+            else:
+                subdir_link = f"{subdir.name}/index.md"
+            content += f"- [{subdir.name}/]({subdir_link})\n"
+        content += "\n"
+
+    # Add generation info
+    total_schemas_in_tree = len([s for s in schemas_by_dir.values() for s in s])
+    content += f"""## Generation Info
+
+- **Schemas in this directory**: {len(schemas_in_dir)}
+- **Total schemas in tree**: {total_schemas_in_tree}
+- **Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+- **Source directory**: `{src_path}`
+"""
+
+    with open(index_file, 'w') as f:
+        f.write(content)
+
+    print(f"Generated index: {index_file}")
 
 
 def generate_index(yaml_files, src_path, docs_path):

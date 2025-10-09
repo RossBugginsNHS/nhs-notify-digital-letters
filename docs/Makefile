@@ -6,7 +6,7 @@ SCHEMA_BASE_INPUT_DIR = ../schemas
 SCHEMA_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output
 SCHEMA_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/docs
 BASE_OUTPUT_DIR = _site
-BASE_DOCS_OUTPUT_DIR = schema
+BASE_DOCS_OUTPUT_DIR = schemas
 SCHEMA_OUTPUT_DIR = $(BASE_OUTPUT_DIR)/schemas
 SCHEMA_DOCS_OUTPUT_DIR = $(BASE_DOCS_OUTPUT_DIR)
 
@@ -29,7 +29,7 @@ define baseurlparam =
 $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
 endef
 
-build: build-schemas build-docs copy-schemas show-build-output
+build: build-schemas copy-schema-docs build-docs copy-schemas show-build-output
 
 build-docs: version
 	npm run build $(baseurlparam)
@@ -61,8 +61,14 @@ show-build-output:
 	@echo "Build output in $(BASE_OUTPUT_DIR):"
 	@find $(BASE_OUTPUT_DIR) -type f -name "*" | sort
 
+clean: clean-docs clean-schemas
+clean-docs:
+	rm -rf $(BASE_OUTPUT_DIR)
+
+
 clean-schemas:
 	rm -rf $(SCHEMA_OUTPUT_DIR)
+	rm -rf $(SCHEMA_DOCS_OUTPUT_DIR)
 
 debug: version
 	npm run debug
