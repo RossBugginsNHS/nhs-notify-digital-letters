@@ -1,13 +1,15 @@
 # Variables
 SCHEMA_SRC_DIR := src
 OUTPUT_DIR := output
+DOCS_DIR := docs
 SCRIPTS_DIR := scripts
 YAML_TO_JSON_SCRIPT := $(SCRIPTS_DIR)/yaml_to_json.py
+GENERATE_DOCS_SCRIPT := $(SCRIPTS_DIR)/generate_docs.py
 YAML_SCHEMAS := $(shell find $(SCHEMA_SRC_DIR) -name "*.schema.yaml" -type f)
 JSON_OUTPUTS := $(patsubst $(SCHEMA_SRC_DIR)/%.schema.yaml,$(OUTPUT_DIR)/%.schema.json,$(YAML_SCHEMAS))
 
 # Default target
-.PHONY: all clean build convert-schemas config check-deps
+.PHONY: all clean build build-schemas convert-schemas config check-deps build-docs
 
 all: build
 
@@ -43,30 +45,43 @@ convert-schemas: check-deps $(OUTPUT_DIR)
 	done
 
 # Build all schemas
-build: convert-schemas
+build-schemas: convert-schemas
 	@echo "Building schemas complete!"
 	@echo "Found $(words $(YAML_SCHEMAS)) YAML schema(s):"
 	@for schema in $(YAML_SCHEMAS); do echo "  - $$schema"; done
 	@echo "Generated JSON schemas in $(OUTPUT_DIR)/"
 
+# Build everything (schemas and docs)
+build: build-schemas build-docs
+	@echo "Build complete! Generated JSON schemas and documentation."
+
+# Generate documentation from schemas
+build-docs: check-deps
+	@echo "Generating documentation from YAML schemas..."
+	@python3 $(GENERATE_DOCS_SCRIPT) $(SCHEMA_SRC_DIR) $(DOCS_DIR)
+	@echo "Documentation generated in $(DOCS_DIR)/"
+
 # Clean output directory
 clean:
-	@echo "Cleaning output directory..."
-	@rm -rf $(OUTPUT_DIR)
+	@echo "Cleaning output and docs directories..."
+	@rm -rf $(OUTPUT_DIR) $(DOCS_DIR)
 	@echo "Clean complete!"
 
 # Show help
 help:
 	@echo "Available targets:"
-	@echo "  all     - Build all schemas (default)"
-	@echo "  config  - Setup dependencies (Python, PyYAML)"
-	@echo "  build   - Convert YAML schemas from src/ to JSON in output/ (preserving folder structure)"
-	@echo "  list    - List all YAML schema files that would be processed"
-	@echo "  clean   - Remove output directory"
-	@echo "  help    - Show this help message"
+	@echo "  all           - Build everything (schemas + docs) (default)"
+	@echo "  build         - Build everything (schemas + docs)"
+	@echo "  build-schemas - Convert YAML schemas from src/ to JSON in output/ (preserving folder structure)"
+	@echo "  build-docs    - Generate Markdown documentation from YAML schemas"
+	@echo "  config        - Setup dependencies (Python, PyYAML)"
+	@echo "  list          - List all YAML schema files that would be processed"
+	@echo "  clean         - Remove output and docs directories"
+	@echo "  help          - Show this help message"
 	@echo ""
 	@echo "Source schemas are looked for in: $(SCHEMA_SRC_DIR)/"
 	@echo "Output JSON files are generated in: $(OUTPUT_DIR)/ (with preserved folder structure)"
+	@echo "Documentation files are generated in: $(DOCS_DIR)/ (with preserved folder structure)"
 
 # List all YAML schema files
 list:
