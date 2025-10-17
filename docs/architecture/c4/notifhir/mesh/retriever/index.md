@@ -1,5 +1,5 @@
 ---
-layout: page
+
 title: MESH Retriever
 parent:  MESH Services
 nav_order: 2
@@ -8,6 +8,8 @@ is_not_draft: false
 last_modified_date: 2024-05-28
 owner: Ross Buggins
 author: Ross Buggins
+diagrams: [c4code-mesh-retriever]
+events-raised: []
+events-consumed: []
+c4type: code
 ---
-
-{% include diagram.html title="c4Component-notifhir-3" %}
