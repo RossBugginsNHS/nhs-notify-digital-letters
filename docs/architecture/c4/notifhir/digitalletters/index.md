@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Core System Notifier
+title: Digital Letter Viewer Services
 parent:  NotiFHIR
-nav_order: 6
+nav_order: 8
 has_children: true
 is_not_draft: false
 last_modified_date: 2024-05-28

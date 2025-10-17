@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Queue Adder - C4 Code
-parent:  Printer - C4 Component
+title: Queue Adder
+parent:  Queue Services
 nav_order: 1
 has_children: true
 is_not_draft: false

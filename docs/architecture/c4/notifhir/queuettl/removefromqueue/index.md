@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Queue Remover - C4 Code
-parent:  Printer - C4 Component
+title: Queue Remover
+parent:  Queue Services
 nav_order: 2
 has_children: true
 is_not_draft: false
