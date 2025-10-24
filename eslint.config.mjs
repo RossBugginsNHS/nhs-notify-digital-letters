@@ -77,7 +77,6 @@ export default defineConfig([
       'import-x/resolver-next': [
         eslintImportResolverTypescript.createTypeScriptImportResolver({
           project: [
-            'frontend/tsconfig.json',
             'lambdas/*/tsconfig.json',
             'tests/test-team/tsconfig.json',
             'utils/*/tsconfig.json',
@@ -140,7 +139,7 @@ export default defineConfig([
 
   // prettier
   prettierRecommended,
-  { rules: { ...prettierConfigRules, 'prettier/prettier': 2 } },
+  { rules: { ...prettierConfigRules, 'prettier/prettier': ['error', { singleQuote: true }] } },
 
   // jsxA11y
   {
@@ -168,20 +167,6 @@ export default defineConfig([
     files: ['**/*.html'],
     plugins: { html },
   },
-
-  // Next.js
-  ...compat.config({
-    extends: ['next', 'next/core-web-vitals', 'next/typescript'],
-    settings: {
-      next: {
-        rootDir: 'frontend',
-      },
-    },
-    rules: {
-      // needed because next lint rules look for a pages directory
-      '@next/next/no-html-link-for-pages': 0,
-    },
-  }),
 
   // json
   {
@@ -241,6 +226,12 @@ export default defineConfig([
     },
     rules: {
       'no-relative-import-paths/no-relative-import-paths': 2,
+    },
+  },
+  {
+    files: ['utils/**'],
+    rules: {
+      'no-relative-import-paths/no-relative-import-paths': 0,
     },
   },
   {
