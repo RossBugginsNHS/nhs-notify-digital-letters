@@ -3,7 +3,7 @@
 # To regenerate, run: make update-readme
 # To customize labels and purposes, edit: readme-metadata.yaml
 
-generated: '2025-10-28T16:21:55.253Z'
+generated: '2025-10-28T16:29:46.754Z'
 common: null
 domains:
   - name: digital-letters
@@ -37,4 +37,12 @@ domains:
             source: src/digital-letters/2025-10/supplier-allocation-profile.schema.yaml
             published: schemas/digital-letters/2025-10/supplier-allocation-profile.schema.json
             docs: ../../docs/cloudevents/digital-letters/2025-10/supplier-allocation-profile.schema.md
-        exampleEvents: []
+        exampleEvents:
+          - name: File Printed
+            filename: file-printed-event
+            json: ../../docs/cloudevents/digital-letters/2025-10/example-events/file-printed-event.json
+            markdown: ../../docs/cloudevents/digital-letters/2025-10/example-events/file-printed-event.md
+          - name: File Received
+            filename: file-received-event
+            json: ../../docs/cloudevents/digital-letters/2025-10/example-events/file-received-event.json
+            markdown: ../../docs/cloudevents/digital-letters/2025-10/example-events/file-received-event.md

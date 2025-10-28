@@ -48,7 +48,6 @@ function renderTable(headers, rows) {
  */
 function renderCommonSchemas(common) {
   const lines = [];
-
   // If no common schemas, return empty section or skip
   if (!common || !common.versions || common.versions.length === 0) {
     lines.push("## Common Schemas (Shared Across All Domains)");
@@ -57,7 +56,6 @@ function renderCommonSchemas(common) {
     lines.push("");
     return lines.join("\n");
   }
-
   lines.push("## Common Schemas (Shared Across All Domains)");
   lines.push("");
 

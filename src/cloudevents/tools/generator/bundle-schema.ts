@@ -19,28 +19,6 @@ import path from 'path';
  *   npm run bundle -- nhs-notify-example-event.schema.json dist/nhs-notify-example-event.bundle.schema.json
  */
 
-// Add global error handlers
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise);
-  console.error('Reason:', reason);
-  if (reason instanceof Error) {
-    console.error('Stack:', reason.stack);
-  } else {
-    console.error('Reason (JSON):', JSON.stringify(reason, null, 2));
-  }
-  process.exit(1);
-});
-
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  if (error instanceof Error) {
-    console.error('Stack:', error.stack);
-  } else {
-    console.error('Error (JSON):', JSON.stringify(error, null, 2));
-  }
-  process.exit(1);
-});
-
 async function main() {
   const args = process.argv.slice(2);
   let flatten = false;
@@ -282,23 +260,8 @@ async function main() {
     console.log(`Bundled schema written to ${outFile}`);
   } catch (err) {
     console.error('Failed to bundle schema:', err);
-    if (err instanceof Error) {
-      console.error('Error message:', err.message);
-      console.error('Error stack:', err.stack);
-    } else {
-      console.error('Non-Error thrown:', JSON.stringify(err, null, 2));
-    }
     process.exit(1);
   }
 }
 
-main().catch((err) => {
-  console.error('Unhandled error in main():', err);
-  if (err instanceof Error) {
-    console.error('Error message:', err.message);
-    console.error('Error stack:', err.stack);
-  } else {
-    console.error('Non-Error thrown:', JSON.stringify(err, null, 2));
-  }
-  process.exit(1);
-});
+main();

@@ -48,7 +48,7 @@ async function main() {
   const dereferencedSchema = await $RefParser.dereference(schemaPath, {
     resolve: {
       file: { order: 1 },
-      http: {
+      http: { 
         order: 2,
         headers: {
           'User-Agent': 'nhs-notify-schema-builder/1.0',

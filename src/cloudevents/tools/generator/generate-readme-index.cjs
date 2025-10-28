@@ -447,7 +447,7 @@ function main(docsBasePath) {
 
 `;
 
-  fs.writeFileSync(OUTPUT_FILE, header + yamlContent, "utf8");
+fs.writeFileSync(OUTPUT_FILE, header + yamlContent, "utf8");
 
   const totalCommonSchemas = common && common.versions
     ? common.versions.reduce((sum, v) => sum + v.schemas.length, 0)
