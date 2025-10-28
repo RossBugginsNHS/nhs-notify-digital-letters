@@ -1,0 +1,19 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: NHS Notify Supplier Allocation Profile
+description: NHS Notify Supplier Allocation profile for CloudEvents 1.0 including additional governance and tracing attributes.
+type: object
+allOf:
+  - $ref: https://notify.nhs.uk/cloudevents/schemas/common/2025-10/nhs-notify-profile.schema.json
+properties:
+  type:
+    type: string
+    minLength: 1
+    allOf:
+      - name: NHS Notify versioned event type pattern
+        type: string
+        pattern: ^uk\.nhs\.notify\.supplier\.allocation\.[a-z0-9]+(?:\.[a-z0-9]+)*\.v[0-9]+$
+  source:
+    type: string
+    pattern: ^/nhs/england/notify/(production|staging|development|uat)/(primary|secondary|dev-[0-9]+)/(data-plane|control-plane)/supplierallocation
+    minLength: 40
+    format: uri-reference

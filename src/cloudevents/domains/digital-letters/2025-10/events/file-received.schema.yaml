@@ -1,0 +1,26 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+allOf:
+  - $ref: ../supplier-allocation-profile.schema.yaml
+properties:
+  type:
+    type: string
+    const: uk.nhs.notify.supplier.allocation.file.received.v1
+    description: Concrete versioned event type string for this example event (.vN suffix).
+    examples:
+      - uk.nhs.notify.supplier.allocation.file.received.v1
+  source:
+    type: string
+    pattern: ^/nhs/england/notify/(production|staging|development|uat)/(primary|secondary|dev-[0-9]+)/data-plane/supplierallocation
+    description: Event source for supplier allocation examples.
+    examples:
+      - /nhs/england/notify/production/primary/data-plane/supplierallocation
+  dataschema:
+    type: string
+    const: ../data/file-data.schema.yaml
+    description: Canonical URI of the example event's data schema.
+    examples:
+      - file-data.schema.yaml
+  data:
+    $ref: ../data/file-data.schema.yaml
+    description: Example payload wrapper containing notify-payload.

@@ -1,0 +1,10 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+title: Example data type
+description: Example data type
+type: object
+additionalProperties: false
+properties:
+  something:
+    $ref: ../defs/someobject.schema.yaml#/properties/something
+required:
+  - something
