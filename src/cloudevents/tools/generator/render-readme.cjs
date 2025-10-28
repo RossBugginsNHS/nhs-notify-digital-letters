@@ -259,7 +259,7 @@ function main() {
   const indexYaml = fs.readFileSync(INDEX_FILE, "utf8");
   const index = yaml.load(indexYaml);
 
-  const totalCommonSchemas = index.common && index.common.versions 
+  const totalCommonSchemas = index.common && index.common.versions
     ? index.common.versions.reduce((sum, v) => sum + v.schemas.length, 0)
     : 0;
   console.log(`📦 Loaded index (generated ${index.generated})`);

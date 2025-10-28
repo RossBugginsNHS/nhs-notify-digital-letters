@@ -1,16 +1,4 @@
 {
-  "name": "digital-letters-cloudevents-schemas",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "generate": "ts-node tools/generator/generate-example.ts $@",
-    "build-docs": "node tools/generator/generate-docs.cjs",
-    "validate": "node tools/validator/validate.js $@",
-    "bundle": "ts-node tools/generator/bundle-schema.ts",
-    "bundle:prefer-child": "ts-node tools/generator/bundle-schema-prefer-child.ts",
-    "build": "ts-node tools/builder/build-schema.ts",
-    "update-readme": "node tools/generator/update-readme.cjs $@"
-  },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
     "ajv": "^8.0.0",
@@ -25,5 +13,17 @@
     "json-schema-static-docs": "^0.28.1",
     "ts-node": "^10.0.0",
     "typescript": "^5.0.0"
-  }
+  },
+  "name": "digital-letters-cloudevents-schemas",
+  "scripts": {
+    "build": "ts-node tools/builder/build-schema.ts",
+    "build-docs": "node tools/generator/generate-docs.cjs",
+    "bundle": "ts-node tools/generator/bundle-schema.ts",
+    "bundle:prefer-child": "ts-node tools/generator/bundle-schema-prefer-child.ts",
+    "generate": "ts-node tools/generator/generate-example.ts $@",
+    "update-readme": "node tools/generator/update-readme.cjs $@",
+    "validate": "node tools/validator/validate.js $@"
+  },
+  "type": "module",
+  "version": "1.0.0"
 }

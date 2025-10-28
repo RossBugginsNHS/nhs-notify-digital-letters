@@ -76,6 +76,33 @@ make config
 
 There are `make` tasks for you to configure to run your tests.  Run `make test` to see how they work.  You should be able to use the same entry points for local development as in your CI pipeline.
 
+## CloudEvents Schemas
+
+This section contains automatically generated documentation for CloudEvents schemas.
+
+<!-- AUTO-GENERATED-CONTENT:START -->
+## Common Schemas (Shared Across All Domains)
+
+_No common schemas defined yet._
+
+
+## Digital Letters Domain
+
+**Purpose:** Production domain for digital letters events
+
+### Version: 2025-10
+
+| Schema Type | Source (YAML) | Published Schema | Documentation |
+| ----------- | ------------- | ---------------- | ------------- |
+| **File Data** | [`src/digital-letters/2025-10/data/file-data.schema.yaml`](src/digital-letters/2025-10/data/file-data.schema.yaml) | [`schemas/digital-letters/2025-10/data/file-data.schema.json`](schemas/digital-letters/2025-10/data/file-data.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10/data/file-data.schema.md`](../../docs/cloudevents/digital-letters/2025-10/data/file-data.schema.md) |
+| **Someobject** | [`src/digital-letters/2025-10/defs/someobject.schema.yaml`](src/digital-letters/2025-10/defs/someobject.schema.yaml) | [`schemas/digital-letters/2025-10/defs/someobject.schema.json`](schemas/digital-letters/2025-10/defs/someobject.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10/defs/someobject.schema.md`](../../docs/cloudevents/digital-letters/2025-10/defs/someobject.schema.md) |
+| **File Printed** | [`src/digital-letters/2025-10/events/file-printed.schema.yaml`](src/digital-letters/2025-10/events/file-printed.schema.yaml) | [`schemas/digital-letters/2025-10/events/file-printed.schema.json`](schemas/digital-letters/2025-10/events/file-printed.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10/events/file-printed.schema.md`](../../docs/cloudevents/digital-letters/2025-10/events/file-printed.schema.md) |
+| **File Received** | [`src/digital-letters/2025-10/events/file-received.schema.yaml`](src/digital-letters/2025-10/events/file-received.schema.yaml) | [`schemas/digital-letters/2025-10/events/file-received.schema.json`](schemas/digital-letters/2025-10/events/file-received.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10/events/file-received.schema.md`](../../docs/cloudevents/digital-letters/2025-10/events/file-received.schema.md) |
+| **Profile** | [`src/digital-letters/2025-10/supplier-allocation-profile.schema.yaml`](src/digital-letters/2025-10/supplier-allocation-profile.schema.yaml) | [`schemas/digital-letters/2025-10/supplier-allocation-profile.schema.json`](schemas/digital-letters/2025-10/supplier-allocation-profile.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10/supplier-allocation-profile.schema.md`](../../docs/cloudevents/digital-letters/2025-10/supplier-allocation-profile.schema.md) |
+
+
+<!-- AUTO-GENERATED-CONTENT:END -->
+
 ## Design
 
 ### Diagrams

@@ -1,12 +1,11 @@
 {
+  "name": "Notify Loaded 1.0.17",
+  "image": "ghcr.io/nhsdigital/nhs-notify-devcontainer-loaded:1.0.17",
   "containerEnv": {
-    "GITHUBMONITOR": "false",
-    "MAKECONFIG": "true",
+    "UPDATEFROMTEMPLATE": "false",
     "SHOWWELCOME": "true",
-    "UPDATEFROMTEMPLATE": "false"
+    "MAKECONFIG": "true",
+    "GITHUBMONITOR": "false"
   },
-  "image": "ghcr.io/nhsdigital/nhs-notify-devcontainer-loaded:1.0.16",
-  "name": "Notify Loaded Dev Container 1.0.16",
-  "postCreateCommand": "echo My own container created",
-  "postStartCommand": "echo My own container started"
+  "postStartCommand": "mkdir -p ~/.gnupg && echo '## 1-day timeout' > ~/.gnupg/gpg-agent.conf && echo 'default-cache-ttl 86400' >> ~/.gnupg/gpg-agent.conf && echo 'max-cache-ttl 86400' >> ~/.gnupg/gpg-agent.conf && gpg-connect-agent reloadagent /bye 2>/dev/null || true"
 }

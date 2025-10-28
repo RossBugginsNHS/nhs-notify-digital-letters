@@ -172,18 +172,18 @@ async function loadExternalSchema(uri) {
       delete schemaCopy.$id;
       return schemaCopy;
     }
-    
+
     // Try to load from file system relative to baseDir/schemaDir
     // Remove the leading slash to make it relative
     let relativePath = uri.substring(1);
-    
+
     // If the URI starts with a directory that matches the basename of schemaDir, remove it
     // e.g. if schemaDir is /path/to/output and URI is /output/common/..., strip the /output part
     const baseName = path.basename(schemaDir);
     if (relativePath.startsWith(baseName + '/')) {
       relativePath = relativePath.substring(baseName.length + 1);
     }
-    
+
     const filePath = path.join(schemaDir, relativePath);
     if (fs.existsSync(filePath)) {
       try {
