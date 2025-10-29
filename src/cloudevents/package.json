@@ -13,6 +13,7 @@
     "update-readme": "node tools/generator/update-readme.cjs $@",
     "lint": "echo 'no linting configured'",
     "lint:fix": "echo 'no linting configured'",
+    "typecheck": "echo 'no typechecking configured'",
     "test:unit": "make build && make generate && make test-domains"
   },
   "dependencies": {
