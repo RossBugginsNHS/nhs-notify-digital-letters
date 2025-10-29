@@ -1,0 +1,46 @@
+# uk.nhs.notify.digital.letters.file.received.v1
+
+**Event Type:** `uk.nhs.notify.digital.letters.file.received.v1`
+
+**Source:** `/nhs/england/notify/uat/dev-754120/data-plane/digitalletters`
+
+**Subject:** `customer/16cfaa99-b5d0-94a2-ac5e-aef2e0ddbefd/6fcysxbdzer/4f44ea8d-b5bd-01fc-4240-99f9bfab0559/6/5cc201f1-761e-645d-4fae-5f6f7fa3fc6e`
+
+**Event ID:** `48d8d63f-4c30-4501-92f1-ba5e9366b3bf`
+
+**Timestamp:** 2025-10-29T08:13:21.350Z
+
+## Related Schema Documentation
+
+- [Event Schema](../file-received.schema.md)
+- [Event Schema (Bundled)](../file-received.bundle.schema.md)
+- [Event Schema (Flattened)](../file-received.flattened.schema.md)
+
+## Complete Event Instance
+
+```json
+{
+  "type": "uk.nhs.notify.digital.letters.file.received.v1",
+  "source": "/nhs/england/notify/uat/dev-754120/data-plane/digitalletters",
+  "dataschema": "../data/file-data.schema.json",
+  "data": {
+    "something": "nostrud dolore esse elit"
+  },
+  "specversion": "1.0",
+  "id": "48d8d63f-4c30-4501-92f1-ba5e9366b3bf",
+  "subject": "customer/16cfaa99-b5d0-94a2-ac5e-aef2e0ddbefd/6fcysxbdzer/4f44ea8d-b5bd-01fc-4240-99f9bfab0559/6/5cc201f1-761e-645d-4fae-5f6f7fa3fc6e",
+  "time": "2025-10-29T08:13:21.350Z",
+  "datacontenttype": "application/json",
+  "traceparent": "00-4b39de812eb8f212ddbc3f2b03668d76-3b040ba82cb30e6d-01",
+  "tracestate": "sed tempor ad voluptate officia",
+  "partitionkey": "customer-16cfaa99",
+  "recordedtime": "2025-10-29T08:13:22.350Z",
+  "sampledrate": 1,
+  "sequence": "00000000000389358396",
+  "severitytext": "DEBUG",
+  "severitynumber": 1,
+  "dataclassification": "internal",
+  "dataregulation": "PCI-DSS",
+  "datacategory": "sensitive"
+}
+```

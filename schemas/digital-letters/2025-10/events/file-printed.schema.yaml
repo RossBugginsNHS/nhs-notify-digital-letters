@@ -1,7 +1,8 @@
+$id: https://notify.nhs.uk/cloudevents/schemas/cloudevents/domains/digital-letters/2025-10/events/file-printed.schema.json
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 allOf:
-  - $ref: ../digital-letters-profile.schema.yaml
+  - $ref: https://notify.nhs.uk/cloudevents/schemas/../domains/digital-letters/2025-10/digital-letters-profile.schema.json
 properties:
   type:
     type: string
@@ -17,10 +18,10 @@ properties:
       - /nhs/england/notify/production/primary/data-plane/digitalletters
   dataschema:
     type: string
-    const: ../data/file-data.schema.yaml
+    const: https://notify.nhs.uk/cloudevents/schemas/../domains/digital-letters/2025-10/data/file-data.schema.json
     description: Canonical URI of the example event's data schema.
     examples:
-      - file-data.schema.yaml
+      - file-data.schema.json
   data:
-    $ref: ../data/file-data.schema.yaml
+    $ref: https://notify.nhs.uk/cloudevents/schemas/../domains/digital-letters/2025-10/data/file-data.schema.json
     description: Example payload wrapper containing notify-payload.

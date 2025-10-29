@@ -1,0 +1,40 @@
+{
+  "$id": "https://notify.nhs.uk/cloudevents/schemas/cloudevents/domains/digital-letters/2025-10/events/file-received.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://notify.nhs.uk/cloudevents/schemas/../domains/digital-letters/2025-10/digital-letters-profile.schema.json"
+    }
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "uk.nhs.notify.digital.letters.file.received.v1",
+      "description": "Concrete versioned event type string for this example event (.vN suffix).",
+      "examples": [
+        "uk.nhs.notify.digital.letters.file.received.v1"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "pattern": "^/nhs/england/notify/(production|staging|development|uat)/(primary|secondary|dev-[0-9]+)/data-plane/digitalletters",
+      "description": "Event source for digital letters  examples.",
+      "examples": [
+        "/nhs/england/notify/production/primary/data-plane/digitalletters"
+      ]
+    },
+    "dataschema": {
+      "type": "string",
+      "const": "https://notify.nhs.uk/cloudevents/schemas/../domains/digital-letters/2025-10/data/file-data.schema.json",
+      "description": "Canonical URI of the example event's data schema.",
+      "examples": [
+        "file-data.schema.json"
+      ]
+    },
+    "data": {
+      "$ref": "https://notify.nhs.uk/cloudevents/schemas/../domains/digital-letters/2025-10/data/file-data.schema.json",
+      "description": "Example payload wrapper containing notify-payload."
+    }
+  }
+}

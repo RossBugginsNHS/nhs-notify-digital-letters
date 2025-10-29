@@ -1,0 +1,46 @@
+# uk.nhs.notify.digital.letters.file.printed.v1
+
+**Event Type:** `uk.nhs.notify.digital.letters.file.printed.v1`
+
+**Source:** `/nhs/england/notify/development/secondary/data-plane/digitalletters`
+
+**Subject:** `customer/86e8bcef-6f8e-5c3f-9bf3-0c1ca3f8fd1a/v/4s8-hmcdf/08d9accb-a8a7-ee10-edf7-2340d97fc83e/4b22c63f-b69a-abd5-9cf9-3ebcc2259eb6/qrzkeuxl2/w/-rat3bgw/b0njqbr/a013ec7f-8bc6-d1ed-1b97-bd6eacacadb3/07747fde-d4fc-25de-aa15-5fbd65e3d20e`
+
+**Event ID:** `18095bc1-dee4-4e4f-b17c-da07b2f0f85a`
+
+**Timestamp:** 2025-10-29T08:13:20.835Z
+
+## Related Schema Documentation
+
+- [Event Schema](../file-printed.schema.md)
+- [Event Schema (Bundled)](../file-printed.bundle.schema.md)
+- [Event Schema (Flattened)](../file-printed.flattened.schema.md)
+
+## Complete Event Instance
+
+```json
+{
+  "type": "uk.nhs.notify.digital.letters.file.printed.v1",
+  "source": "/nhs/england/notify/development/secondary/data-plane/digitalletters",
+  "dataschema": "../data/file-data.schema.json",
+  "data": {
+    "something": "labore Lorem velit ut"
+  },
+  "specversion": "1.0",
+  "id": "18095bc1-dee4-4e4f-b17c-da07b2f0f85a",
+  "subject": "customer/86e8bcef-6f8e-5c3f-9bf3-0c1ca3f8fd1a/v/4s8-hmcdf/08d9accb-a8a7-ee10-edf7-2340d97fc83e/4b22c63f-b69a-abd5-9cf9-3ebcc2259eb6/qrzkeuxl2/w/-rat3bgw/b0njqbr/a013ec7f-8bc6-d1ed-1b97-bd6eacacadb3/07747fde-d4fc-25de-aa15-5fbd65e3d20e",
+  "time": "2025-10-29T08:13:20.835Z",
+  "datacontenttype": "application/json",
+  "traceparent": "00-06f303e509862ae623b130cf0f9cd485-cfd56bd93af93daa-01",
+  "tracestate": "do",
+  "partitionkey": "customer-86e8bcef",
+  "recordedtime": "2025-10-29T08:13:21.835Z",
+  "sampledrate": 1,
+  "sequence": "00000000000589879394",
+  "severitytext": "DEBUG",
+  "severitynumber": 1,
+  "dataclassification": "restricted",
+  "dataregulation": "CCPA",
+  "datacategory": "non-sensitive"
+}
+```

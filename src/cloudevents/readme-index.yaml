@@ -3,7 +3,7 @@
 # To regenerate, run: make update-readme
 # To customize labels and purposes, edit: readme-metadata.yaml
 
-generated: '2025-10-28T16:29:46.754Z'
+generated: '2025-10-29T08:13:27.708Z'
 common: null
 domains:
   - name: digital-letters
@@ -22,6 +22,11 @@ domains:
             source: src/digital-letters/2025-10/defs/someobject.schema.yaml
             published: schemas/digital-letters/2025-10/defs/someobject.schema.json
             docs: ../../docs/cloudevents/digital-letters/2025-10/defs/someobject.schema.md
+          - type: Profile
+            category: profile
+            source: src/digital-letters/2025-10/digital-letters-profile.schema.yaml
+            published: schemas/digital-letters/2025-10/digital-letters-profile.schema.json
+            docs: ../../docs/cloudevents/digital-letters/2025-10/digital-letters-profile.schema.md
           - type: File Printed
             category: events
             source: src/digital-letters/2025-10/events/file-printed.schema.yaml
@@ -32,11 +37,6 @@ domains:
             source: src/digital-letters/2025-10/events/file-received.schema.yaml
             published: schemas/digital-letters/2025-10/events/file-received.schema.json
             docs: ../../docs/cloudevents/digital-letters/2025-10/events/file-received.schema.md
-          - type: Profile
-            category: profile
-            source: src/digital-letters/2025-10/supplier-allocation-profile.schema.yaml
-            published: schemas/digital-letters/2025-10/supplier-allocation-profile.schema.json
-            docs: ../../docs/cloudevents/digital-letters/2025-10/supplier-allocation-profile.schema.md
         exampleEvents:
           - name: File Printed
             filename: file-printed-event

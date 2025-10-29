@@ -1,0 +1,13 @@
+$id: https://notify.nhs.uk/cloudevents/schemas/cloudevents/domains/digital-letters/2025-10/defs/someobject.schema.json
+$schema: https://json-schema.org/draft/2020-12/schema
+title: NHS Common Types v1.0.0
+description: Reusable types for NHS Notify payload schemas.
+type: object
+properties:
+  something:
+    type: string
+    description: Example reusable property definition
+    examples:
+      - example value
+required:
+  - something
