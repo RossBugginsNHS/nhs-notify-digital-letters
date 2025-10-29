@@ -52,19 +52,25 @@ async function main() {
 
   try {
     // Use bundle (not dereference) to keep shared $defs only once.
-    const bundled = await $RefParser.bundle(entryPath, {
-      resolve: {
-        file: { order: 1 },
-        http: {
-          order: 2,
-          headers: {
-            'User-Agent': 'nhs-notify-schema-builder/1.0',
-            'Accept': 'application/json, application/schema+json, */*'
-          }
+    // Only resolve local file references, leave remote URLs as-is
+    let bundled;
+    try {
+      bundled = await $RefParser.bundle(entryPath, {
+        resolve: {
+          file: { order: 1 },
+          // Disable http resolver completely
+          http: false
+        },
+        dereference: {
+          circular: 'ignore'
         }
-      },
-      dereference: { circular: 'ignore' }
-    });
+      });
+    } catch (error: any) {
+      // If bundling fails due to unresolvable remote references,
+      // fall back to just parsing the schema without bundling
+      console.warn(`Warning: Could not bundle all references (${error.message}). Using unbundled schema.`);
+      bundled = await $RefParser.parse(entryPath);
+    }
 
     // Set $id to match the output file's relative path from output root
     // This matches how build-schema.ts calculates $id for modular schemas

@@ -45,10 +45,13 @@ async function main() {
   } catch (e) {
     // Not a URL, use as-is
   }
+
+  console.log(`[GENERATE] Starting schema resolution for: ${schemaPath}`);
+
   const dereferencedSchema = await $RefParser.dereference(schemaPath, {
     resolve: {
       file: { order: 1 },
-      http: { 
+      http: {
         order: 2,
         headers: {
           'User-Agent': 'nhs-notify-schema-builder/1.0',
@@ -57,7 +60,43 @@ async function main() {
       }
     }
   });
+
+  console.log(`[GENERATE] Schema dereferenced successfully`);
+  console.log(`[GENERATE] Schema properties keys:`, Object.keys(dereferencedSchema.properties || {}));
+
+  if (dereferencedSchema.properties?.data) {
+    console.log(`[GENERATE] Data property found in schema:`, JSON.stringify(dereferencedSchema.properties.data, null, 2));
+  } else {
+    console.log(`[GENERATE] No data property found in schema`);
+  }
+
+  console.log(`[GENERATE] Generating example with jsf...`);
+  console.log(`[GENERATE] JSF options set`);
+
+  // Try to generate the data field separately first to see if that works
+  let separateDataExample = null;
+  if (dereferencedSchema.properties?.data && typeof dereferencedSchema.properties.data === 'object') {
+    console.log(`[GENERATE] Attempting to generate data field separately...`);
+    try {
+      separateDataExample = jsf.generate(dereferencedSchema.properties.data as any);
+      console.log(`[GENERATE] Data field generated separately successfully`);
+    } catch (e) {
+      console.log(`[GENERATE] Failed to generate data field separately:`, e);
+    }
+  }
+
   const example = jsf.generate(dereferencedSchema);
+
+  console.log(`[GENERATE] Example generated. Type:`, typeof example);
+  console.log(`[GENERATE] Example keys:`, example && typeof example === 'object' ? Object.keys(example) : 'Not an object');
+  console.log(`[GENERATE] Example data field:`, example && typeof example === 'object' ? JSON.stringify(example.data) : 'Example not an object');
+
+  // If the main generation didn't include data field but we generated it separately, add it
+  if (example && typeof example === 'object' && !example.data && separateDataExample) {
+    console.log(`[GENERATE] Adding separately generated data field to main example`);
+    example.data = separateDataExample;
+    console.log(`[GENERATE] Data field added successfully`);
+  }
   // Apply constrained overrides so we always satisfy combined pattern + semantic requirements.
   if (example && typeof example === 'object') {
     // 1. Enforce required CloudEvents profile fields if missing (some schemas rely on profile ref)
@@ -180,8 +219,15 @@ async function main() {
     example.sampledrate = 1;
 
     // 12. Data payload enforcement
+    console.log(`[GENERATE] Before data processing - example.data:`, JSON.stringify(example.data));
+    console.log(`[GENERATE] Data field type:`, typeof example.data);
+    console.log(`[GENERATE] Data field is object:`, example.data && typeof example.data === 'object');
+
     if (!example.data || typeof example.data !== 'object') {
+      console.log(`[GENERATE] Data field is missing or not an object, setting to empty object`);
       example.data = {} as any;
+    } else {
+      console.log(`[GENERATE] Data field already exists with keys:`, Object.keys(example.data));
     }
 
     // Recursively find and set any nhsNumber property to a valid value
@@ -190,6 +236,7 @@ async function main() {
 
       for (const key in obj) {
         if (key === 'nhsNumber' && typeof obj[key] === 'string') {
+          console.log(`[GENERATE] Found nhsNumber field, setting to valid value`);
           // Set to known valid NHS number with correct checksum
           obj[key] = '9434765919';
         } else if (typeof obj[key] === 'object' && obj[key] !== null) {
@@ -199,7 +246,9 @@ async function main() {
       }
     };
 
+    console.log(`[GENERATE] About to process NHS numbers in data:`, JSON.stringify(example.data));
     setValidNhsNumber(example.data);
+    console.log(`[GENERATE] After NHS number processing - data:`, JSON.stringify(example.data));
 
     // 13. datacontenttype & dataschema stable defaults
     example.datacontenttype = 'application/json';

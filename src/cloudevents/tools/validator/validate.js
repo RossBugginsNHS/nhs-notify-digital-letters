@@ -122,48 +122,143 @@ for (const fullPath of allSchemaFiles) {
 }
 
 // Function to load external HTTP/HTTPS schemas or base-relative paths
+const httpCache = new Map(); // Cache for external HTTP/HTTPS schemas
+const requestCounts = new Map(); // Track request counts per URI
+const MAX_REQUESTS_PER_URI = 5; // Prevent infinite loops
+
 async function loadExternalSchema(uri) {
+  // Detect metaschema self-references and block them
+  const normalizedUri = uri.replace(/#$/, ''); // Remove trailing fragment
+  if (normalizedUri === 'http://json-schema.org/draft-07/schema' ||
+      normalizedUri === 'https://json-schema.org/draft-07/schema') {
+    console.log(`[FETCH] BLOCKED: Metaschema self-reference detected for ${uri} - skipping to prevent infinite loop`);
+    // Return a minimal schema that won't cause validation issues
+    return { type: "object" };
+  }
+
+  // Track request count to prevent infinite loops
+  const currentCount = requestCounts.get(uri) || 0;
+  if (currentCount >= MAX_REQUESTS_PER_URI) {
+    console.log(`[FETCH] BLOCKED: Too many requests (${currentCount}) for ${uri} - returning cached result`);
+    if (httpCache.has(uri)) {
+      return httpCache.get(uri);
+    }
+    throw new Error(`Maximum requests exceeded for ${uri} and no cached result available`);
+  }
+  requestCounts.set(uri, currentCount + 1);
+
+  // Check cache first
+  if (httpCache.has(uri)) {
+    console.log(`[FETCH] Using cached schema: ${uri} (request #${currentCount + 1})`);
+    return httpCache.get(uri);
+  }
+
   // Handle HTTP/HTTPS URLs
   if (uri.startsWith('http://') || uri.startsWith('https://')) {
+    console.log(`[FETCH] Loading external schema: ${uri}`);
     try {
       const https = await import('https');
       const http = await import('http');
-      const protocol = uri.startsWith('https://') ? https : http;
+      const url = await import('url');
 
       return new Promise((resolve, reject) => {
-        const options = {
-          headers: {
-            'User-Agent': 'nhs-notify-schema-validator/1.0',
-            'Accept': 'application/json, application/schema+json, */*'
-          }
-        };
+        const maxRedirects = 5;
+        let redirectCount = 0;
+        const startTime = Date.now();
 
-        protocol.get(uri, options, (res) => {
-          if (res.statusCode !== 200) {
-            reject(new Error(`HTTP ${res.statusCode} when fetching ${uri}`));
-            return;
-          }
+        function fetchUrl(currentUri) {
+          console.log(`[FETCH] Requesting: ${currentUri} (attempt ${redirectCount + 1})`);
+          const parsedUrl = new url.URL(currentUri);
+          const protocol = parsedUrl.protocol === 'https:' ? https : http;
 
-          let data = '';
-          res.on('data', (chunk) => { data += chunk; });
-          res.on('end', () => {
-            try {
-              const schema = JSON.parse(data);
-              resolve(schema);
-            } catch (e) {
-              reject(new Error(`Failed to parse JSON from ${uri}: ${e.message}`));
+          const options = {
+            hostname: parsedUrl.hostname,
+            port: parsedUrl.port,
+            path: parsedUrl.pathname + parsedUrl.search,
+            timeout: 10000, // 10 second timeout
+            headers: {
+              'User-Agent': 'nhs-notify-schema-validator/1.0',
+              'Accept': 'application/json, application/schema+json, */*'
             }
+          };
+
+          const req = protocol.get(options, (res) => {
+            console.log(`[FETCH] Response ${res.statusCode} from ${currentUri}`);
+
+            // Handle redirects
+            if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+              if (redirectCount >= maxRedirects) {
+                console.error(`[FETCH] Too many redirects (${maxRedirects}) when fetching ${uri}`);
+                reject(new Error(`Too many redirects (${maxRedirects}) when fetching ${uri}`));
+                return;
+              }
+              redirectCount++;
+
+              // Handle relative redirects
+              let redirectUrl = res.headers.location;
+              if (!redirectUrl.startsWith('http')) {
+                redirectUrl = new url.URL(redirectUrl, currentUri).href;
+              }
+
+              console.log(`[FETCH] Following redirect ${res.statusCode}: ${currentUri} -> ${redirectUrl}`);
+              fetchUrl(redirectUrl);
+              return;
+            }
+
+            if (res.statusCode !== 200) {
+              console.error(`[FETCH] HTTP ${res.statusCode} when fetching ${uri}`);
+              reject(new Error(`HTTP ${res.statusCode} when fetching ${uri}`));
+              return;
+            }
+
+            let data = '';
+            let bytesReceived = 0;
+            res.on('data', (chunk) => {
+              data += chunk;
+              bytesReceived += chunk.length;
+              if (bytesReceived % 1024 === 0) {
+                console.log(`[FETCH] Received ${bytesReceived} bytes from ${currentUri}`);
+              }
+            });
+            res.on('end', () => {
+              const elapsed = Date.now() - startTime;
+              console.log(`[FETCH] Download complete: ${bytesReceived} bytes in ${elapsed}ms from ${currentUri}`);
+              try {
+                console.log(`[FETCH] Parsing JSON schema from ${currentUri}`);
+                const schema = JSON.parse(data);
+                console.log(`[FETCH] Successfully parsed schema from ${uri} (request #${currentCount + 1})`);
+
+                // Cache the schema
+                httpCache.set(uri, schema);
+                console.log(`[FETCH] Cached schema: ${uri}`);
+
+                resolve(schema);
+              } catch (e) {
+                console.error(`[FETCH] Failed to parse JSON from ${uri}: ${e.message}`);
+                reject(new Error(`Failed to parse JSON from ${uri}: ${e.message}`));
+              }
+            });
           });
-        }).on('error', (e) => {
-          reject(new Error(`Failed to fetch ${uri}: ${e.message}`));
-        });
+
+          req.on('timeout', () => {
+            console.error(`[FETCH] Timeout after 10s when fetching ${currentUri}`);
+            req.destroy();
+            reject(new Error(`Timeout when fetching ${uri}`));
+          });
+
+          req.on('error', (e) => {
+            console.error(`[FETCH] Network error when fetching ${currentUri}: ${e.message}`);
+            reject(new Error(`Failed to fetch ${uri}: ${e.message}`));
+          });
+        }
+
+        fetchUrl(uri);
       });
     } catch (e) {
+      console.error(`[FETCH] Exception when loading external schema ${uri}: ${e.message}`);
       throw new Error(`Failed to load external schema ${uri}: ${e.message}`);
     }
-  }
-
-  // Handle base-relative paths (starting with /)
+  }  // Handle base-relative paths (starting with /)
   if (uri.startsWith('/')) {
     // First check if the schema is already loaded
     if (schemas[uri]) {
@@ -172,18 +267,18 @@ async function loadExternalSchema(uri) {
       delete schemaCopy.$id;
       return schemaCopy;
     }
-    
+
     // Try to load from file system relative to baseDir/schemaDir
     // Remove the leading slash to make it relative
     let relativePath = uri.substring(1);
-    
+
     // If the URI starts with a directory that matches the basename of schemaDir, remove it
     // e.g. if schemaDir is /path/to/output and URI is /output/common/..., strip the /output part
     const baseName = path.basename(schemaDir);
     if (relativePath.startsWith(baseName + '/')) {
       relativePath = relativePath.substring(baseName.length + 1);
     }
-    
+
     const filePath = path.join(schemaDir, relativePath);
     if (fs.existsSync(filePath)) {
       try {

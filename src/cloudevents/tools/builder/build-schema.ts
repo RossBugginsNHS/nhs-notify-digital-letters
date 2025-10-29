@@ -156,6 +156,45 @@ function processRefs(
         );
         const urlPath = relativePath.replace(/\\/g, "/");
         constValue = fragment ? `${baseUrl}/${urlPath}#${fragment}` : `${baseUrl}/${urlPath}`;
+      } else if (constValue.startsWith("./") || constValue.startsWith("../")) {
+        // If no baseUrl provided but it's a relative path, convert to file:// URI for CloudEvents compliance
+        const [refPath, fragment] = constValue.split("#");
+        const resolvedPath = path.resolve(sourceDir, refPath);
+
+        // Calculate the relative path from the output file location
+        const sourceRelativePath = path.relative(
+          path.join(process.cwd(), "src"),
+          sourceSchemaPath
+        );
+        const outputFileRelativePath = sourceRelativePath
+          .replace(/\.yaml$/, '.json')
+          .replace(/\.yml$/, '.json');
+        const fromOutputFile = path.join(
+          process.cwd(),
+          "output",
+          path.dirname(outputFileRelativePath)
+        );
+
+        // Calculate where the referenced file will be in output
+        const referencedRelativePath = path.relative(
+          path.join(process.cwd(), "src"),
+          resolvedPath
+        );
+        const toBuiltFile = path.join(
+          process.cwd(),
+          "output",
+          referencedRelativePath.replace(/\.yaml$/, '.json').replace(/\.yml$/, '.json')
+        );
+
+        let relativeRef = path
+          .relative(fromOutputFile, toBuiltFile)
+          .replace(/\\/g, "/");
+        relativeRef = relativeRef.startsWith(".")
+          ? relativeRef
+          : `./${relativeRef}`;
+
+        // Convert to file:// URI for CloudEvents compliance
+        constValue = fragment ? `file://${relativeRef}#${fragment}` : `file://${relativeRef}`;
       }
 
       result[key] = constValue;

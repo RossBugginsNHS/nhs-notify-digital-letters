@@ -41,6 +41,13 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
   const loadExternalSchema = async (uri) => {
     console.log(`📥 Loading external schema: ${uri}`);
 
+    // Block metaschema self-references to prevent infinite loops
+    if (uri.includes('json-schema.org/draft-07/schema') ||
+        uri.includes('json-schema.org/draft/2020-12/schema')) {
+      console.log(`   🚫 BLOCKED: Metaschema self-reference detected for ${uri} - skipping to prevent infinite loop`);
+      return false; // Return false to indicate schema should be skipped
+    }
+
     if (!uri.startsWith('http://') && !uri.startsWith('https://')) {
       throw new Error(`Only HTTP(S) URLs supported for external schemas: ${uri}`);
     }
@@ -171,8 +178,13 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
       strictTypes: false,
       strictTuples: false,
       strictRequired: false,
+      validateSchema: false, // Disable schema validation to avoid metaschema issues
+      addUsedSchema: false,  // Don't automatically add schemas to avoid conflicts
       loadSchema: loadExternalSchema,
-      schemas: Object.values(externalSchemas), // Pre-add external schemas
+      schemas: Object.entries(externalSchemas).map(([uri, schema]) => {
+        // Ensure each schema has an $id field set to its URI
+        return { ...schema, $id: uri };
+      }), // Pre-add external schemas with proper IDs
       formats: {
         "nhs-number": {
           type: "string",
