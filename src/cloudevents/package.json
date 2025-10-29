@@ -14,7 +14,7 @@
     "lint": "echo 'no linting configured'",
     "lint:fix": "echo 'no linting configured'",
     "typecheck": "echo 'no typechecking configured'",
-    "test:unit": "make build && make generate && make test-domains"
+    "test:unit": "node --version && npm --version && asdf install && node --version && npm --version && make build && make generate && make test-domains"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
