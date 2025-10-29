@@ -10,7 +10,10 @@
     "bundle": "ts-node tools/generator/bundle-schema.ts",
     "bundle:prefer-child": "ts-node tools/generator/bundle-schema-prefer-child.ts",
     "build": "ts-node tools/builder/build-schema.ts",
-    "update-readme": "node tools/generator/update-readme.cjs $@"
+    "update-readme": "node tools/generator/update-readme.cjs $@",
+    "lint": "echo 'no linting configured'",
+    "lint:fix": "echo 'no linting configured'",
+    "test:unit": "make build && make generate && make test-domains"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.9",
