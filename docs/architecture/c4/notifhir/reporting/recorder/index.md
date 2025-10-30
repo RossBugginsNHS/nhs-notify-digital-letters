@@ -11,6 +11,7 @@ author: Tom D'Roza
 diagrams: [c4code-tracker-listener, c4component-nhsapp-callback, sequence-nhsapp-callback]
 events-raised: []
 events-consumed: [
+    print-status-updated,
     core-request-submitted,
     mesh-file-found,
     mesh-file-saved,

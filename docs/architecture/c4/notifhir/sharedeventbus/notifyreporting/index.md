@@ -12,8 +12,8 @@ diagrams: []
 events-raised: []
 events-consumed: [
     mesh-inbox-message-downloaded,
-    mesh-inbox-message-received
-    letter-available]
+    mesh-inbox-message-received,
+    print-letter-available]
 description: Listens to all events and generates up the report
 c4type: code
 

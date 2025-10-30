@@ -10,6 +10,6 @@ owner: Tom D'Roza
 author: Tom D'Roza
 diagrams: [c4code-mesh-timer]
 events-raised: [mesh-poller-timer-expired]
-events-consumed: [timer-time-expired]
+events-consumed: [event-bus-timer-time-expired]
 c4type: code
 ---

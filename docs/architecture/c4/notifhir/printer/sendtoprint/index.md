@@ -9,7 +9,7 @@ last_modified_date: 2025-10-29
 owner: Ross Buggins
 author: Tom D'Roza
 diagrams: [c4code-printer-sendtoprint]
-events-raised: [print-ready]
-events-consumed: [item-ready]
+events-raised: [print-letter-available]
+events-consumed: [fhir-attachment-extracted]
 c4type: code
 ---
