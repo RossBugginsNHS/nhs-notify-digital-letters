@@ -3,6 +3,7 @@ name: "1. CI/CD pull request"
 # The total recommended execution time for the "CI/CD Pull Request" workflow is around 20 minutes.
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "**"

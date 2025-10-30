@@ -1,0 +1,77 @@
+# uk.nhs.notify.digital.letters.core.request.submitted.v1
+
+**Event Type:** `uk.nhs.notify.digital.letters.core.request.submitted.v1`
+
+**Source:** `/nhs/england/notify/development/dev-2874965453/data-plane/digitalletters/coresystemnotifier`
+
+**Subject:** `customer/1d6ed4dc-173f-32be-522e-aec85970f91f/6rzjm1xoy8/kveu/3b1ed5bd-7ca0-ceed-a2f5-827f17e9e4bb/q1x4tsc8/b2e8dc33-5e4c-6ccc-de98-fd7b212c958f/fdce4f4b-dea0-fab5-6243-d08e7dfe9c6e/6xk0hp7v9w`
+
+**Event ID:** `50db829a-65a1-44aa-a83e-21f31fa9ddd1`
+
+**Timestamp:** 2025-10-30T09:26:57.236Z
+
+## Related Schema Documentation
+
+- [Event Schema](../uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.md)
+- [Event Schema (Bundled)](../uk.nhs.notify.digital.letters.core.request.submitted.v1.bundle.schema.md)
+- [Event Schema (Flattened)](../uk.nhs.notify.digital.letters.core.request.submitted.v1.flattened.schema.md)
+
+## Complete Event Instance
+
+```json
+{
+  "type": "uk.nhs.notify.digital.letters.core.request.submitted.v1",
+  "source": "/nhs/england/notify/development/dev-2874965453/data-plane/digitalletters/coresystemnotifier",
+  "dataschema": "file://../data/digital-letter-base-data.schema.json",
+  "data": {
+    "something": "ut adipisicing commodo est dolore",
+    "notify-payload": {
+      "notify-data": {
+        "utb78": -39066611.102656215,
+        "irure_5c": -98585290.09898016,
+        "eiusmod1ab": 10264776.436576754,
+        "dolor_c": -94968757,
+        "consequatb3": "aliqua magna incididunt ea voluptate"
+      },
+      "notify-metadata": {
+        "teamResponsible": "Team 3",
+        "notifyDomain": "Ordering",
+        "microservice": "RAwtg",
+        "repositoryUrl": "http://DaPgqpKJQDjVuhZXAoPtFLYSbO.aoovXdYJ9e7Ywhsa7kgrjBAosR0i-czqzDFzLhVGQNzNKBs3Xn1SBifIfJJfPeUARU8Jbj.PnP12A95.",
+        "accountId": "PMHYvx",
+        "environment": "development",
+        "instance": "pex5jb",
+        "microserviceInstanceId": "Mi4ErYbO-J",
+        "microserviceVersion": "93643642.83165.0+VG0xk64TM6s.Det.O8P96WXyCW",
+        "commitSha": "e15a8cfafadebddd3a3ea89fdc90c6954",
+        "buildTimestamp": "1924-01-10T12:21:32.0Z",
+        "serviceTier": "experimental",
+        "region": "eu-west-2",
+        "pseudonymisationLevel": "tokenised",
+        "replayIndicator": false,
+        "originalEventId": "e209cb01-4cdf-42b6-813c-0e4f06c13b3a",
+        "integrityHash": "sha256:2b457c89568fd2a4f53dffa08d9669d87d18395122611d098ae1154725b378fa",
+        "producedByType": "container"
+      }
+    }
+  },
+  "profileversion": "1.0.0",
+  "profilepublished": "2025-10",
+  "specversion": "1.0",
+  "id": "50db829a-65a1-44aa-a83e-21f31fa9ddd1",
+  "subject": "customer/1d6ed4dc-173f-32be-522e-aec85970f91f/6rzjm1xoy8/kveu/3b1ed5bd-7ca0-ceed-a2f5-827f17e9e4bb/q1x4tsc8/b2e8dc33-5e4c-6ccc-de98-fd7b212c958f/fdce4f4b-dea0-fab5-6243-d08e7dfe9c6e/6xk0hp7v9w",
+  "time": "2025-10-30T09:26:57.236Z",
+  "datacontenttype": "application/json",
+  "traceparent": "00-653fdb5f57fef144fcc2a0b796a8b85d-f27fff4279e67a28-01",
+  "tracestate": "minim",
+  "partitionkey": "customer-1d6ed4dc",
+  "recordedtime": "2025-10-30T09:26:58.236Z",
+  "sampledrate": 1,
+  "sequence": "00000000000361554932",
+  "severitytext": "DEBUG",
+  "severitynumber": 1,
+  "dataclassification": "restricted",
+  "dataregulation": "NIST-800-53",
+  "datacategory": "sensitive"
+}
+```

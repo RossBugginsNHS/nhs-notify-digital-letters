@@ -21,6 +21,12 @@ cd "$(git rev-parse --show-toplevel)"
 npm ci
 npm run test:unit --workspaces
 
+echo "Running cloudevents unit tests"
+
+# COMMENTED OUT UNTIL WAF IS FIXED
+#make -C src/cloudevents test-ci
+#echo "Cloudevents unit tests complete"
+
 # merge coverage reports
 mkdir -p .reports
 TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.."

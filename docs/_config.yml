@@ -119,15 +119,26 @@ defaults:
       last_modified_date: 2025-01-01
 
   - scope:
+      path: "cloudevents"
+    values:
+      layout: "page"
+      is_not_draft: false
+      parent: Home
+      owner: NHS Notify
+      author: NHS Notify
+      last_modified_date: 2025-01-01
+
+  - scope:
       path: "schemas"
       type: "pages"
     values:
       layout: "page"
       is_not_draft: false
-      parent: Schemas
+      parent: Home
       owner: NHS Notify
       author: NHS Notify
       last_modified_date: 2025-01-01
+
   - scope:
       path: ""
       type: "schema"
@@ -137,6 +148,7 @@ defaults:
       owner: NHS Notify
       author: NHS Notify
       last_modified_date: 2025-01-01
+
   - scope:
       path: ""
       type: "diagrams"

@@ -76,6 +76,39 @@ make config
 
 There are `make` tasks for you to configure to run your tests.  Run `make test` to see how they work.  You should be able to use the same entry points for local development as in your CI pipeline.
 
+## CloudEvents Schemas
+
+This section contains automatically generated documentation for CloudEvents schemas.
+
+<!-- AUTO-GENERATED-CONTENT:START -->
+## Common Schemas (Shared Across All Domains)
+
+_No common schemas defined yet._
+
+
+## Digital Letters Domain
+
+**Purpose:** Production domain for digital letters events
+
+### Version: 2025-10-draft
+
+| Schema Type | Source (YAML) | Published Schema | Documentation |
+| ----------- | ------------- | ---------------- | ------------- |
+| **Digital Letter Base Data** | [`src/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.yaml`](src/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.yaml) | [`schemas/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.json`](schemas/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.md`](../../docs/cloudevents/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.md) |
+| **Someobject** | [`src/digital-letters/2025-10-draft/defs/someobject.schema.yaml`](src/digital-letters/2025-10-draft/defs/someobject.schema.yaml) | [`schemas/digital-letters/2025-10-draft/defs/someobject.schema.json`](schemas/digital-letters/2025-10-draft/defs/someobject.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10-draft/defs/someobject.schema.md`](../../docs/cloudevents/digital-letters/2025-10-draft/defs/someobject.schema.md) |
+| **Profile** | [`src/digital-letters/2025-10-draft/digital-letters-core-system-notifier-profile.schema.yaml`](src/digital-letters/2025-10-draft/digital-letters-core-system-notifier-profile.schema.yaml) | [`schemas/digital-letters/2025-10-draft/digital-letters-core-system-notifier-profile.schema.json`](schemas/digital-letters/2025-10-draft/digital-letters-core-system-notifier-profile.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10-draft/digital-letters-core-system-notifier-profile.schema.md`](../../docs/cloudevents/digital-letters/2025-10-draft/digital-letters-core-system-notifier-profile.schema.md) |
+| **Profile** | [`src/digital-letters/2025-10-draft/digital-letters-profile.schema.yaml`](src/digital-letters/2025-10-draft/digital-letters-profile.schema.yaml) | [`schemas/digital-letters/2025-10-draft/digital-letters-profile.schema.json`](schemas/digital-letters/2025-10-draft/digital-letters-profile.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10-draft/digital-letters-profile.schema.md`](../../docs/cloudevents/digital-letters/2025-10-draft/digital-letters-profile.schema.md) |
+| **Uk.nhs.notify.digital.letters.core.request.submitted.v1** | [`src/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.yaml`](src/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.yaml) | [`schemas/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.json`](schemas/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.json) | [`../../docs/cloudevents/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.md`](../../docs/cloudevents/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.core.request.submitted.v1.schema.md) |
+
+#### Example Events
+
+| Event Name | Event Instance | Documentation |
+| ---------- | -------------- | ------------- |
+| **Uk.nhs.notify.digital.letters.core.request.submitted.v1** | [`../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.core.request.submitted.v1-event.json`](../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.core.request.submitted.v1-event.json) | [`../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.core.request.submitted.v1-event.md`](../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.core.request.submitted.v1-event.md) |
+
+
+<!-- AUTO-GENERATED-CONTENT:END -->
+
 ## Design
 
 ### Diagrams

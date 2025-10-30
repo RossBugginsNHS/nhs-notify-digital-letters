@@ -3,7 +3,8 @@ VERSION ?= ""
 SCHEMA_PATTERN = *.schema.json
 SCHEMA_DOCS_PATTERN = *.md
 SCHEMA_YAML_DOCS_PATTERN= *.yaml
-SCHEMA_BASE_INPUT_DIR = ../schemas
+SCHEMA_BASE_INPUT_DIR = ../src/cloudeventjekylldocs
+SCHEMA_SRC_BASE_DIR = ../src/cloudevents
 SCHEMA_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/schemas
 SCHEMA_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/docs/md
 SCHEMA_YAML_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/docs/yaml
@@ -37,7 +38,10 @@ build-docs: version
 	npm run build $(baseurlparam)
 
 build-schemas: clean-schemas
-	(cd $(SCHEMA_BASE_INPUT_DIR) && make config && make build)
+	make -C $(SCHEMA_SRC_BASE_DIR) deploy
+	make -C $(SCHEMA_BASE_INPUT_DIR) config
+	make -C $(SCHEMA_BASE_INPUT_DIR) build
+#	(cd $(SCHEMA_SCRIPTS_BASE_INPUT_DIR) && make config && make build)
 
 
 copy-schema-docs:
