@@ -9,7 +9,7 @@ last_modified_date: 2025-10-13
 owner: Tom D'Roza
 author: Tom D'Roza
 diagrams: [c4code-mesh-timer]
-events-raised: [mesh-timer-schedule-expired]
+events-raised: [mesh-poller-timer-expired]
 events-consumed: [timer-time-expired]
 c4type: code
 ---

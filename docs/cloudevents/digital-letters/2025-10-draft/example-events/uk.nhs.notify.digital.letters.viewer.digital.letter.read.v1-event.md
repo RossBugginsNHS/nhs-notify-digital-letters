@@ -1,0 +1,71 @@
+# uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1
+
+**Event Type:** `uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1`
+
+**Source:** `/nhs/england/notify/uat/secondary/data-plane/digitalletters/viewer`
+
+**Subject:** `customer/a122fc54-d89c-ba3d-ed0d-59bb2f5e71e8/e54de635-4ecb-6b79-4ef5-a19debdef42b/b45e3e3e-e9ba-62fc-bcfa-addcf0fd17de/ebda250c-41e2-2905-cfb1-aa9e33dcaf6e`
+
+**Event ID:** `18a658d1-fff0-4178-acbf-e42d865db095`
+
+**Timestamp:** 2025-10-30T09:55:50.114Z
+
+## Related Schema Documentation
+
+- [Event Schema](../uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1.schema.md)
+- [Event Schema (Bundled)](../uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1.bundle.schema.md)
+- [Event Schema (Flattened)](../uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1.flattened.schema.md)
+
+## Complete Event Instance
+
+```json
+{
+  "type": "uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1",
+  "source": "/nhs/england/notify/uat/secondary/data-plane/digitalletters/viewer",
+  "dataschema": "file://../data/digital-letter-base-data.schema.json",
+  "data": {
+    "something": "non consectetur ut aliqua Duis",
+    "notify-payload": {
+      "notify-data": {},
+      "notify-metadata": {
+        "teamResponsible": "Team 2",
+        "notifyDomain": "Delivering",
+        "microservice": "kZZ6Pbq",
+        "repositoryUrl": "http://qtpRroMmhzAk.enuQnUTI95gO3G2lv7+CDnLVPcKFaH",
+        "accountId": "5WNO9lAYZ4",
+        "environment": "testing",
+        "instance": "u2vHk2A",
+        "microserviceInstanceId": "x",
+        "microserviceVersion": "0.101978.70121-397.66VrB7VqAoK.12.660142Zx-.0",
+        "commitSha": "3302898757da2e0cff9bc843aeb3b7e51f2deabf",
+        "buildTimestamp": "1964-10-10T21:23:36.0Z",
+        "serviceTier": "standard",
+        "region": "eu-west-1",
+        "pseudonymisationLevel": "tokenised",
+        "replayIndicator": true,
+        "originalEventId": "64a4ae55-1657-4211-b73d-9a624e8fc2f5",
+        "integrityHash": "sha256:68533b729c243dd6d9c410dc4a37585267eef459632eef5d82997447fdd370d3",
+        "producedByType": "container"
+      }
+    }
+  },
+  "profileversion": "1.0.0",
+  "profilepublished": "2025-10",
+  "specversion": "1.0",
+  "id": "18a658d1-fff0-4178-acbf-e42d865db095",
+  "subject": "customer/a122fc54-d89c-ba3d-ed0d-59bb2f5e71e8/e54de635-4ecb-6b79-4ef5-a19debdef42b/b45e3e3e-e9ba-62fc-bcfa-addcf0fd17de/ebda250c-41e2-2905-cfb1-aa9e33dcaf6e",
+  "time": "2025-10-30T09:55:50.114Z",
+  "datacontenttype": "application/json",
+  "traceparent": "00-f8bcc8b72c9e72bb987111f12adc2905-f106c6ac187d293d-01",
+  "tracestate": "mollit tempor cillum ullamco occaecat",
+  "partitionkey": "customer-a122fc54",
+  "recordedtime": "2025-10-30T09:55:51.114Z",
+  "sampledrate": 1,
+  "sequence": "00000000000940575717",
+  "severitytext": "FATAL",
+  "severitynumber": 5,
+  "dataclassification": "confidential",
+  "dataregulation": "NIST-800-53",
+  "datacategory": "standard"
+}
+```

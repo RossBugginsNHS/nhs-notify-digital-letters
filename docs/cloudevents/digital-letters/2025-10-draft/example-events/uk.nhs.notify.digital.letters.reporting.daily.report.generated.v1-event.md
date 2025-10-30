@@ -1,0 +1,73 @@
+# uk.nhs.notify.digital.letters.reporting123.daily.report.generated.v1
+
+**Event Type:** `uk.nhs.notify.digital.letters.reporting123.daily.report.generated.v1`
+
+**Source:** `/nhs/england/notify/staging/secondary/data-plane/digitalletters/reporting`
+
+**Subject:** `customer/11fbd4b5-675f-f2f7-ea4d-aec8f5b4cb0d/se1c2be/1k21qi8e72g/5a179547-b0cc-8af7-90cc-23e9ea97ac91/858bdaec-6bde-d8df-efc6-3cbaf8a5ee85/2cabdbd2-bae9-e3c5-cc24-b13e83a3d5b1/050e1a5e-e4bd-b877-4fb0-fec3ffe3d8d6/go6pfk6/eaf58ae4-8ced-221c-29ec-a87cc6dc286a/dcbd858f-e1ae-a5da-1c9b-5e8e76dfdc24/zc`
+
+**Event ID:** `a42a010a-d9bf-4fd6-b0c4-94e7cd95fded`
+
+**Timestamp:** 2025-10-30T09:55:49.173Z
+
+## Related Schema Documentation
+
+- [Event Schema](../uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1.schema.md)
+- [Event Schema (Bundled)](../uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1.bundle.schema.md)
+- [Event Schema (Flattened)](../uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1.flattened.schema.md)
+
+## Complete Event Instance
+
+```json
+{
+  "type": "uk.nhs.notify.digital.letters.reporting123.daily.report.generated.v1",
+  "source": "/nhs/england/notify/staging/secondary/data-plane/digitalletters/reporting",
+  "dataschema": "file://../data/digital-letter-base-data.schema.json",
+  "data": {
+    "something": "in officia",
+    "notify-payload": {
+      "notify-data": {
+        "Ut80": -62506166
+      },
+      "notify-metadata": {
+        "teamResponsible": "Team 3",
+        "notifyDomain": "Delivering",
+        "microservice": "XkWRY9",
+        "repositoryUrl": "http://UKQzlK.nebgBa+Oc7m8bB5.s,PGCVqp8s",
+        "accountId": "1jN40",
+        "environment": "production",
+        "instance": "ZfTQkJ",
+        "microserviceInstanceId": "3Ml",
+        "microserviceVersion": "0.82066198.893-0.0.0.8KLTe9NRiV.0.0705821uH.9723001.08jKJ61IttN5C.41438379170.98229.0+3-I.so7CFd.T.Dfq1all0.Oqseg0ng7.nGp3J4OhEe.yKNmJ.DmyMqh",
+        "commitSha": "e0e1d8041c00f6ca0e",
+        "buildTimestamp": "1962-02-26T10:47:28.0Z",
+        "serviceTier": "standard",
+        "region": "eu-west-2",
+        "pseudonymisationLevel": "none",
+        "replayIndicator": true,
+        "originalEventId": "109e5eb4-e82d-4f70-88a6-5f46ff63bd55",
+        "integrityHash": "sha256:5840ade80ad66d81777f95799671aa59c7420f36ceb92e0637653eda1ccdb1f4",
+        "producedByType": "vm"
+      }
+    }
+  },
+  "profileversion": "1.0.0",
+  "profilepublished": "2025-10",
+  "specversion": "1.0",
+  "id": "a42a010a-d9bf-4fd6-b0c4-94e7cd95fded",
+  "subject": "customer/11fbd4b5-675f-f2f7-ea4d-aec8f5b4cb0d/se1c2be/1k21qi8e72g/5a179547-b0cc-8af7-90cc-23e9ea97ac91/858bdaec-6bde-d8df-efc6-3cbaf8a5ee85/2cabdbd2-bae9-e3c5-cc24-b13e83a3d5b1/050e1a5e-e4bd-b877-4fb0-fec3ffe3d8d6/go6pfk6/eaf58ae4-8ced-221c-29ec-a87cc6dc286a/dcbd858f-e1ae-a5da-1c9b-5e8e76dfdc24/zc",
+  "time": "2025-10-30T09:55:49.173Z",
+  "datacontenttype": "application/json",
+  "traceparent": "00-8a4da9ddef97bd33c2aaeded2c729ea5-f0bd4168e9f3e09b-01",
+  "tracestate": "laboris ex adipisicing Duis in",
+  "partitionkey": "customer-11fbd4b5",
+  "recordedtime": "2025-10-30T09:55:50.173Z",
+  "sampledrate": 1,
+  "sequence": "00000000000415095977",
+  "severitytext": "WARN",
+  "severitynumber": 3,
+  "dataclassification": "internal",
+  "dataregulation": "CCPA",
+  "datacategory": "special-category"
+}
+```

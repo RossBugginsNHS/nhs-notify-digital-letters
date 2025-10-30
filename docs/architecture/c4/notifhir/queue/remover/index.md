@@ -1,14 +1,15 @@
 ---
 
-title: Print Supplier Services
-parent:  NotiFHIR
+title: Remover
+parent:  Queue Services
+nav_order: 3
 has_children: true
 is_not_draft: false
 last_modified_date: 2024-05-28
 owner: Ross Buggins
 author: Ross Buggins
-diagrams: [c4component-printsuppliers]
+diagrams: []
 events-raised: []
 events-consumed: []
-c4type: component
+c4type: code
 ---
