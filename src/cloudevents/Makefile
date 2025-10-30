@@ -126,7 +126,7 @@ asdf-install-test:
 	asdf install
 	@echo "asdf installation complete"
 
-test-ci:
+deploy-ci:
 	echo "=== Setting up environment for CI unit tests ===" && \
 	curl -LO https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz && \
 	tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C /usr/local/bin && \
@@ -166,6 +166,4 @@ test-ci:
 	asdf current && \
 	node --version && \
 	npm --version && \
-	make build && \
-	make generate && \
-	make test-domains
+	make deploy

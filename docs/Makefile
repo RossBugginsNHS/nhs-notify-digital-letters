@@ -34,8 +34,15 @@ endef
 
 build: build-schemas copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
 
+build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
+
 build-docs: version
 	npm run build $(baseurlparam)
+
+build-schemas-ci: clean-schemas
+	make -C $(SCHEMA_SRC_BASE_DIR) deploy-ci
+	make -C $(SCHEMA_BASE_INPUT_DIR) config
+	make -C $(SCHEMA_BASE_INPUT_DIR) build
 
 build-schemas: clean-schemas
 	make -C $(SCHEMA_SRC_BASE_DIR) deploy
