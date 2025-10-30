@@ -10,7 +10,7 @@ owner: Tom D'Roza
 author: Tom D'Roza
 diagrams: []
 events-raised: []
-events-consumed: [letter-available]
+events-consumed: [notifhir-letter-available]
 description: Listens to all events and generates up the report
 c4type: code
 

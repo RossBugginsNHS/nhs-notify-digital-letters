@@ -1,5 +1,5 @@
 ---
-title: letter-available
+title: notifhir-letter-available
 type: uk.nhs.notify.digital.letters.notifhir.letter.available.v1
 nice_name: LetterAvailable
 service: Notifhir Service

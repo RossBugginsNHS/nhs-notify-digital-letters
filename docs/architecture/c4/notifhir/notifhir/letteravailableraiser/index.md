@@ -9,7 +9,7 @@ last_modified_date: 2025-10-24
 owner: Ross Buggins
 author: Tom D'Roza
 diagrams: []
-events-raised: [letter-available]
+events-raised: [notifhir-letter-available]
 events-consumed: [queue-item-dequeued]
 c4type: code
 ---

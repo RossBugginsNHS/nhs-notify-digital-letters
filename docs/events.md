@@ -18,9 +18,14 @@ author: Ross Buggins
 {% assign sorted_events = site.events | group_by: "service"  %}
 {% assign serviceSorteds = sorted_events | sort: "name" %}
 
-<table>
+{% for service_sorted in serviceSorteds %}
+{% assign nameSortedService = service_sorted.items | sort: "nice_name" %}
+{% assign service = site.pages | where_exp:"service", "service.title ==  service_sorted.name" | first %}
+
+ <h2>   <a href="{{service.url | relative_url}}">{{ service.title }}</a></h2>
+
+<table style="word-wrap:break-word;table-layout: fixed;width:100%">
     <tr>
-        <th>Service</th>
         <th>Nice Name</th>
         <th>Title</th>
         <th>Type</th>
@@ -30,15 +35,10 @@ author: Ross Buggins
         <th>Data</th>
     </tr>
 
-{% for service_sorted in serviceSorteds %}
- {% assign nameSortedService = service_sorted.items | sort: "nice_name" %}
+
+
 {% for event in nameSortedService %}
     <tr>
-        <td>
-          {% assign service = site.pages | where_exp:"service", "service.title == event.service" | first %}
-           <a href="{{service.url | relative_url}}">{{ event.service }}</a>
-
-        </td>
         <td>
             <a href="{{event.url | relative_url}}">{{ event.nice_name }}</a>
         </td>
@@ -76,5 +76,7 @@ author: Ross Buggins
         </td>
     </tr>
 {% endfor %}
-{% endfor %}
+
 </table>
+
+{% endfor %}

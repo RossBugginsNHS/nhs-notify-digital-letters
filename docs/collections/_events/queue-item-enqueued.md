@@ -1,5 +1,5 @@
 ---
-title: item-enqueued
+title: queue-item-enqueued
 type: uk.nhs.notify.digital.letters.queue.item.enqueued.v1
 nice_name: ItemEnqueued
 service: Queue Services
