@@ -1,5 +1,5 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-title: Digital Letter Viewer Services Profile
+title: Viewer Services Profile
 description: Digital Letter Viewer Services (ie NHS App pdf viewing related) profile
 type: object
 allOf:

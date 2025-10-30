@@ -3,7 +3,7 @@
 # To regenerate, run: make update-readme
 # To customize labels and purposes, edit: readme-metadata.yaml
 
-generated: '2025-10-30T09:55:58.627Z'
+generated: '2025-10-30T14:14:21.793Z'
 common: null
 domains:
   - name: digital-letters
@@ -52,11 +52,11 @@ domains:
             source: src/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1.schema.yaml
             published: schemas/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1.schema.json
             docs: ../../docs/cloudevents/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1.schema.md
-          - type: Uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1
+          - type: Uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1
             category: events
-            source: src/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1.schema.yaml
-            published: schemas/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1.schema.json
-            docs: ../../docs/cloudevents/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1.schema.md
+            source: src/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1.schema.yaml
+            published: schemas/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1.schema.json
+            docs: ../../docs/cloudevents/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1.schema.md
           - type: Uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1
             category: events
             source: src/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1.schema.yaml
@@ -71,10 +71,10 @@ domains:
             filename: uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1-event
             json: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1-event.json
             markdown: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1-event.md
-          - name: Uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1
-            filename: uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1-event
-            json: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1-event.json
-            markdown: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.reporting.generate.daily.report.v1-event.md
+          - name: Uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1
+            filename: uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1-event
+            json: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1-event.json
+            markdown: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1-event.md
           - name: Uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1
             filename: uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1-event
             json: ../../docs/cloudevents/digital-letters/2025-10-draft/example-events/uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1-event.json

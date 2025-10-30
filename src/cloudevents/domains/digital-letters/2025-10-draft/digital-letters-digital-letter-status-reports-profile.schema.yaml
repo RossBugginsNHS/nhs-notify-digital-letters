@@ -1,5 +1,5 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-title: Digital Letter Status Reports Profile
+title: Reporting Profile
 description: Digital Letter Status Reports profile
 type: object
 allOf:

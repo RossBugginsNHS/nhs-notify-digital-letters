@@ -1,6 +1,6 @@
 ---
 
-title: Callback from Print
+title: Events from Supplier API
 parent:  Print Supplier Services
 nav_order: 9
 has_children: true

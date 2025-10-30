@@ -13,7 +13,7 @@
 
 ## Properties
 
-<table class="jssd-properties-table"><thead><tr><th colspan="2">Name</th><th>Type</th></tr></thead><tbody><tr><td colspan="2"><a href="#type">type</a></td><td>String=uk.nhs.notify.digital.letters.core.request.submitted.v1</td></tr><tr><td colspan="2"><a href="#source">source</a></td><td>String</td></tr><tr><td colspan="2"><a href="#dataschema">dataschema</a></td><td>String=file://../data/digital-letter-base-data.schema.json</td></tr><tr><td colspan="2"><a href="#data">data</a></td><td>Object (of type <a href="../data/digital-letter-base-data.schema.html">File Data</a>)</td></tr><tr><td colspan="2" rowspan="1">All of:</td><td>Object (of type <a href="../digital-letters-core-system-notifier-profile.schema.html">Core System Notifier Profile</a>)</td></tr></tbody></table>
+<table class="jssd-properties-table"><thead><tr><th colspan="2">Name</th><th>Type</th></tr></thead><tbody><tr><td colspan="2"><a href="#type">type</a></td><td>String=uk.nhs.notify.digital.letters.core.request.submitted.v1</td></tr><tr><td colspan="2"><a href="#source">source</a></td><td>String</td></tr><tr><td colspan="2"><a href="#dataschema">dataschema</a></td><td>String=file://../data/digital-letter-base-data.schema.json</td></tr><tr><td colspan="2"><a href="#data">data</a></td><td>Object (of type <a href="../data/digital-letter-base-data.schema.html">Placeholder Data</a>)</td></tr><tr><td colspan="2" rowspan="1">All of:</td><td>Object (of type <a href="../digital-letters-core-system-notifier-profile.schema.html">Notify Core Profile</a>)</td></tr></tbody></table>
 
 
 
@@ -107,13 +107,13 @@
     </tr>
     <tr>
       <th>Title</th>
-      <td colspan="2">File Data</td>
+      <td colspan="2">Placeholder Data</td>
     </tr>
     <tr>
       <th>Description</th>
       <td colspan="2">Example payload wrapper containing notify-payload.</td>
     </tr>
-    <tr><th>Type</th><td colspan="2">Object (of type <a href="../data/digital-letter-base-data.schema.html">File Data</a>)</td></tr>
+    <tr><th>Type</th><td colspan="2">Object (of type <a href="../data/digital-letter-base-data.schema.html">Placeholder Data</a>)</td></tr>
     <tr>
       <th>Required</th>
       <td colspan="2">No</td>

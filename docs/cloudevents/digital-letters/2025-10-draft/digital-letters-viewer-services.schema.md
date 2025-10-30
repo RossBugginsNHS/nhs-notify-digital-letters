@@ -1,6 +1,6 @@
 
 
-# Digital Letter Viewer Services Profile
+# Viewer Services Profile
 
 <p>Digital Letter Viewer Services (ie NHS App pdf viewing related) profile</p>
 
@@ -13,7 +13,7 @@
 
 ## Properties
 
-<table class="jssd-properties-table"><thead><tr><th colspan="2">Name</th><th>Type</th></tr></thead><tbody><tr><td rowspan="1"><a href="#type">type</a></td><td rowspan="1">All of:</td><td><a href="#type-0">NHS Notify versioned event type pattern (String)</a></td></tr><tr><td colspan="2"><a href="#source">source</a></td><td>String</td></tr><tr><td colspan="2" rowspan="1">All of:</td><td>Object (of type <a href="./digital-letters-profile.schema.html">NHS Notify Digital Letters Profile</a>)</td></tr></tbody></table>
+<table class="jssd-properties-table"><thead><tr><th colspan="2">Name</th><th>Type</th></tr></thead><tbody><tr><td rowspan="1"><a href="#type">type</a></td><td rowspan="1">All of:</td><td><a href="#type-0">NHS Notify versioned event type pattern (String)</a></td></tr><tr><td colspan="2"><a href="#source">source</a></td><td>String</td></tr><tr><td colspan="2" rowspan="1">All of:</td><td>Object (of type <a href="./digital-letters-profile.schema.html">Digital Letters Profile</a>)</td></tr></tbody></table>
 
 
 
@@ -92,7 +92,7 @@
 {
     "$id": "/digital-letters/2025-10-draft/digital-letters-viewer-services.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "Digital Letter Viewer Services Profile",
+    "title": "Viewer Services Profile",
     "description": "Digital Letter Viewer Services (ie NHS App pdf viewing related) profile",
     "type": "object",
     "allOf": [

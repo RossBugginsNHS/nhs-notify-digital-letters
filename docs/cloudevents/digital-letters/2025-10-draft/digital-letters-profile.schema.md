@@ -1,6 +1,6 @@
 
 
-# NHS Notify Digital Letters Profile
+# Digital Letters Profile
 
 <p>NHS Notify Digital Letters profile for CloudEvents 1.0 including additional governance and tracing attributes.</p>
 
@@ -92,7 +92,7 @@
 {
     "$id": "/digital-letters/2025-10-draft/digital-letters-profile.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "NHS Notify Digital Letters Profile",
+    "title": "Digital Letters Profile",
     "description": "NHS Notify Digital Letters profile for CloudEvents 1.0 including additional governance and tracing attributes.",
     "type": "object",
     "allOf": [

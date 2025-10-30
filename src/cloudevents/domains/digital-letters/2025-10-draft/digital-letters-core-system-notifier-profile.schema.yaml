@@ -1,5 +1,5 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-title: Core System Notifier Profile
+title: Notify Core Profile
 description: Core System Notifier profile
 type: object
 allOf:

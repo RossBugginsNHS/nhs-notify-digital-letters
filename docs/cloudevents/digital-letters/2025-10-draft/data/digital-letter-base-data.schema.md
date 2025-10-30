@@ -1,8 +1,8 @@
 
 
-# File Data
+# Placeholder Data
 
-<p>Example data type</p>
+<p>Base data for digital letters - a placeholder until all data schemas are defined</p>
 
 <table>
 <tbody>
@@ -57,8 +57,8 @@
 {
     "$id": "/digital-letters/2025-10-draft/data/digital-letter-base-data.schema.json",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "File Data",
-    "description": "Example data type",
+    "title": "Placeholder Data",
+    "description": "Base data for digital letters - a placeholder until all data schemas are defined",
     "type": "object",
     "additionalProperties": false,
     "properties": {
