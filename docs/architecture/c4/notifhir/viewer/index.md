@@ -8,6 +8,4 @@ last_modified_date: 2024-05-28
 owner: Ross Buggins
 author: Ross Buggins
 diagrams: [c4component-digitaletters]
-events-raised: []
-events-consumed: []
 ---

@@ -286,7 +286,7 @@ Source Files:
 
 Generated Output:
   AsyncAPI specs: 26 files (160KB)
-  
+
 Input Processing:
   Events:         22 loaded
   Services:       33 processed
@@ -324,7 +324,7 @@ Add to `.github/workflows/`:
     cd src/asyncapigenerator
     make install
     make generate
-    
+
 - name: Validate AsyncAPI
   run: |
     npm install -g @asyncapi/cli

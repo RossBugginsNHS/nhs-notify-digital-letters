@@ -204,7 +204,7 @@ Developer Workflow:
 
 ┌────────────┐
 │  1. Edit   │  Update event or service documentation
-│    Docs    │  in docs/collections/_events/ or 
+│    Docs    │  in docs/collections/_events/ or
 └─────┬──────┘  docs/architecture/c4/notifhir/
       │
       ▼

@@ -13,9 +13,9 @@ events-raised: []
 events-consumed: [
     print-status-updated,
     core-request-submitted,
-    mesh-file-found,
-    mesh-file-saved,
-    pdm-file-saved,
+    mesh-inbox-message-received,
+    mesh-inbox-message-downloaded,
+    pdm-resource-submitted,
     viewer-digital-letter-read,
     pdm-resource-retries-exceeded,
     reporting-daily-report-generated,

@@ -133,8 +133,25 @@ python import_asyncapi.py \
   --asyncapi-dir ./src/asyncapigenerator/output \
   --eventcatalog-dir ./src/eventcatalog/digital-letters \
   --domain "Digital Letters" \
+  --schema-base-path /path/to/repo/root \
   --verbose
 ```
+
+### Schema File Copying
+
+To enable schema file copying to event directories:
+
+```bash
+python import_asyncapi.py \
+  --schema-base-path /home/user/nhs-notify-digital-letters
+```
+
+This will:
+
+- Copy schema files from `<schema-base-path>/schemas/...` to event directories
+- Update event pages to use `<Schema>` and `<SchemaViewer>` components with just the filename
+- Only copy schemas that match the `https://notify.nhs.uk/cloudevents` URL pattern
+- External schemas (e.g., from `nhsdigital.github.io`) are not copied
 
 ## Makefile Targets
 
@@ -186,6 +203,7 @@ The Makefile provides convenient commands for common tasks:
 | `--asyncapi-dir` | Directory containing AsyncAPI YAML files | `src/asyncapigenerator/output` |
 | `--eventcatalog-dir` | EventCatalog root directory | `src/eventcatalog/digital-letters` |
 | `--domain` | Name of the domain to create | `Digital Letters` |
+| `--schema-base-path` | Base path for schema files on local filesystem | None (schemas not copied) |
 | `--verbose`, `-v` | Enable verbose logging | `False` |
 | `--help`, `-h` | Show help message | - |
 
@@ -197,24 +215,37 @@ The tool creates the following EventCatalog structure:
 eventcatalog/
 ├── domains/
 │   ├── mesh-services/
-│   │   ├── index.md
-│   │   ├── mesh-poller/
-│   │   │   ├── index.md
-│   │   │   └── events/
-│   │   │       ├── mesh-inbox-message-received.md
-│   │   │       └── mesh-poller-timer-expired.md
-│   │   └── mesh-retriever/
-│   │       ├── index.md
-│   │       └── events/
-│   │           └── ...
+│   │   ├── index.mdx
+│   │   └── services/
+│   │       ├── mesh-poller/
+│   │       │   ├── index.mdx
+│   │       │   └── events/
+│   │       │       ├── mesh-inbox-message-received/
+│   │       │       │   └── index.mdx
+│   │       │       └── mesh-poller-timer-expired/
+│   │       │           └── index.mdx
+│   │       └── mesh-retriever/
+│   │           ├── index.mdx
+│   │           └── events/
+│   │               └── ...
 │   ├── pdm-services/
-│   │   └── ...
+│   │   ├── index.mdx
+│   │   └── services/
+│   │       └── ...
 │   └── core-services/
-│       └── ...
+│       ├── index.mdx
+│       └── services/
+│           └── ...
 └── channels/
-    ├── uk-nhs-notify-digital-letters-mesh-inbox-message-received-v1.md
+    ├── uk-nhs-notify-digital-letters-mesh-inbox-message-received-v1/
+    │   └── index.mdx
     └── ...
 ```
+
+**Note**: The importer automatically creates relationships between resources:
+
+- Domain frontmatter includes a `services:` list linking to services within that domain
+- Service frontmatter includes `receives:` and `sends:` lists linking to events the service interacts with
 
 ## How It Works
 

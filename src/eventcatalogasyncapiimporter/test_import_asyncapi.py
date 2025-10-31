@@ -139,10 +139,10 @@ class TestAsyncAPIImporter(unittest.TestCase):
         domain_path = importer.create_domain_structure("Test Domain")
 
         self.assertTrue(domain_path.exists())
-        self.assertTrue((domain_path / "index.md").exists())
+        self.assertTrue((domain_path / "index.mdx").exists())
 
-        # Check index.md content
-        with open(domain_path / "index.md", "r") as f:
+        # Check index.mdx content
+        with open(domain_path / "index.mdx", "r") as f:
             content = f.read()
             self.assertIn("Test Domain", content)
             self.assertIn("test-domain", content)
@@ -154,11 +154,15 @@ class TestAsyncAPIImporter(unittest.TestCase):
         )
         domain_path = importer.create_domain_structure("Test Domain")
         service_path = importer.create_service_structure(
-            domain_path, "Test Service", self.sample_asyncapi
+            domain_path, "Test Service", self.sample_asyncapi, "Test Domain"
         )
 
+        # Services should be under domain/services/ (nested structure)
         self.assertTrue(service_path.exists())
-        self.assertTrue((service_path / "index.md").exists())
+        self.assertTrue((service_path / "index.mdx").exists())
+        self.assertTrue((domain_path / "services").exists())
+        self.assertEqual(service_path.parent.name, "services")
+        self.assertEqual(service_path.parent.parent, domain_path)
 
         # Check service is tracked
         self.assertIn("test-service", importer.created_services)
@@ -172,7 +176,7 @@ class TestAsyncAPIImporter(unittest.TestCase):
         channel_data = self.sample_asyncapi["channels"]["test_event_channel_v1"]
         importer.create_channel_structure("test_event_channel_v1", channel_data)
 
-        channel_file = importer.channels_dir / "test-event-channel-v1.md"
+        channel_file = importer.channels_dir / "test-event-channel-v1.mdx"
         self.assertTrue(channel_file.exists())
 
         # Check channel is tracked

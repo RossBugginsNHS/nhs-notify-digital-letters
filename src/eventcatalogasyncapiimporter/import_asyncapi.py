@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
@@ -26,6 +27,7 @@ class AsyncAPIImporter:
         eventcatalog_dir: Path,
         domain_name: str = "Digital Letters",
         verbose: bool = False,
+        schema_base_path: Optional[Path] = None,
     ):
         """
         Initialize the importer.
@@ -35,11 +37,13 @@ class AsyncAPIImporter:
             eventcatalog_dir: EventCatalog root directory
             domain_name: Name of the domain to create
             verbose: Enable verbose logging
+            schema_base_path: Base path for schema files on local filesystem
         """
         self.asyncapi_dir = Path(asyncapi_dir)
         self.eventcatalog_dir = Path(eventcatalog_dir)
         self.domain_name = domain_name
         self.verbose = verbose
+        self.schema_base_path = Path(schema_base_path) if schema_base_path else None
 
         # Create base directories
         self.domains_dir = self.eventcatalog_dir / "domains"
@@ -49,6 +53,10 @@ class AsyncAPIImporter:
         self.created_services: Set[str] = set()
         self.created_events: Set[str] = set()
         self.created_channels: Set[str] = set()
+
+        # Track relationships for updating frontmatter
+        self.domain_services: Dict[str, List[Dict[str, str]]] = {}  # domain -> list of services
+        self.service_events: Dict[str, Dict[str, List[Dict[str, str]]]] = {}  # service -> {sends: [], receives: []}
 
     def log(self, message: str, level: str = "INFO") -> None:
         """Log a message."""
@@ -111,7 +119,7 @@ class AsyncAPIImporter:
         if not domain_path.exists():
             domain_path.mkdir(parents=True, exist_ok=True)
 
-            # Create index.md for domain
+            # Create index.mdx for domain
             index_content = f"""---
 id: {domain_slug}
 name: {domain_name}
@@ -126,7 +134,7 @@ This domain contains services related to {domain_name}.
 
 <NodeGraph />
 """
-            index_file = domain_path / "index.md"
+            index_file = domain_path / "index.mdx"
             with open(index_file, "w") as f:
                 f.write(index_content)
 
@@ -135,16 +143,17 @@ This domain contains services related to {domain_name}.
         return domain_path
 
     def create_service_structure(
-        self, domain_path: Path, service_name: str, asyncapi_data: Dict[str, Any]
+        self, domain_path: Path, service_name: str, asyncapi_data: Dict[str, Any], domain_name: str = None
     ) -> Path:
         """Create service directory structure."""
         service_slug = self.sanitize_name(service_name)
-        service_path = domain_path / service_slug
+        # Services should be under a 'services' folder within the domain
+        # Structure: domains/{Domain Name}/services/{Service Name}/
+        services_dir = domain_path / "services"
+        services_dir.mkdir(parents=True, exist_ok=True)
+        service_path = services_dir / service_slug
 
-        if service_slug in self.created_services:
-            self.log(f"Service already exists: {service_name}", "DEBUG")
-            return service_path
-
+        # Always create/update service files (don't skip if already processed)
         service_path.mkdir(parents=True, exist_ok=True)
 
         info = asyncapi_data.get("info", {})
@@ -152,7 +161,12 @@ This domain contains services related to {domain_name}.
         version = info.get("version", "0.0.1")
         metadata = info.get("x-service-metadata", {})
 
-        # Create index.md for service
+        # Convert non-semver versions to semver (EventCatalog expects semver)
+        # If version is a date like "2025-10-draft", use "1.0.0" instead
+        if not version or not version[0].isdigit() or version.count('.') != 2:
+            version = "1.0.0"
+
+        # Create index.mdx for service
         index_content = f"""---
 id: {service_slug}
 name: {service_name}
@@ -165,7 +179,7 @@ summary: |
         if metadata.get("owner"):
             index_content += f"owners:\n  - {metadata['owner']}\n"
 
-        index_content += """---
+        index_content += f"""---
 
 ## Overview
 
@@ -176,7 +190,7 @@ summary: |
 <NodeGraph />
 """
 
-        index_file = service_path / "index.md"
+        index_file = service_path / "index.mdx"
         with open(index_file, "w") as f:
             f.write(index_content)
 
@@ -211,13 +225,50 @@ summary: |
         # Determine if it's a published or subscribed event
         event_type = "published" if action == "send" else "received"
 
+        # Extract schema path if available
+        payload = message_data.get("payload", {})
+        schema_path = payload.get("$ref", "")
+
+        # Strip the https://notify.nhs.uk/cloudevents prefix to make it relative
+        if schema_path:
+            schema_path = schema_path.replace("https://notify.nhs.uk/cloudevents", "")
+
+        # Create event folder and index.mdx (EventCatalog expects events/eventname/index.mdx)
+        event_dir = events_dir / event_slug
+        event_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy schema file to event directory if schema_base_path is provided
+        schema_filename = None
+        if schema_path and self.schema_base_path:
+            # Get just the path part (remove leading slash for joining)
+            relative_schema_path = schema_path.lstrip("/")
+            source_schema_file = self.schema_base_path / relative_schema_path
+
+            if source_schema_file.exists():
+                schema_filename = source_schema_file.name
+                dest_schema_file = event_dir / schema_filename
+                try:
+                    shutil.copy2(source_schema_file, dest_schema_file)
+                    self.log(f"Copied schema file: {schema_filename}", "DEBUG")
+                except Exception as e:
+                    self.log(f"Error copying schema file {source_schema_file}: {e}", "WARNING")
+                    schema_filename = None
+            else:
+                self.log(f"Schema file not found: {source_schema_file}", "WARNING")
+
         # Create event markdown file
+        frontmatter_parts = [
+            f"id: {event_slug}",
+            f"name: {event_name}",
+            f"version: 1.0.0",
+            f"summary: |\n  {summary}"
+        ]
+
+        if schema_path:
+            frontmatter_parts.append(f"schemaPath: {schema_path}")
+
         event_content = f"""---
-id: {event_slug}
-name: {event_name}
-version: 1.0.0
-summary: |
-  {summary}
+{chr(10).join(frontmatter_parts)}
 ---
 
 ## Overview
@@ -229,14 +280,25 @@ summary: |
 **Content Type**: `{content_type}`
 
 **Event Type**: {event_type.capitalize()}
-
-## Schema
 """
 
         # Add schema reference if available
-        payload = message_data.get("payload", {})
-        if "$ref" in payload:
-            event_content += f"\nSchema Reference: `{payload['$ref']}`\n"
+        if schema_path:
+            event_content += f"""
+## Schema
+
+Schema Reference: `{schema_path}`
+"""
+
+            # Add schema components if we successfully copied the schema file
+            if schema_filename:
+                event_content += f"""
+<!-- Renders the given schema into the page, as a JSON code block -->
+<Schema file="{schema_filename}" />
+
+<!-- Renders the given schema into the page using a nice Schema component -->
+<SchemaViewer file="{schema_filename}" />
+"""
 
         traits = message_data.get("traits", [])
         if traits:
@@ -246,7 +308,7 @@ summary: |
                 if trait_desc:
                     event_content += f"- {trait_desc}\n"
 
-        event_file = events_dir / f"{event_slug}.md"
+        event_file = event_dir / "index.mdx"
         with open(event_file, "w") as f:
             f.write(event_content)
 
@@ -267,6 +329,10 @@ summary: |
 
         address = channel_data.get("address", channel_name)
         description = channel_data.get("description", f"Channel: {channel_name}")
+
+        # Create channel folder and index.mdx (EventCatalog expects channels/channelname/index.mdx)
+        channel_dir = self.channels_dir / channel_slug
+        channel_dir.mkdir(parents=True, exist_ok=True)
 
         # Create channel markdown file
         channel_content = f"""---
@@ -296,7 +362,7 @@ This channel carries the following messages:
             msg_summary = msg_data.get("summary", msg_name)
             channel_content += f"- **{msg_name}**: {msg_summary}\n"
 
-        channel_file = self.channels_dir / f"{channel_slug}.md"
+        channel_file = channel_dir / "index.mdx"
         with open(channel_file, "w") as f:
             f.write(channel_content)
 
@@ -314,14 +380,34 @@ This channel carries the following messages:
         # Extract service information
         service_name = self.extract_service_name(asyncapi_data)
         domain_name = self.extract_domain_from_service(service_name, asyncapi_data)
+        service_slug = self.sanitize_name(service_name)
+        domain_slug = self.sanitize_name(domain_name)
 
         # Create domain structure
         domain_path = self.create_domain_structure(domain_name)
 
         # Create service structure
         service_path = self.create_service_structure(
-            domain_path, service_name, asyncapi_data
+            domain_path, service_name, asyncapi_data, domain_name
         )
+
+        # Track domain-service relationship
+        if domain_slug not in self.domain_services:
+            self.domain_services[domain_slug] = []
+
+        # Add service to domain if not already there
+        # Normalize version to semver (EventCatalog expects semver)
+        raw_version = asyncapi_data.get("info", {}).get("version", "0.0.1")
+        if not raw_version or not raw_version[0].isdigit() or raw_version.count('.') != 2:
+            raw_version = "1.0.0"
+
+        service_ref = {"id": service_slug, "version": raw_version}
+        if service_ref not in self.domain_services[domain_slug]:
+            self.domain_services[domain_slug].append(service_ref)
+
+        # Initialize service events tracking
+        if service_slug not in self.service_events:
+            self.service_events[service_slug] = {"sends": [], "receives": []}
 
         # Process channels
         channels = asyncapi_data.get("channels", {})
@@ -349,9 +435,121 @@ This channel carries the following messages:
                             msg_data = messages_data.get(msg_name, msg_data)
 
                     channel_address = channel_data.get("address", channel_name)
+                    event_slug = self.sanitize_name(msg_name)
+
+                    # Track service-event relationship
+                    event_ref = {"id": event_slug, "version": "1.0.0"}
+                    if action == "send":
+                        if event_ref not in self.service_events[service_slug]["sends"]:
+                            self.service_events[service_slug]["sends"].append(event_ref)
+                    else:
+                        if event_ref not in self.service_events[service_slug]["receives"]:
+                            self.service_events[service_slug]["receives"].append(event_ref)
+
                     self.create_event_structure(
                         service_path, msg_name, channel_address, msg_data, action
                     )
+
+    def update_domain_relationships(self) -> None:
+        """Update domain index files with service relationships."""
+        self.log("\nUpdating domain relationships...")
+
+        for domain_slug, services in self.domain_services.items():
+            domain_path = self.domains_dir / domain_slug / "index.mdx"
+            if not domain_path.exists():
+                self.log(f"Domain file not found: {domain_path}", "WARNING")
+                continue
+
+            # Read existing content
+            with open(domain_path, "r") as f:
+                content = f.read()
+
+            # Split frontmatter and markdown
+            if content.startswith("---"):
+                parts = content.split("---", 2)
+                if len(parts) >= 3:
+                    frontmatter = parts[1]
+                    markdown_content = parts[2]
+
+                    # Remove existing services section if present
+                    import re
+                    frontmatter = re.sub(r'\nservices:.*?(?=\n\w+:|$)', '', frontmatter, flags=re.DOTALL)
+
+                    # Add updated services list
+                    services_yaml = "\nservices:\n"
+                    for service in services:
+                        services_yaml += f"  - id: {service['id']}\n"
+                        services_yaml += f"    version: {service['version']}\n"
+
+                    frontmatter += services_yaml
+
+                    # Write back
+                    new_content = f"---{frontmatter}---{markdown_content}"
+                    with open(domain_path, "w") as f:
+                        f.write(new_content)
+
+                    self.log(f"Updated domain: {domain_slug} with {len(services)} services")
+
+    def update_service_relationships(self) -> None:
+        """Update service index files with event relationships."""
+        self.log("\nUpdating service relationships...")
+
+        for service_slug, events in self.service_events.items():
+            # Find the service file - search in all domains
+            service_file = None
+            for domain_dir in self.domains_dir.glob("*"):
+                if not domain_dir.is_dir():
+                    continue
+                services_dir = domain_dir / "services"
+                if not services_dir.exists():
+                    continue
+                potential_file = services_dir / service_slug / "index.mdx"
+                if potential_file.exists():
+                    service_file = potential_file
+                    break
+
+            if not service_file:
+                self.log(f"Service file not found for: {service_slug}", "WARNING")
+                continue
+
+            # Read existing content
+            with open(service_file, "r") as f:
+                content = f.read()
+
+            # Split frontmatter and markdown
+            if content.startswith("---"):
+                parts = content.split("---", 2)
+                if len(parts) >= 3:
+                    frontmatter = parts[1]
+                    markdown_content = parts[2]
+
+                    needs_update = False
+
+                    # Add receives if not already there
+                    if events["receives"] and "receives:" not in frontmatter:
+                        receives_yaml = "\nreceives:\n"
+                        for event in events["receives"]:
+                            receives_yaml += f"  - id: {event['id']}\n"
+                            receives_yaml += f"    version: {event['version']}\n"
+                        frontmatter += receives_yaml
+                        needs_update = True
+
+                    # Add sends if not already there
+                    if events["sends"] and "sends:" not in frontmatter:
+                        sends_yaml = "\nsends:\n"
+                        for event in events["sends"]:
+                            sends_yaml += f"  - id: {event['id']}\n"
+                            sends_yaml += f"    version: {event['version']}\n"
+                        frontmatter += sends_yaml
+                        needs_update = True
+
+                    if needs_update:
+                        # Write back
+                        new_content = f"---{frontmatter}---{markdown_content}"
+                        with open(service_file, "w") as f:
+                            f.write(new_content)
+
+                        self.log(f"Updated service: {service_slug} with {len(events['sends'])} sends, {len(events['receives'])} receives")
 
     def import_all(self) -> None:
         """Import all AsyncAPI files from the directory."""
@@ -378,6 +576,10 @@ This channel carries the following messages:
                 continue
 
             self.process_asyncapi_file(yaml_file)
+
+        # Update relationships in frontmatter
+        self.update_domain_relationships()
+        self.update_service_relationships()
 
         # Print summary
         self.log(f"\n{'='*60}")
@@ -437,6 +639,13 @@ Examples:
     )
 
     parser.add_argument(
+        "--schema-base-path",
+        type=str,
+        default=str(repo_root),
+        help="Base path for schema files on local filesystem (default: repo root)",
+    )
+
+    parser.add_argument(
         "--verbose",
         "-v",
         action="store_true",
@@ -451,6 +660,7 @@ Examples:
         eventcatalog_dir=args.eventcatalog_dir,
         domain_name=args.domain,
         verbose=args.verbose,
+        schema_base_path=args.schema_base_path,
     )
 
     try:

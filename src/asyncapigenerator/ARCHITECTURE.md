@@ -52,7 +52,7 @@ Each event becomes:
 
 1. **Channel**: Named from the event type (with `/` instead of `.`)
    - Address: `uk/nhs/notify/digital/letters/mesh/inbox/message/received/v1`
-   
+
 2. **Message**: Contains the event metadata
    - Content type: `application/cloudevents+json`
    - Payload: `$ref` to the CloudEvents envelope schema
@@ -65,7 +65,7 @@ For each service:
 1. **Send Operations**: Created for each event in `events-raised`
    - Action: `send`
    - Links to the channel for that event
-   
+
 2. **Receive Operations**: Created for each event in `events-consumed`
    - Action: `receive`
    - Links to the channel for that event

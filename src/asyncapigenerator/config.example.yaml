@@ -15,7 +15,7 @@ output_dir: ./output
 # AsyncAPI specification metadata
 asyncapi:
   version: 3.0.0
-  
+
 info:
   title: NHS Notify Digital Letters
   version: 2025-10-draft

@@ -9,8 +9,6 @@ last_modified_date: 2025-10-24
 owner: Tom D'Roza
 author: Tom D'Roza
 diagrams: []
-events-raised: [supplier-api-print-status-updated]
-events-consumed: [print-letter-available]
 description: Listens to all events and generates up the report
 c4type: code
 

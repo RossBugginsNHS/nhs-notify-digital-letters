@@ -12,12 +12,9 @@ diagrams: []
 events-raised: []
 events-consumed: [
     core-request-submitted,
-    mesh-file-found,
-    mesh-file-saved,
     mesh-inbox-message-downloaded,
     mesh-inbox-message-received,
     mesh-status-report-sent,
-    pdm-file-saved,
     pdm-resource-retries-exceeded,
     print-letter-available,
     print-status-updated,

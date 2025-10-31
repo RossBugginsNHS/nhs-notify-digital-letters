@@ -10,10 +10,15 @@ SCHEMA_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/docs/md
 SCHEMA_YAML_DOCS_INPUT_DIR = $(SCHEMA_BASE_INPUT_DIR)/output/docs/yaml
 BASE_OUTPUT_DIR = _site
 BASE_DOCS_OUTPUT_DIR = schemas
-SCHEMA_OUTPUT_DIR = $(BASE_OUTPUT_DIR)/schemas
+SCHEMA_OUTPUT_DIR = schemas
 SCHEMA_DOCS_OUTPUT_DIR = $(BASE_DOCS_OUTPUT_DIR)
 SCHEMA_YAML_DOCS_OUTPUT_DIR = _data/schema
 SHELL = /bin/bash
+
+EVENT_CAT_ROOT_DIR = ../src/eventcatalog
+EVENT_CAT_INPUT_DIR = ../src/eventcatalog/digital-letters/dist
+EVENT_CAT_OUTPUT_DIR = eventcatalog
+
 
 default: install
 
@@ -32,17 +37,37 @@ define baseurlparam =
 $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
 endef
 
-build: build-schemas copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
+build: clean build-schemas copy-schema-docs copy-schema-yaml-docs copy-schemas build-eventcatalog build-docs show-build-output
 
-build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
+#build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
+
+
+build-eventcatalog:
+	$(MAKE) build-eventcatalog-prereq
+	make -C $(EVENT_CAT_ROOT_DIR) build
+	$(MAKE) build-eventcatalog-copy
+
+build-eventcatalog-prereq:
+	mkdir -p $(EVENT_CAT_OUTPUT_DIR)
+	rm -rf $(EVENT_CAT_OUTPUT_DIR)/*
+	mkdir -p $(EVENT_CAT_OUTPUT_DIR)/_astro
+	touch $(EVENT_CAT_OUTPUT_DIR)/.nojekyll
+	touch $(EVENT_CAT_OUTPUT_DIR)/_astro/.nojekyll
+
+build-eventcatalog-copy:
+
+
+	cp -r $(EVENT_CAT_INPUT_DIR)/. $(EVENT_CAT_OUTPUT_DIR)/
+
 
 build-docs: version
 	npm run build $(baseurlparam)
 
-build-schemas-ci: clean-schemas
-	make -C $(SCHEMA_SRC_BASE_DIR) deploy-ci
-	make -C $(SCHEMA_BASE_INPUT_DIR) config
-	make -C $(SCHEMA_BASE_INPUT_DIR) build
+
+# build-schemas-ci: clean-schemas
+# 	make -C $(SCHEMA_SRC_BASE_DIR) deploy-ci
+# 	make -C $(SCHEMA_BASE_INPUT_DIR) config
+# 	make -C $(SCHEMA_BASE_INPUT_DIR) build
 
 build-schemas: clean-schemas
 	make -C $(SCHEMA_SRC_BASE_DIR) deploy
@@ -84,6 +109,7 @@ show-build-output:
 	@find $(BASE_OUTPUT_DIR) -type f -name "*" | sort
 
 clean: clean-docs clean-schemas
+
 clean-docs:
 	rm -rf $(BASE_OUTPUT_DIR)
 
@@ -92,6 +118,7 @@ clean-schemas:
 	rm -rf $(SCHEMA_OUTPUT_DIR)
 	rm -rf $(SCHEMA_DOCS_OUTPUT_DIR)
 	rm -rf $(SCHEMA_YAML_DOCS_OUTPUT_DIR)
+	rm -rf $(EVENT_CAT_OUTPUT_DIR)
 
 debug: version
 	bundle install --gemfile Gemfile-dev

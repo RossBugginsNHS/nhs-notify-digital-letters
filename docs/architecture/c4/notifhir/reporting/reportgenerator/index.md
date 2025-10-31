@@ -1,6 +1,6 @@
 ---
 
-title: MESH Report Generator
+title: Report Generator
 parent: Reporting
 nav_order: 4
 has_children: true

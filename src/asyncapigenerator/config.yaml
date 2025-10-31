@@ -15,16 +15,16 @@ output_dir: ./output
 # AsyncAPI specification metadata
 asyncapi:
   version: 3.0.0
-  
+
 info:
   title: NHS Notify Digital Letters
   version: 2025-10-draft
   description: |
     Event-driven architecture for NHS Notify Digital Letters system.
     This system handles pre-rendered letters for both print and digital viewing.
-    
-    Services communicate in an event driven manner, using CloudEvents. 
-    Digital Letters has its own Event Bridge, and any events to share with 
+
+    Services communicate in an event driven manner, using CloudEvents.
+    Digital Letters has its own Event Bridge, and any events to share with
     the wider NHS Notify system are forwarded to the core Event Bridge.
   contact:
     name: NHS Notify Team

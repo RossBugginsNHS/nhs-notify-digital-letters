@@ -10,6 +10,7 @@ PIP := pip
 ASYNCAPI_DIR ?= ../asyncapigenerator/output
 EVENTCATALOG_DIR ?= ../eventcatalog/digital-letters
 DOMAIN_NAME ?= Digital Letters
+SCHEMA_BASE_PATH ?= ../../
 VERBOSE ?= false
 
 # Colors for output
@@ -44,12 +45,13 @@ install-dev: install ## Install development dependencies
 ##@ Import Operations
 
 .PHONY: import
-import: ## Run the importer with default settings
+import: clean-output ## Run the importer with default settings
 	@echo "$(COLOR_GREEN)Running AsyncAPI importer...$(COLOR_RESET)"
 	$(PYTHON) import_asyncapi.py \
 		--asyncapi-dir "$(ASYNCAPI_DIR)" \
 		--eventcatalog-dir "$(EVENTCATALOG_DIR)" \
-		--domain "$(DOMAIN_NAME)"
+		--domain "$(DOMAIN_NAME)" \
+		--schema-base-path "$(SCHEMA_BASE_PATH)"
 	@echo "$(COLOR_GREEN)✓ Import completed$(COLOR_RESET)"
 
 .PHONY: import-verbose
@@ -59,6 +61,7 @@ import-verbose: ## Run the importer with verbose output
 		--asyncapi-dir "$(ASYNCAPI_DIR)" \
 		--eventcatalog-dir "$(EVENTCATALOG_DIR)" \
 		--domain "$(DOMAIN_NAME)" \
+		--schema-base-path "$(SCHEMA_BASE_PATH)" \
 		--verbose
 	@echo "$(COLOR_GREEN)✓ Import completed$(COLOR_RESET)"
 
@@ -68,10 +71,12 @@ import-custom: ## Run with custom paths (use: make import-custom ASYNCAPI_DIR=/p
 	@echo "  AsyncAPI dir: $(ASYNCAPI_DIR)"
 	@echo "  EventCatalog dir: $(EVENTCATALOG_DIR)"
 	@echo "  Domain: $(DOMAIN_NAME)"
+	@echo "  Schema base path: $(SCHEMA_BASE_PATH)"
 	$(PYTHON) import_asyncapi.py \
 		--asyncapi-dir "$(ASYNCAPI_DIR)" \
 		--eventcatalog-dir "$(EVENTCATALOG_DIR)" \
 		--domain "$(DOMAIN_NAME)" \
+		--schema-base-path "$(SCHEMA_BASE_PATH)" \
 		--verbose
 	@echo "$(COLOR_GREEN)✓ Import completed$(COLOR_RESET)"
 
@@ -151,6 +156,7 @@ info: ## Show configuration information
 	@echo "  AsyncAPI dir: $(ASYNCAPI_DIR)"
 	@echo "  EventCatalog dir: $(EVENTCATALOG_DIR)"
 	@echo "  Domain name: $(DOMAIN_NAME)"
+	@echo "  Schema base path: $(SCHEMA_BASE_PATH)"
 	@echo "  Verbose: $(VERBOSE)"
 	@echo ""
 	@echo "$(COLOR_BOLD)AsyncAPI Files:$(COLOR_RESET)"

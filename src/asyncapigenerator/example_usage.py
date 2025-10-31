@@ -17,7 +17,7 @@ def example_basic():
     """Basic example - generate all AsyncAPI specs with default config."""
     print("Example 1: Basic usage with default config")
     print("-" * 60)
-    
+
     config = load_config('config.yaml')
     generator = AsyncAPIGenerator(config)
     generator.generate()
@@ -27,7 +27,7 @@ def example_custom_paths():
     """Example with custom paths."""
     print("\nExample 2: Custom paths")
     print("-" * 60)
-    
+
     config = {
         'events_dir': '/custom/path/to/events',
         'services_dir': '/custom/path/to/services',
@@ -42,7 +42,7 @@ def example_custom_paths():
             'description': 'Custom event-driven architecture'
         }
     }
-    
+
     generator = AsyncAPIGenerator(config)
     # generator.generate()  # Uncomment to run
 
@@ -51,7 +51,7 @@ def example_single_service():
     """Example generating AsyncAPI for a single service."""
     print("\nExample 3: Generate for single service")
     print("-" * 60)
-    
+
     config = load_config('config.yaml')
     generator = AsyncAPIGenerator(config)
     generator.generate(service_filter='MESH Poller')
@@ -61,25 +61,25 @@ def example_programmatic():
     """Example of programmatic access to events and services."""
     print("\nExample 4: Programmatic access")
     print("-" * 60)
-    
+
     config = load_config('config.yaml')
     generator = AsyncAPIGenerator(config)
-    
+
     # Load data without generating
     generator.load_events()
     generator.load_services()
-    
+
     # Access the data
     print(f"Total events: {len(generator.events)}")
     print(f"Total services: {len(generator.services)}")
-    
+
     # Print some event info
     print("\nSample events:")
     for i, (name, event) in enumerate(generator.events.items()):
         if i >= 3:  # Just show first 3
             break
         print(f"  - {name}: {event.type}")
-    
+
     # Print services with events
     print("\nServices with events:")
     for name, service in generator.services.items():

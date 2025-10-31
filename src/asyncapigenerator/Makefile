@@ -9,7 +9,7 @@ help: ## Show this help message
 install: ## Install dependencies
 	pip install -r requirements.txt
 
-generate: ## Generate AsyncAPI specs for all services
+generate: clean## Generate AsyncAPI specs for all services
 	python generate_asyncapi.py --config config.yaml
 
 generate-service: ## Generate AsyncAPI for a specific service (use SERVICE=name)

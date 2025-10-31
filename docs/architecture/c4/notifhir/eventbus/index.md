@@ -8,6 +8,4 @@ last_modified_date: 2025-10-16
 owner: Ross Buggins
 author: Ross Buggins
 diagrams: [c4component-eventbus]
-events-raised: [event-bus-timer-time-expired]
-events-consumed: []
 ---

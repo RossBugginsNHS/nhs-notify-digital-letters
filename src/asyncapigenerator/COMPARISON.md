@@ -108,12 +108,12 @@ asyncapi: 3.0.0
 info:
   title: My API
   version: 1.0.0
-  
+
 servers:
   production:
     host: eventbridge.aws.com
     protocol: eventbridge
-    
+
 channels:
   user/signedup:
     address: user/signedup
@@ -124,7 +124,7 @@ channels:
           properties:
             userId: string
             email: string
-            
+
 operations:
   onUserSignedUp:
     action: receive

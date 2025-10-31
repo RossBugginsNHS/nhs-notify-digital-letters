@@ -130,22 +130,29 @@ The importer generates an EventCatalog structure like:
 eventcatalog/
 ├── domains/
 │   ├── mesh-services/
-│   │   ├── index.md
-│   │   ├── mesh-poller/
-│   │   │   ├── index.md
-│   │   │   └── events/
-│   │   │       ├── mesh-inbox-message-received.md
-│   │   │       └── mesh-poller-timer-expired.md
-│   │   └── mesh-retriever/
-│   │       └── ...
+│   │   ├── index.mdx
+│   │   └── services/
+│   │       ├── mesh-poller/
+│   │       │   ├── index.mdx
+│   │       │   └── events/
+│   │       │       ├── mesh-inbox-message-received.mdx
+│   │       │       └── mesh-poller-timer-expired.mdx
+│   │       └── mesh-retriever/
+│   │           └── ...
 │   ├── pdm-services/
-│   │   └── ...
+│   │   ├── index.mdx
+│   │   └── services/
+│   │       └── ...
 │   └── core-services/
-│       └── ...
+│       ├── index.mdx
+│       └── services/
+│           └── ...
 └── channels/
-    ├── uk-nhs-notify-digital-letters-mesh-inbox-message-received-v1.md
+    ├── uk-nhs-notify-digital-letters-mesh-inbox-message-received-v1.mdx
     └── ...
 ```
+
+**Relationships**: The importer automatically creates links between resources in the frontmatter (domains → services, services → events).
 
 ## 🧪 Testing
 

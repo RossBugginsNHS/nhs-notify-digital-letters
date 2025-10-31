@@ -1,0 +1,31 @@
+---
+id: pdm-poller
+name: PDM Poller
+version: 1.0.0
+summary: |
+  AsyncAPI specification for PDM Poller
+owners:
+  - Ross Buggins
+
+receives:
+  - id: pdmresourcesubmitted
+    version: 1.0.0
+  - id: pdmresourceunavailable
+    version: 1.0.0
+
+sends:
+  - id: pdmresourceavailable
+    version: 1.0.0
+  - id: pdmresourceunavailable
+    version: 1.0.0
+  - id: pdmresourceretriesexceeded
+    version: 1.0.0
+---
+
+## Overview
+
+AsyncAPI specification for PDM Poller
+
+## Architecture
+
+<NodeGraph />

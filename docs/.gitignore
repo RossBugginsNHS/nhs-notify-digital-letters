@@ -12,3 +12,4 @@ _data/schema
 assets-webpack/*
 Gemfile-dev.lock
 Gemfile.lock
+eventcatalog/

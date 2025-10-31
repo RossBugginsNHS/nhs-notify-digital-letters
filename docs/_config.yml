@@ -78,6 +78,11 @@ gh_edit_source: docs # the source that your files originate from
 gh_edit_view_mode: "tree" # "tree" or "edit" if you want the user to jump into the editor immediately
 
 nav_external_links:
+  - title: Event Catalog
+    url: ./eventcatalog
+    hide_icon: false # set to true to hide the external link icon - defaults to false
+    opens_in_new_tab: false # set to true to open this link in a new tab - defaults to false
+
   - title: Notify Service Catalogue
     url: https://digital.nhs.uk/services/nhs-notify
     hide_icon: false # set to true to hide the external link icon - defaults to false
@@ -177,6 +182,10 @@ defaults:
 include:
   - .version
   - version.json
+  - _astro
+  - _*.js
+
+
 exclude:
   - package-lock.json
   - package.json

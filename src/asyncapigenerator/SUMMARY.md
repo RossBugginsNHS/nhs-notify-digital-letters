@@ -131,7 +131,7 @@ asyncapi: 3.0.0
 info:
   title: NHS Notify Digital Letters - MESH Poller
   version: 2025-10-draft
-  
+
 channels:
   uk_nhs_notify_digital_letters_mesh_inbox_message_received_v1:
     address: uk/nhs/notify/digital/letters/mesh/inbox/message/received/v1
@@ -140,7 +140,7 @@ channels:
         contentType: application/cloudevents+json
         payload:
           $ref: https://...schema.json
-          
+
 operations:
   send_event:
     action: send
@@ -262,7 +262,7 @@ This occurs when:
   run: |
     cd src/asyncapigenerator
     python generate_asyncapi.py
-    
+
 - name: Validate AsyncAPI
   run: asyncapi validate src/asyncapigenerator/output/*.yaml
 ```
