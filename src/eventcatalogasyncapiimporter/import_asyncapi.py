@@ -239,6 +239,9 @@ summary: |
 
         # Copy schema file to event directory if schema_base_path is provided
         schema_filename = None
+        data_schema_filename = None
+        data_schema_path = None
+
         if schema_path and self.schema_base_path:
             # Get just the path part (remove leading slash for joining)
             relative_schema_path = schema_path.lstrip("/")
@@ -250,6 +253,38 @@ summary: |
                 try:
                     shutil.copy2(source_schema_file, dest_schema_file)
                     self.log(f"Copied schema file: {schema_filename}", "DEBUG")
+
+                    # Parse the schema file to look for dataschema
+                    try:
+                        with open(source_schema_file, 'r') as f:
+                            schema_content = json.load(f)
+
+                        # Look for dataschema with const value
+                        if "properties" in schema_content and "dataschema" in schema_content["properties"]:
+                            dataschema_prop = schema_content["properties"]["dataschema"]
+                            if "const" in dataschema_prop:
+                                data_schema_url = dataschema_prop["const"]
+                                # Strip the prefix to get relative path
+                                data_schema_path = data_schema_url.replace("https://notify.nhs.uk/cloudevents", "")
+
+                                # Copy the data schema file
+                                relative_data_schema_path = data_schema_path.lstrip("/")
+                                source_data_schema_file = self.schema_base_path / relative_data_schema_path
+
+                                if source_data_schema_file.exists():
+                                    data_schema_filename = source_data_schema_file.name
+                                    dest_data_schema_file = event_dir / data_schema_filename
+                                    try:
+                                        shutil.copy2(source_data_schema_file, dest_data_schema_file)
+                                        self.log(f"Copied data schema file: {data_schema_filename}", "DEBUG")
+                                    except Exception as e:
+                                        self.log(f"Error copying data schema file {source_data_schema_file}: {e}", "WARNING")
+                                        data_schema_filename = None
+                                else:
+                                    self.log(f"Data schema file not found: {source_data_schema_file}", "WARNING")
+                    except Exception as e:
+                        self.log(f"Error parsing schema file {source_schema_file}: {e}", "WARNING")
+
                 except Exception as e:
                     self.log(f"Error copying schema file {source_schema_file}: {e}", "WARNING")
                     schema_filename = None
@@ -286,27 +321,43 @@ summary: |
         if schema_path:
             event_content += f"""
 ## Schema
-
-Schema Reference: `{schema_path}`
 """
 
-            # Add schema components if we successfully copied the schema file
+            # Add data schema reference first if available
+            if data_schema_filename:
+                event_content += f"""
+Data Schema Reference: [{data_schema_path}]({data_schema_path})
+"""
+
+            # Add envelope schema reference
             if schema_filename:
                 event_content += f"""
+Schema Reference: [{schema_path}]({schema_path})
+"""
+
+            # Add data schema components if we successfully copied the data schema file
+            if data_schema_filename:
+                event_content += f"""
+### Data Schema
+
+<!-- Renders the given schema into the page, as a JSON code block -->
+<Schema file="{data_schema_filename}" />
+
+<!-- Renders the given schema into the page using a nice Schema component -->
+<SchemaViewer file="{data_schema_filename}" />
+"""
+
+            # Add envelope schema components if we successfully copied the schema file
+            if schema_filename:
+                event_content += f"""
+### Envelope Schema
+
 <!-- Renders the given schema into the page, as a JSON code block -->
 <Schema file="{schema_filename}" />
 
 <!-- Renders the given schema into the page using a nice Schema component -->
 <SchemaViewer file="{schema_filename}" />
 """
-
-        traits = message_data.get("traits", [])
-        if traits:
-            event_content += "\n## Additional Information\n\n"
-            for trait in traits:
-                trait_desc = trait.get("description", "")
-                if trait_desc:
-                    event_content += f"- {trait_desc}\n"
 
         event_file = event_dir / "index.mdx"
         with open(event_file, "w") as f:

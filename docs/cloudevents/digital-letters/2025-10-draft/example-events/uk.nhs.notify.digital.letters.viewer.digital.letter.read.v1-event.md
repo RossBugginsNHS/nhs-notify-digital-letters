@@ -2,13 +2,13 @@
 
 **Event Type:** `uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1`
 
-**Source:** `/nhs/england/notify/production/primary/data-plane/digitalletters/viewer`
+**Source:** `/nhs/england/notify/development/secondary/data-plane/digitalletters/viewer`
 
-**Subject:** `customer/e5ae5af8-5857-a705-00c4-d90ab5f5f91d/gomv-4t3/ca17f9d5-1c41-17dd-decf-197bb5dab1c0/adbe2a48-3621-c24b-3f3e-e9e2e1ffb124/80810b50-bb2e-32fb-8bcd-ee866378a400`
+**Subject:** `customer/dd9bb6fa-d8ab-e304-8d61-ae9dfcdab19c/c7cd8805-fffd-a212-cd6d-fddcc5114fbf/i/9qscntzdu14/cab94ebc-ed4d-d00d-c2af-b6aed2c8d7da/y8qwift/f8cdeedf-d0ce-f35d-d53f-12cb0fd1c52d/1f8fdaa2-ca4e-6ce8-5aae-6fb26f2f0ebd/ltwt/b94eaea1-98a7-fa18-0c2e-24e07cecf4e4`
 
-**Event ID:** `f490ef77-b630-4e01-86c2-eefed67ab298`
+**Event ID:** `3930ae4f-78e0-4963-b732-6cc6e68e7acf`
 
-**Timestamp:** 2025-10-31T11:27:32.156Z
+**Timestamp:** 2025-10-31T11:44:12.900Z
 
 ## Related Schema Documentation
 
@@ -21,35 +21,34 @@
 ```json
 {
   "type": "uk.nhs.notify.digital.letters.viewer.digital.letter.read.v1",
-  "source": "/nhs/england/notify/production/primary/data-plane/digitalletters/viewer",
+  "source": "/nhs/england/notify/development/secondary/data-plane/digitalletters/viewer",
   "dataschema": "file://../data/digital-letter-base-data.schema.json",
   "data": {
-    "something": "exercitation magna",
+    "something": "ut est incididunt elit",
     "notify-payload": {
       "notify-data": {
-        "dolor_db6": false,
-        "qui_1f0": "Duis proident aute",
-        "irure5": "proident id consectetur ut",
-        "adipisicingb": false
+        "deserunt15": "deserunt non ad dolor",
+        "Loremd": true,
+        "aliquip199": 79381283
       },
       "notify-metadata": {
         "teamResponsible": "Team 3",
         "notifyDomain": "Delivering",
-        "microservice": "JEfEYxV7bd",
-        "repositoryUrl": "https://aacnYadSLpilA.znFlDuRXln60ZFPnS3zPQUjpoUM.XmlyviTEuO3nBQLIXXT61JoXtvMh++09W",
-        "accountId": "FPQa5l",
-        "environment": "development",
-        "instance": "b-",
-        "microserviceInstanceId": "Ytlpz5Zd28",
-        "microserviceVersion": "0.11.0-8309M2Q.0.165MsdFj7.0.82jevOxCWxhN.61.810.0.0.64081+IiS8Erq",
-        "commitSha": "7cbe26c3eba55e2252",
-        "buildTimestamp": "1958-02-18T14:26:45.0Z",
-        "serviceTier": "critical",
+        "microservice": "-1",
+        "repositoryUrl": "https://GuOcgrkqHeVOFsnzqIklehudARrzIwGNG.gsinD7nM2Mvj2DdOSmZ1M9LP4.uq9cQm8uilYFqz",
+        "accountId": "GgUBlL",
+        "environment": "production",
+        "instance": "w",
+        "microserviceInstanceId": "Qm5",
+        "microserviceVersion": "0.0.2698897225+kFhCgov.ZlLcHqX7tmJ.2X1EnMgE.OMioL1b.LKC.SiCY2KMd-.-XuPU9v.Ty51.NyrX.O6Mhl0ZW-.IHQtrdUImTt",
+        "commitSha": "e3d41c51100c1659e19efd440f3c07e8bb7f",
+        "buildTimestamp": "1900-03-18T19:52:08.0Z",
+        "serviceTier": "standard",
         "region": "eu-central-1",
-        "pseudonymisationLevel": "tokenised",
-        "replayIndicator": true,
-        "originalEventId": "e82fa823-3c8c-4b93-8aa4-eed410a0f614",
-        "integrityHash": "sha256:089f866530b44dfe20a366104acd30d1c1534203bd7075f0c06de02858201358",
+        "pseudonymisationLevel": "anonymised",
+        "replayIndicator": false,
+        "originalEventId": "4f19b216-336c-44c2-9892-878667b8023c",
+        "integrityHash": "sha256:f781c50ef623edc0b23823a4246883ee37a0cebcf254b043766842702eb32ab1",
         "producedByType": "other"
       }
     }
@@ -57,20 +56,20 @@
   "profileversion": "1.0.0",
   "profilepublished": "2025-10",
   "specversion": "1.0",
-  "id": "f490ef77-b630-4e01-86c2-eefed67ab298",
-  "subject": "customer/e5ae5af8-5857-a705-00c4-d90ab5f5f91d/gomv-4t3/ca17f9d5-1c41-17dd-decf-197bb5dab1c0/adbe2a48-3621-c24b-3f3e-e9e2e1ffb124/80810b50-bb2e-32fb-8bcd-ee866378a400",
-  "time": "2025-10-31T11:27:32.156Z",
+  "id": "3930ae4f-78e0-4963-b732-6cc6e68e7acf",
+  "subject": "customer/dd9bb6fa-d8ab-e304-8d61-ae9dfcdab19c/c7cd8805-fffd-a212-cd6d-fddcc5114fbf/i/9qscntzdu14/cab94ebc-ed4d-d00d-c2af-b6aed2c8d7da/y8qwift/f8cdeedf-d0ce-f35d-d53f-12cb0fd1c52d/1f8fdaa2-ca4e-6ce8-5aae-6fb26f2f0ebd/ltwt/b94eaea1-98a7-fa18-0c2e-24e07cecf4e4",
+  "time": "2025-10-31T11:44:12.900Z",
   "datacontenttype": "application/json",
-  "traceparent": "00-4b65aed56ef694567e952f5e170d416e-615296bd2d0d0e40-01",
-  "tracestate": "officia dolor tempor",
-  "partitionkey": "customer-e5ae5af8",
-  "recordedtime": "2025-10-31T11:27:33.156Z",
+  "traceparent": "00-a7e1fec3f305e104dbf90a9b2b483213-03cc3d00877db179-01",
+  "tracestate": "sit quis",
+  "partitionkey": "customer-dd9bb6fa",
+  "recordedtime": "2025-10-31T11:44:13.900Z",
   "sampledrate": 1,
-  "sequence": "00000000000928532689",
-  "severitytext": "DEBUG",
-  "severitynumber": 1,
-  "dataclassification": "internal",
-  "dataregulation": "PCI-DSS",
-  "datacategory": "standard"
+  "sequence": "00000000000105002795",
+  "severitytext": "ERROR",
+  "severitynumber": 4,
+  "dataclassification": "confidential",
+  "dataregulation": "GDPR",
+  "datacategory": "non-sensitive"
 }
 ```

@@ -2,13 +2,13 @@
 
 **Event Type:** `uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1`
 
-**Source:** `/nhs/england/notify/development/dev-491114/data-plane/digitalletters/reporting`
+**Source:** `/nhs/england/notify/production/primary/data-plane/digitalletters/reporting`
 
-**Subject:** `customer/22fbfe04-687c-ce39-a0b5-edebf5dbc096`
+**Subject:** `customer/e4ab82c6-fa8e-1a9e-2cc6-a33ff8db33be`
 
-**Event ID:** `01e4baa7-e891-4535-a563-519aab716ea2`
+**Event ID:** `5e14852b-3c90-4cec-8f88-15da057b8b6e`
 
-**Timestamp:** 2025-10-31T11:27:31.702Z
+**Timestamp:** 2025-10-31T11:44:12.397Z
 
 ## Related Schema Documentation
 
@@ -21,54 +21,51 @@
 ```json
 {
   "type": "uk.nhs.notify.digital.letters.reporting.daily.report.timer.expired.v1",
-  "source": "/nhs/england/notify/development/dev-491114/data-plane/digitalletters/reporting",
+  "source": "/nhs/england/notify/production/primary/data-plane/digitalletters/reporting",
   "dataschema": "file://../data/digital-letter-base-data.schema.json",
   "data": {
-    "something": "sunt pariatur et Lorem",
+    "something": "eu Excepteur cillum commodo",
     "notify-payload": {
-      "notify-data": {
-        "laboris_5d": 99812057.10132319,
-        "suntb95": false
-      },
+      "notify-data": {},
       "notify-metadata": {
-        "teamResponsible": "Team 3",
-        "notifyDomain": "Enquiries",
-        "microservice": "ezsxBI",
-        "repositoryUrl": "https://GRVnjkOCKLsNgtcccsfQiyuyuLgLddfyv.yqmwoMrtTEgr47QZp1mtY",
-        "accountId": "S",
+        "teamResponsible": "Team 2",
+        "notifyDomain": "Delivering",
+        "microservice": "0ttEJbABa",
+        "repositoryUrl": "http://cZiZBacwnZQYyofDTJWsdGvEPwKWmkk.erDAZqSe03cEpQM37IZi9seQNG",
+        "accountId": "074",
         "environment": "staging",
-        "instance": "kH9ZybF6-H",
-        "microserviceInstanceId": "offI11",
-        "microserviceVersion": "0.3123822.782354",
-        "commitSha": "e42d1214386482776d08b467",
-        "buildTimestamp": "1935-04-15T22:46:47.0Z",
+        "instance": "1sOq",
+        "microserviceInstanceId": "72RkF-yNge",
+        "microserviceVersion": "0.0.0+Q8TDPj.-t558K.j8.ICVBX.vG2KJkS69.0.d0KsWnO4e",
+        "commitSha": "8523c1b59519",
+        "buildTimestamp": "1966-12-09T03:45:31.0Z",
         "serviceTier": "standard",
-        "region": "eu-central-1",
+        "region": "eu-west-2",
         "pseudonymisationLevel": "tokenised",
-        "replayIndicator": true,
-        "originalEventId": "50dec8b7-d97e-4de6-9700-1d74c56a6922",
-        "integrityHash": "sha256:5cfd7b2c72e588b7c75a5e94d21c67a2493f061ed6d8b22b3f2ddfd002d1cfab",
-        "producedByType": "vm"
+        "replayIndicator": false,
+        "originalEventId": "e4bec7e5-c1af-4f19-89f6-56a9eec94b71",
+        "integrityHash": "sha256:8de1aec3e67b9bcb180eefb18be541a54b5cbe2cd69562b6a29e044f26f41f64",
+        "producedByType": "other"
       }
     }
   },
   "profileversion": "1.0.0",
   "profilepublished": "2025-10",
   "specversion": "1.0",
-  "id": "01e4baa7-e891-4535-a563-519aab716ea2",
-  "subject": "customer/22fbfe04-687c-ce39-a0b5-edebf5dbc096",
-  "time": "2025-10-31T11:27:31.702Z",
+  "id": "5e14852b-3c90-4cec-8f88-15da057b8b6e",
+  "subject": "customer/e4ab82c6-fa8e-1a9e-2cc6-a33ff8db33be",
+  "time": "2025-10-31T11:44:12.397Z",
   "datacontenttype": "application/json",
-  "traceparent": "00-0f91f2040ffad72c2902eb770546af30-376576b3e298d36e-01",
-  "tracestate": "nostrud eiusmod Duis adipisicing quis",
-  "partitionkey": "customer-22fbfe04",
-  "recordedtime": "2025-10-31T11:27:32.702Z",
+  "traceparent": "00-f3fd271e28dbdbdb7e000bf27fdf0afe-d9173eb56cc27b10-01",
+  "tracestate": "nostrud labore",
+  "partitionkey": "customer-e4ab82c6",
+  "recordedtime": "2025-10-31T11:44:13.397Z",
   "sampledrate": 1,
-  "sequence": "00000000000953237729",
-  "severitytext": "ERROR",
-  "severitynumber": 4,
-  "dataclassification": "internal",
+  "sequence": "00000000000141426187",
+  "severitytext": "FATAL",
+  "severitynumber": 5,
+  "dataclassification": "public",
   "dataregulation": "GDPR",
-  "datacategory": "non-sensitive"
+  "datacategory": "special-category"
 }
 ```
