@@ -299,8 +299,8 @@ summary: |
             f"summary: |\n  {summary}"
         ]
 
-        if schema_path:
-            frontmatter_parts.append(f"schemaPath: {schema_path}")
+        if schema_filename:
+            frontmatter_parts.append(f"schemaPath: {schema_filename}")
 
         event_content = f"""---
 {chr(10).join(frontmatter_parts)}
