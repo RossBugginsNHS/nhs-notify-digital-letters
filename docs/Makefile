@@ -110,8 +110,8 @@ show-build-output:
 
 clean: clean-docs clean-schemas
 	rm -rf assets-webpack
-	rm -f cloudevents
-	
+	rm -rf cloudevents
+
 clean-docs:
 	rm -rf $(BASE_OUTPUT_DIR)
 
