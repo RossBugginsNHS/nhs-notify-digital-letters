@@ -29,3 +29,5 @@ domains
 channels
 dist
 
+node_modules
+public

@@ -8,7 +8,7 @@
 PYTHON := python3
 PIP := pip
 ASYNCAPI_DIR ?= ../asyncapigenerator/output
-EVENTCATALOG_DIR ?= ../eventcatalog/digital-letters
+EVENTCATALOG_DIR ?= ../eventcatalog
 DOMAIN_NAME ?= Digital Letters
 SCHEMA_BASE_PATH ?= ../../
 VERBOSE ?= false
