@@ -109,12 +109,15 @@ show-build-output:
 	@find $(BASE_OUTPUT_DIR) -type f -name "*" | sort
 
 clean: clean-docs clean-schemas
-
+	rm -rf assets-webpack
+	rm -f cloudevents
+	
 clean-docs:
 	rm -rf $(BASE_OUTPUT_DIR)
 
 
 clean-schemas:
+
 	rm -rf $(SCHEMA_OUTPUT_DIR)
 	rm -rf $(SCHEMA_DOCS_OUTPUT_DIR)
 	rm -rf $(SCHEMA_YAML_DOCS_OUTPUT_DIR)
