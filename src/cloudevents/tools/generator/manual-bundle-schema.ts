@@ -78,6 +78,80 @@ async function fetchExternalSchema(url: string): Promise<SchemaObject> {
   });
 }
 
+// Post-process: convert remaining relative file refs to external URLs
+function convertRelativeRefsToUrls(
+  schema: any,
+  sourceFile: string,
+  repoRoot: string,
+  baseUrl: string
+): any {
+  if (!schema || typeof schema !== 'object') return schema;
+  
+  if (Array.isArray(schema)) {
+    return schema.map(item => convertRelativeRefsToUrls(item, sourceFile, repoRoot, baseUrl));
+  }
+  
+  const result: any = {};
+  
+  for (const [key, value] of Object.entries(schema)) {
+    if ((key === '$ref' || key === 'const') && typeof value === 'string') {
+      const ref = value;
+      
+      // Only process relative file refs (not external http/https or internal #/)
+      // Also handle file:// URIs
+      const isFileUri = ref.startsWith('file://../') || ref.startsWith('file://./');
+      const isRelative = ref.startsWith('./') || ref.startsWith('../');
+      
+      if (!isExternalRef(ref) && !ref.startsWith('#/') && (isFileUri || isRelative)) {
+        try {
+          // Strip file:// prefix if present
+          let cleanRef = ref;
+          if (isFileUri) {
+            cleanRef = ref.replace(/^file:\/\//, '');
+          }
+          
+          // Split into path and fragment
+          const [refPath, fragment] = cleanRef.split('#');
+          
+          // Resolve the relative path from the source file's directory
+          // sourceFile is in output/, so this gives us an absolute path in output/
+          const resolvedPath = resolveRefPath(sourceFile, refPath);
+          
+          // Calculate the path relative to output/ root
+          const outputPath = path.join(repoRoot, 'output');
+          const relativeToOutput = path.relative(outputPath, resolvedPath);
+          
+          // This relative path mirrors the structure under src/cloudevents/domains/
+          // Convert to URL path (normalize slashes)
+          let urlPath = relativeToOutput.replace(/\\/g, '/');
+          
+          // Strip "cloudevents/domains/" prefix if present (same as build-schema.ts does with stripPrefix)
+          if (urlPath.startsWith('cloudevents/domains/')) {
+            urlPath = urlPath.substring('cloudevents/domains/'.length);
+          }
+          
+          // Construct the final URL
+          const fragmentPart = fragment ? `#${fragment}` : '';
+          result[key] = `${baseUrl}/${urlPath}${fragmentPart}`;
+        } catch (error: any) {
+          console.warn(`Warning: Could not convert ${ref} to external URL: ${error.message}`);
+          result[key] = value;
+        }
+      } else {
+        // Keep external, internal, or already processed refs as-is
+        result[key] = value;
+      }
+    } else if (typeof value === 'object' && value !== null) {
+      // Recursively process nested objects
+      result[key] = convertRelativeRefsToUrls(value, sourceFile, repoRoot, baseUrl);
+    } else {
+      result[key] = value;
+    }
+  }
+  
+  return result;
+}
+
 async function bundleSchema(
   entryPath: string,
   flatten: boolean = false
@@ -565,6 +639,7 @@ async function main() {
   const args = process.argv.slice(2);
   let flatten = false;
   let rootDir: string | undefined;
+  let baseUrl: string | undefined;
   const filtered: string[] = [];
 
   for (let i = 0; i < args.length; i++) {
@@ -574,6 +649,9 @@ async function main() {
     } else if (a === '--root-dir' && i + 1 < args.length) {
       rootDir = args[i + 1];
       i++;
+    } else if (a === '--base-url' && i + 1 < args.length) {
+      baseUrl = args[i + 1];
+      i++;
     } else {
       filtered.push(a);
     }
@@ -581,7 +659,7 @@ async function main() {
 
   const [entry, outFile] = filtered;
   if (!entry || !outFile) {
-    console.error('Usage: ts-node manual-bundle-schema.ts [--flatten] [--root-dir <path>] <entry-schema> <output-file>');
+    console.error('Usage: ts-node manual-bundle-schema.ts [--flatten] [--root-dir <path>] [--base-url <url>] <entry-schema> <output-file>');
     process.exit(1);
   }
 
@@ -592,11 +670,17 @@ async function main() {
   }
 
   try {
-    const result = await bundleSchema(entryPath, flatten);
+    let result = await bundleSchema(entryPath, flatten);
     
     // Calculate $id
     const outFileAbs = path.isAbsolute(outFile) ? outFile : path.join(process.cwd(), outFile);
     const repoRoot = rootDir ? path.resolve(rootDir) : process.cwd();
+    
+    // Post-process: convert relative refs to external URLs if baseUrl provided
+    if (baseUrl && rootDir) {
+      result = convertRelativeRefsToUrls(result, entryPath, repoRoot, baseUrl);
+    }
+    
     const outputRoot = path.join(repoRoot, 'output');
 
     let schemaId: string;

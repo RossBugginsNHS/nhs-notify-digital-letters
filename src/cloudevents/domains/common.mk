@@ -123,8 +123,8 @@ publish-json:
 		echo "Bundling and flattening published event schemas..."; \
 		for schema in $(EVENT_NAMES); do \
 			echo "  - $$schema (bundle & flatten)"; \
-			cd $(CLOUD_EVENTS_DIR) && npm run bundle -- --root-dir $(ROOT_DIR) $(OUTPUT_DIR)/events/$$schema.schema.json $(SCHEMAS_DIR)/events/$$schema.bundle.schema.json || exit 1; \
-			cd $(CLOUD_EVENTS_DIR) && npm run bundle -- --flatten --root-dir $(ROOT_DIR) $(OUTPUT_DIR)/events/$$schema.schema.json $(SCHEMAS_DIR)/events/$$schema.flattened.schema.json || exit 1; \
+			cd $(CLOUD_EVENTS_DIR) && npm run bundle -- --root-dir $(ROOT_DIR) --base-url $(SCHEMA_BASE_URL) $(OUTPUT_DIR)/events/$$schema.schema.json $(SCHEMAS_DIR)/events/$$schema.bundle.schema.json || exit 1; \
+			cd $(CLOUD_EVENTS_DIR) && npm run bundle -- --flatten --root-dir $(ROOT_DIR) --base-url $(SCHEMA_BASE_URL) $(OUTPUT_DIR)/events/$$schema.schema.json $(SCHEMAS_DIR)/events/$$schema.flattened.schema.json || exit 1; \
 		done; \
 	fi
 
