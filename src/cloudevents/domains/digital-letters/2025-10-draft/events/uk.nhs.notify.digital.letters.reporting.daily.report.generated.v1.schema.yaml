@@ -2,11 +2,11 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: DailyReportGenerated
 type: object
 allOf:
-  - $ref: ../digital-letters-core-system-notifier-profile.schema.yaml
+  - $ref: ../digital-letters-reporting-profile.schema.yaml
 properties:
   type:
     type: string
-    const: uk.nhs.notify.digital.letters.reporting123.daily.report.generated.v1
+    const: uk.nhs.notify.digital.letters.reporting.daily.report.generated.v1
     description: Concrete versioned event type string for this example event (.vN suffix).
   source:
     type: string

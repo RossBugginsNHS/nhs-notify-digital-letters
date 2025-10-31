@@ -10,6 +10,6 @@ owner: Ross Buggins
 author: Ross Buggins
 diagrams: []
 events-raised: [queue-timer-expired]
-events-consumed: []
+events-consumed: [event-bus-timer-time-expired]
 c4type: code
 ---

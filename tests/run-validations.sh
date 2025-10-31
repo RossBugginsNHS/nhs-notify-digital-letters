@@ -1,37 +1,98 @@
 #!/bin/bash
 
-# Simple validation script for NHS Notify Digital Letters
-# This script validates generated example events against their schemas
+# run-validations.sh
+# Runs validation tests against multiple schemas
+# Usage: run-validations.sh <base_dir> <data_file> <schema1> [schema2] [schema3] ...
 
-set -e
+# Parse arguments
+BASE_DIR="$1"
+DATA_FILE="$2"
+shift 2
 
-# Parameters
-OUTPUT_DIR="$1"
-EVENT_FILE="$2"
-SCHEMA_FILE="$3"
-BUNDLE_SCHEMA_FILE="$4"
-FLATTENED_SCHEMA_FILE="$5"
-DOMAIN_PROFILE="$6"
-PROFILE_SCHEMA="$7"
+# Remaining arguments are schema paths
+SCHEMAS=("$@")
 
-echo "Validating event: $(basename "$EVENT_FILE")"
+# Extract a friendly name from schema path
+get_schema_name() {
+    local path="$1"
+    # Get filename without path
+    local filename=$(basename "$path")
+    # Remove .schema.json extension
+    local name="${filename%.schema.json}"
+    echo "$name"
+}
 
-# Check if files exist
-if [[ ! -f "$EVENT_FILE" ]]; then
-    echo "ERROR: Event file not found: $EVENT_FILE"
-    exit 1
+get_data_name() {
+    local path="$1"
+    # Get filename without path
+    local filename=$(basename "$path")
+    # Remove .schema.json extension
+    local name="${filename%.json}"
+    echo "$name"
+}
+
+data_file_name=$(get_data_name "$DATA_FILE")
+
+echo ""
+echo ""
+echo "=== Running Validation Tests ==="
+echo -e "Data File:\t $data_file_name"
+echo -e "Data Path:\t $(basename "$DATA_FILE")"
+echo ""
+echo "Testing against:"
+for schema_path in "${SCHEMAS[@]}"; do
+    schema_name=$(get_schema_name "$schema_path")
+    echo -e "Schema Name:\t $schema_name"
+    echo -e "Schema Path:\t $schema_path"
+done
+echo ""
+echo ""
+
+failed=0
+passed=0
+total=${#SCHEMAS[@]}
+index=1
+
+
+
+for schema_path in "${SCHEMAS[@]}"; do
+    schema_name=$(get_schema_name "$schema_path")
+
+    echo "[$index/$total] Validating"
+    echo -e "Schema Name:\t $schema_name"
+    echo -e "Data Name:\t $data_file_name"
+    echo -e "Schema Path:\t $schema_path"
+    echo -e "Data Path:\t $DATA_FILE"
+
+    echo ""
+
+    # Capture the validation output
+    validation_output=$(npm run validate -- --base "$BASE_DIR" "$schema_path" "$DATA_FILE" 2>&1)
+
+    if echo "$validation_output" | grep -q "Valid!"; then
+        echo "✅ PASS"
+
+        ((passed++))
+    else
+        echo "❌ FAIL"
+        echo "Error Details:"
+        # Show the actual error output
+        echo "$validation_output" | grep -v "^>" | grep -v "^$" | head -50
+        failed=1
+    fi
+
+    echo ""
+    ((index++))
+done
+
+echo "========================================"
+echo "Test Summary: $passed/$total passed"
+if [ $failed -eq 0 ]; then
+    echo "✅ All validations passed!"
+else
+    echo "❌ Some validations failed"
 fi
+echo "========================================"
+echo ""
 
-if [[ ! -f "$SCHEMA_FILE" ]]; then
-    echo "ERROR: Schema file not found: $SCHEMA_FILE"
-    exit 1
-fi
-
-# For now, just check that the event file is valid JSON
-if ! jq empty "$EVENT_FILE" 2>/dev/null; then
-    echo "ERROR: Event file is not valid JSON: $EVENT_FILE"
-    exit 1
-fi
-
-echo "✅ Event validation passed: $(basename "$EVENT_FILE")"
-exit 0
+exit $failed

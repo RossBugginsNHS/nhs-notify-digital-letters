@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: DigitalLetterRead
 type: object
 allOf:
-  - $ref: ../digital-letters-core-system-notifier-profile.schema.yaml
+  - $ref: ../digital-letters-viewer-profile.schema.yaml
 properties:
   type:
     type: string

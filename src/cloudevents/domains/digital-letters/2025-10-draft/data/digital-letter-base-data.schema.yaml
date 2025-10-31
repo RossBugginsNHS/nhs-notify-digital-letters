@@ -4,10 +4,7 @@ description: Base data for digital letters - a placeholder until all data schema
 type: object
 additionalProperties: false
 properties:
-  weather:
-    $ref: https://smart-data-models.github.io/dataModel.Weather/WeatherForecast/schema.json
   something:
     $ref: ../defs/someobject.schema.yaml#/properties/something
 required:
   - something
-  - weather

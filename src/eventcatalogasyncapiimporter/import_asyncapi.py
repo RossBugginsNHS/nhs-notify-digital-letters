@@ -239,6 +239,7 @@ summary: |
 
         # Copy schema file to event directory if schema_base_path is provided
         schema_filename = None
+        bundled_schema_filename = None
         data_schema_filename = None
         data_schema_path = None
 
@@ -253,6 +254,18 @@ summary: |
                 try:
                     shutil.copy2(source_schema_file, dest_schema_file)
                     self.log(f"Copied schema file: {schema_filename}", "DEBUG")
+
+                    # Also copy the bundled version if it exists
+                    bundled_schema_file = source_schema_file.parent / source_schema_file.name.replace('.schema.', '.bundle.schema.')
+                    if bundled_schema_file.exists():
+                        bundled_schema_filename = bundled_schema_file.name
+                        dest_bundled_schema_file = event_dir / bundled_schema_filename
+                        try:
+                            shutil.copy2(bundled_schema_file, dest_bundled_schema_file)
+                            self.log(f"Copied bundled schema file: {bundled_schema_filename}", "DEBUG")
+                        except Exception as e:
+                            self.log(f"Error copying bundled schema file {bundled_schema_file}: {e}", "WARNING")
+                            bundled_schema_filename = None
 
                     # Parse the schema file to look for dataschema
                     try:
@@ -299,8 +312,10 @@ summary: |
             f"summary: |\n  {summary}"
         ]
 
-        if schema_filename:
-            frontmatter_parts.append(f"schemaPath: {schema_filename}")
+        # Use bundled schema if available, otherwise use regular schema
+        schema_path_for_frontmatter = bundled_schema_filename if bundled_schema_filename else schema_filename
+        if schema_path_for_frontmatter:
+            frontmatter_parts.append(f"schemaPath: {schema_path_for_frontmatter}")
 
         event_content = f"""---
 {chr(10).join(frontmatter_parts)}

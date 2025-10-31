@@ -1,12 +1,12 @@
 $schema: https://json-schema.org/draft/2020-12/schema
-title: NotifyCoreRequestSubmitted
+title: NotifyCoreMessageStatusUpdated
 type: object
 allOf:
   - $ref: ../digital-letters-core-system-notifier-profile.schema.yaml
 properties:
   type:
     type: string
-    const: uk.nhs.notify.digital.letters.core.request.submitted.v1
+    const: uk.nhs.notify.digital.letters.core.message.status.updated.v1
     description: Concrete versioned event type string for this example event (.vN suffix).
   source:
     type: string
@@ -15,10 +15,10 @@ properties:
 
   dataschema:
     type: string
-    const: ../data/core.request.submitted-data.v1.schema.yaml
+    const: ../data/core.message.status.updated-data.v1.schema.yaml
     description: Canonical URI of the example event's data schema.
     examples:
-      - core.request.submitted-data.v1.schema.yaml
+      - core.message.status.updated-data.v1.schema.yaml
   data:
-    $ref: ../data/core.request.submitted-data.v1.schema.yaml
+    $ref: ../data/core.message.status.updated-data.v1.schema.yaml
     description: Example payload wrapper containing notify-payload.
