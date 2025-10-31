@@ -16,7 +16,7 @@ SCHEMA_YAML_DOCS_OUTPUT_DIR = _data/schema
 SHELL = /bin/bash
 
 EVENT_CAT_ROOT_DIR = ../src/eventcatalog
-EVENT_CAT_INPUT_DIR = ../src/eventcatalog/digital-letters/dist
+EVENT_CAT_INPUT_DIR = ../src/eventcatalog/dist
 EVENT_CAT_OUTPUT_DIR = eventcatalog
 
 
