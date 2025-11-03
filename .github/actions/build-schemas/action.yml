@@ -25,6 +25,7 @@ runs:
 
     - name: tar schema
       run: tar -cvf artifact.tar src/cloudeventjekylldocs/output/schemas"
+      shell: bash
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
