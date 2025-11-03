@@ -40,3 +40,13 @@ runs:
       with:
         path: "docs/_site/"
         name: jekyll-docs-${{ inputs.version }}
+
+    - name: tar schema
+      run: tar -cvf artifact.tar src/cloudeventjekylldocs/output/schemas
+      shell: bash
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        path: "artifact.tar"
+        name: schemas-${{ inputs.version }}
