@@ -2,7 +2,7 @@
 export default {
   title: 'EventCatalog',
   tagline: 'This internal platform provides a comprehensive view of our event-driven architecture across all systems. Use this portal to discover existing domains, explore services and their dependencies, and understand the message contracts that connect our infrastructure',
-  organizationName: 'digital letters',
+  organizationName: 'nhs notify',
   homepageLink: 'https://eventcatalog.dev/',
   editUrl: 'https://github.com/boyney123/eventcatalog-demo/edit/master',
   // Supports static or server. Static renders a static site, server renders a server side rendered site

@@ -9,7 +9,8 @@ PYTHON := python3
 PIP := pip
 ASYNCAPI_DIR ?= ../asyncapigenerator/output
 EVENTCATALOG_DIR ?= ../eventcatalog
-DOMAIN_NAME ?= Digital Letters
+PARENT_DOMAIN_NAME ?= Digital Letters
+DOMAIN_NAME ?= $(PARENT_DOMAIN_NAME)
 SCHEMA_BASE_PATH ?= ../../
 VERBOSE ?= false
 
@@ -50,7 +51,7 @@ import: clean-output ## Run the importer with default settings
 	$(PYTHON) import_asyncapi.py \
 		--asyncapi-dir "$(ASYNCAPI_DIR)" \
 		--eventcatalog-dir "$(EVENTCATALOG_DIR)" \
-		--domain "$(DOMAIN_NAME)" \
+		--parent-domain "$(PARENT_DOMAIN_NAME)" \
 		--schema-base-path "$(SCHEMA_BASE_PATH)"
 	@echo "$(COLOR_GREEN)✓ Import completed$(COLOR_RESET)"
 
@@ -60,7 +61,7 @@ import-verbose: ## Run the importer with verbose output
 	$(PYTHON) import_asyncapi.py \
 		--asyncapi-dir "$(ASYNCAPI_DIR)" \
 		--eventcatalog-dir "$(EVENTCATALOG_DIR)" \
-		--domain "$(DOMAIN_NAME)" \
+		--parent-domain "$(PARENT_DOMAIN_NAME)" \
 		--schema-base-path "$(SCHEMA_BASE_PATH)" \
 		--verbose
 	@echo "$(COLOR_GREEN)✓ Import completed$(COLOR_RESET)"
@@ -70,12 +71,12 @@ import-custom: ## Run with custom paths (use: make import-custom ASYNCAPI_DIR=/p
 	@echo "$(COLOR_GREEN)Running AsyncAPI importer with custom paths...$(COLOR_RESET)"
 	@echo "  AsyncAPI dir: $(ASYNCAPI_DIR)"
 	@echo "  EventCatalog dir: $(EVENTCATALOG_DIR)"
-	@echo "  Domain: $(DOMAIN_NAME)"
+	@echo "  Parent Domain: $(PARENT_DOMAIN_NAME)"
 	@echo "  Schema base path: $(SCHEMA_BASE_PATH)"
 	$(PYTHON) import_asyncapi.py \
 		--asyncapi-dir "$(ASYNCAPI_DIR)" \
 		--eventcatalog-dir "$(EVENTCATALOG_DIR)" \
-		--domain "$(DOMAIN_NAME)" \
+		--parent-domain "$(PARENT_DOMAIN_NAME)" \
 		--schema-base-path "$(SCHEMA_BASE_PATH)" \
 		--verbose
 	@echo "$(COLOR_GREEN)✓ Import completed$(COLOR_RESET)"

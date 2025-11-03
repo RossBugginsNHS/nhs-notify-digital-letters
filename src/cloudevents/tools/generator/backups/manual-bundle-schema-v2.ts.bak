@@ -4,7 +4,7 @@ import yaml from 'js-yaml';
 
 /**
  * Manual schema bundler that handles external HTTP refs gracefully
- * 
+ *
  * Bundle mode: Fully dereferences (inlines) all local file $refs, no $defs
  * Flatten mode: Dereferences + flattens allOf inheritance structures
  */
@@ -40,50 +40,50 @@ async function bundleSchema(
 ): Promise<SchemaObject> {
   const visited = new Set<string>();
   const circularRefs = new Map<string, any>(); // Track circular references
-  
+
   // Dereference (inline) all $refs recursively
   function dereferenceSchema(schema: any, currentFile: string, refPath: string = ''): any {
     if (!schema || typeof schema !== 'object') {
       return schema;
     }
-    
+
     if (Array.isArray(schema)) {
       return schema.map((item, idx) => dereferenceSchema(item, currentFile, `${refPath}[${idx}]`));
     }
-    
+
     // Check for $ref first
     if (schema.$ref && typeof schema.$ref === 'string') {
       const ref = schema.$ref;
-      
+
       // Keep external HTTP/HTTPS refs as-is
       if (isExternalRef(ref)) {
         return schema;
       }
-      
+
       // Handle fragment-only refs (internal to current schema)
       if (ref.startsWith('#/')) {
         // Keep internal refs for now - they should be resolved in context
         return schema;
       }
-      
+
       // Resolve and inline local file refs
       const [refFilePath, fragment] = ref.split('#');
       if (refFilePath) {
         const resolvedPath = resolveRefPath(currentFile, refFilePath);
         const refKey = `${resolvedPath}${fragment || ''}`;
-        
+
         // Check for circular reference
         if (circularRefs.has(refKey)) {
           console.warn(`Circular reference detected: ${refKey}. Keeping as $ref.`);
           return schema;
         }
-        
+
         // Mark as being processed
         circularRefs.set(refKey, true);
-        
+
         try {
           const refSchema = loadSchema(resolvedPath);
-          
+
           // If there's a fragment, navigate to it
           let target = refSchema;
           if (fragment) {
@@ -98,10 +98,10 @@ async function bundleSchema(
               }
             }
           }
-          
+
           // Recursively dereference the loaded schema
           const dereferenced = dereferenceSchema(target, resolvedPath, refKey);
-          
+
           // Remove $id from inlined schemas to avoid conflicts
           if (dereferenced && typeof dereferenced === 'object' && dereferenced.$id) {
             const clean = { ...dereferenced };
@@ -109,7 +109,7 @@ async function bundleSchema(
             circularRefs.delete(refKey);
             return clean;
           }
-          
+
           circularRefs.delete(refKey);
           return dereferenced;
         } catch (error: any) {
@@ -119,44 +119,44 @@ async function bundleSchema(
         }
       }
     }
-    
+
     // Process all properties
     const result: any = {};
     for (const [key, value] of Object.entries(schema)) {
       result[key] = dereferenceSchema(value, currentFile, `${refPath}.${key}`);
     }
-    
+
     return result;
   }
-  
+
   // Load and dereference the entry schema
   const entrySchema = loadSchema(entryPath);
   visited.add(path.resolve(entryPath));
-  
+
   let dereferenced = dereferenceSchema(entrySchema, entryPath);
-  
+
   // Optionally flatten allOf
   if (flatten) {
     function flattenSchema(schema: any): any {
       if (!schema || typeof schema !== 'object') {
         return schema;
       }
-      
+
       if (Array.isArray(schema)) {
         return schema.map(item => flattenSchema(item));
       }
-      
+
       const result: any = {};
-      
+
       // Process allOf if it exists
       if (Array.isArray(schema.allOf)) {
         const mergedProperties: Record<string, any> = {};
         const mergedRequired: Set<string> = new Set();
         const remainingAllOf: any[] = [];
-        
+
         for (const item of schema.allOf) {
           const flattenedItem = flattenSchema(item);
-          
+
           if (flattenedItem.$ref) {
             // Keep external refs in allOf
             if (isExternalRef(flattenedItem.$ref)) {
@@ -172,7 +172,7 @@ async function bundleSchema(
                 mergedProperties[propKey] = flattenSchema(propValue);
               }
             }
-            
+
             // Merge required
             if (Array.isArray(flattenedItem.required)) {
               flattenedItem.required.forEach((r: string) => mergedRequired.add(r));
@@ -182,7 +182,7 @@ async function bundleSchema(
             remainingAllOf.push(flattenedItem);
           }
         }
-        
+
         // Add merged properties to result
         if (Object.keys(mergedProperties).length > 0) {
           result.properties = mergedProperties;
@@ -190,13 +190,13 @@ async function bundleSchema(
         if (mergedRequired.size > 0) {
           result.required = Array.from(mergedRequired);
         }
-        
+
         // Keep remaining allOf if any
         if (remainingAllOf.length > 0) {
           result.allOf = remainingAllOf;
         }
       }
-      
+
       // Copy all other properties (except allOf which we just processed)
       for (const [key, value] of Object.entries(schema)) {
         if (key !== 'allOf') {
@@ -215,13 +215,13 @@ async function bundleSchema(
           }
         }
       }
-      
+
       return result;
     }
-    
+
     dereferenced = flattenSchema(dereferenced);
   }
-  
+
   return dereferenced;
 }
 
@@ -257,7 +257,7 @@ async function main() {
 
   try {
     const bundled = await bundleSchema(entryPath, flatten);
-    
+
     // Set $id
     const outFileAbs = path.isAbsolute(outFile) ? outFile : path.join(process.cwd(), outFile);
     const repoRoot = rootDir ? path.resolve(rootDir) : process.cwd();
@@ -276,7 +276,7 @@ async function main() {
 
     // Build properly ordered output with metadata first
     const orderedOutput: any = {};
-    
+
     // Standard JSON Schema metadata fields first
     if (bundled.$id) orderedOutput.$id = bundled.$id;
     orderedOutput.$id = schemaId;
@@ -284,21 +284,21 @@ async function main() {
     if (bundled.title) orderedOutput.title = bundled.title;
     if (bundled.description) orderedOutput.description = bundled.description;
     if (bundled.type) orderedOutput.type = bundled.type;
-    
+
     // Then structural fields
     if (bundled.allOf) orderedOutput.allOf = bundled.allOf;
     if (bundled.properties) orderedOutput.properties = bundled.properties;
     if (bundled.required) orderedOutput.required = bundled.required;
-    
+
     // Then any other fields
     for (const [key, value] of Object.entries(bundled)) {
       if (!['$id', '$schema', 'title', 'description', 'type', 'allOf', 'properties', 'required', '$comment'].includes(key)) {
         orderedOutput[key] = value;
       }
     }
-    
+
     // $comment last
-    orderedOutput.$comment = ((bundled.$comment ? bundled.$comment + ' | ' : '') + 
+    orderedOutput.$comment = ((bundled.$comment ? bundled.$comment + ' | ' : '') +
       (flatten ? 'Fully dereferenced and flattened (all local $refs inlined, allOf merged).' : 'Fully dereferenced (all local $refs inlined).'));
 
     const outDir = path.dirname(path.resolve(outFile));

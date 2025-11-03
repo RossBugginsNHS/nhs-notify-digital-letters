@@ -38,13 +38,13 @@ def example_custom_paths():
     importer = AsyncAPIImporter(
         asyncapi_dir=asyncapi_path,
         eventcatalog_dir=eventcatalog_path,
-        domain_name="Custom Domain",
+        parent_domain_name="Custom Parent Domain",
         verbose=True
     )
 
     print(f"AsyncAPI directory: {asyncapi_path}")
     print(f"EventCatalog directory: {eventcatalog_path}")
-    print(f"Domain name: Custom Domain")
+    print(f"Parent domain name: Custom Parent Domain")
     print()
 
 
@@ -98,14 +98,14 @@ def example_check_created_resources():
 
 
 def example_custom_domain_logic():
-    """Example: Customizing domain extraction logic."""
-    print("Example 5: Custom Domain Logic")
+    """Example: Customizing subdomain extraction logic."""
+    print("Example 5: Custom Subdomain Logic")
     print("-" * 50)
 
-    # To customize domain extraction, you would extend the class
+    # To customize subdomain extraction, you would extend the class
     class CustomAsyncAPIImporter(AsyncAPIImporter):
-        def extract_domain_from_service(self, service_name, asyncapi_data):
-            """Custom domain extraction logic."""
+        def extract_subdomain_from_service(self, service_name, asyncapi_data):
+            """Custom subdomain extraction logic."""
             # Custom logic here
             if "payment" in service_name.lower():
                 return "Payment Services"
@@ -113,7 +113,7 @@ def example_custom_domain_logic():
                 return "Notification Services"
 
             # Fall back to parent implementation
-            return super().extract_domain_from_service(service_name, asyncapi_data)
+            return super().extract_subdomain_from_service(service_name, asyncapi_data)
 
     importer = CustomAsyncAPIImporter(
         asyncapi_dir="../../asyncapigenerator/output",

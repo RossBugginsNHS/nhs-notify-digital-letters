@@ -3,6 +3,7 @@ import addFormats from "ajv-formats";
 import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
+import { getCachedSchema, setCachedSchema } from '../cache/schema-cache.ts';
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -122,8 +123,7 @@ for (const fullPath of allSchemaFiles) {
 }
 
 // Function to load external HTTP/HTTPS schemas or base-relative paths
-const httpCache = new Map(); // Cache for external HTTP/HTTPS schemas
-const requestCounts = new Map(); // Track request counts per URI
+const requestCounts = new Map(); // Track request counts per URI to prevent infinite loops
 const MAX_REQUESTS_PER_URI = 5; // Prevent infinite loops
 
 async function loadExternalSchema(uri) {
@@ -139,18 +139,27 @@ async function loadExternalSchema(uri) {
   // Track request count to prevent infinite loops
   const currentCount = requestCounts.get(uri) || 0;
   if (currentCount >= MAX_REQUESTS_PER_URI) {
-    console.log(`[FETCH] BLOCKED: Too many requests (${currentCount}) for ${uri} - returning cached result`);
-    if (httpCache.has(uri)) {
-      return httpCache.get(uri);
+    console.log(`[FETCH] BLOCKED: Too many requests (${currentCount}) for ${uri} - checking cache`);
+    const cached = getCachedSchema(uri);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.warn(`[CACHE] Failed to parse cached schema for ${uri}`);
+      }
     }
     throw new Error(`Maximum requests exceeded for ${uri} and no cached result available`);
   }
   requestCounts.set(uri, currentCount + 1);
 
-  // Check cache first
-  if (httpCache.has(uri)) {
-    console.log(`[FETCH] Using cached schema: ${uri} (request #${currentCount + 1})`);
-    return httpCache.get(uri);
+  // Check persistent cache first
+  const cached = getCachedSchema(uri);
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch (e) {
+      console.warn(`[CACHE] Failed to parse cached schema for ${uri}, fetching fresh copy`);
+    }
   }
 
   // Handle HTTP/HTTPS URLs
@@ -228,9 +237,8 @@ async function loadExternalSchema(uri) {
                 const schema = JSON.parse(data);
                 console.log(`[FETCH] Successfully parsed schema from ${uri} (request #${currentCount + 1})`);
 
-                // Cache the schema
-                httpCache.set(uri, schema);
-                console.log(`[FETCH] Cached schema: ${uri}`);
+                // Cache the schema to persistent storage
+                setCachedSchema(uri, data);
 
                 resolve(schema);
               } catch (e) {
@@ -304,8 +312,8 @@ async function loadExternalSchema(uri) {
   throw new Error(`Cannot load schema from URI: ${uri}`);
 }
 
-const ajv = new Ajv2020({ 
-  strict: false, 
+const ajv = new Ajv2020({
+  strict: false,
   loadSchema: loadExternalSchema,
   verbose: true // Enable schema and parentSchema in error objects
 });
@@ -523,7 +531,7 @@ const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
       console.error("  Keyword:", err.keyword);
       if (err.params) console.error("  Params:", JSON.stringify(err.params));
       if (err.message) console.error("  Message:", err.message);
-      
+
       // Extract helpful information from parentSchema (available with verbose: true)
       if (err.parentSchema) {
         const details = [];
@@ -542,7 +550,7 @@ const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
         if (err.parentSchema.enum) {
           details.push(`Allowed values: ${JSON.stringify(err.parentSchema.enum)}`);
         }
-        
+
         if (details.length > 0) {
           console.error("  Schema constraint details:");
           for (const detail of details) {
@@ -550,7 +558,7 @@ const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
           }
         }
       }
-      
+
       // Show the actual failing schema constraint value
       if (err.schema && typeof err.schema === 'object') {
         const schemaDetails = [];
@@ -563,7 +571,7 @@ const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
         if (err.schema.enum) {
           schemaDetails.push(`Enum: ${JSON.stringify(err.schema.enum)}`);
         }
-        
+
         if (schemaDetails.length > 0) {
           console.error("  Failing constraint:");
           for (const detail of schemaDetails) {

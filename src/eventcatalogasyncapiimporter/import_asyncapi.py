@@ -25,7 +25,7 @@ class AsyncAPIImporter:
         self,
         asyncapi_dir: Path,
         eventcatalog_dir: Path,
-        domain_name: str = "Digital Letters",
+        parent_domain_name: str = "Digital Letters",
         verbose: bool = False,
         schema_base_path: Optional[Path] = None,
     ):
@@ -35,15 +35,16 @@ class AsyncAPIImporter:
         Args:
             asyncapi_dir: Directory containing AsyncAPI YAML files
             eventcatalog_dir: EventCatalog root directory
-            domain_name: Name of the domain to create
+            parent_domain_name: Name of the parent domain (subdomains will be created under this)
             verbose: Enable verbose logging
             schema_base_path: Base path for schema files on local filesystem
         """
         self.asyncapi_dir = Path(asyncapi_dir)
         self.eventcatalog_dir = Path(eventcatalog_dir)
-        self.domain_name = domain_name
+        self.parent_domain_name = parent_domain_name
         self.verbose = verbose
-        self.schema_base_path = Path(schema_base_path) if schema_base_path else None
+        self.schema_base_path = Path(
+            schema_base_path) if schema_base_path else None
 
         # Create base directories
         self.domains_dir = self.eventcatalog_dir / "domains"
@@ -53,10 +54,13 @@ class AsyncAPIImporter:
         self.created_services: Set[str] = set()
         self.created_events: Set[str] = set()
         self.created_channels: Set[str] = set()
+        self.created_parent_domain: bool = False
 
         # Track relationships for updating frontmatter
-        self.domain_services: Dict[str, List[Dict[str, str]]] = {}  # domain -> list of services
-        self.service_events: Dict[str, Dict[str, List[Dict[str, str]]]] = {}  # service -> {sends: [], receives: []}
+        # subdomain -> list of services
+        self.subdomain_services: Dict[str, List[Dict[str, str]]] = {}
+        # service -> {sends: [], receives: []}
+        self.service_events: Dict[str, Dict[str, List[Dict[str, str]]]] = {}
 
     def log(self, message: str, level: str = "INFO") -> None:
         """Log a message."""
@@ -90,10 +94,10 @@ class AsyncAPIImporter:
         title = title.replace("NHS Notify Digital Letters - ", "")
         return title
 
-    def extract_domain_from_service(
+    def extract_subdomain_from_service(
         self, service_name: str, asyncapi_data: Dict[str, Any]
     ) -> str:
-        """Extract domain name from service metadata or name."""
+        """Extract subdomain name from service metadata or name."""
         info = asyncapi_data.get("info", {})
         metadata = info.get("x-service-metadata", {})
         parent = metadata.get("parent", "")
@@ -111,45 +115,90 @@ class AsyncAPIImporter:
         else:
             return "Core Services"
 
-    def create_domain_structure(self, domain_name: str) -> Path:
-        """Create domain directory structure."""
-        domain_slug = self.sanitize_name(domain_name)
-        domain_path = self.domains_dir / domain_slug
+    def create_parent_domain_structure(self) -> Path:
+        """Create parent domain directory structure."""
+        if self.created_parent_domain:
+            return self.domains_dir / self.sanitize_name(self.parent_domain_name)
 
-        if not domain_path.exists():
-            domain_path.mkdir(parents=True, exist_ok=True)
+        parent_domain_slug = self.sanitize_name(self.parent_domain_name)
+        parent_domain_path = self.domains_dir / parent_domain_slug
 
-            # Create index.mdx for domain
+        if not parent_domain_path.exists():
+            parent_domain_path.mkdir(parents=True, exist_ok=True)
+
+            # Create index.mdx for parent domain
             index_content = f"""---
-id: {domain_slug}
-name: {domain_name}
+id: {parent_domain_slug}
+name: {self.parent_domain_name}
 version: 0.0.1
 summary: |
-  {domain_name} domain
+    {self.parent_domain_name} parent domain
 ---
 
 ## Overview
 
-This domain contains services related to {domain_name}.
+This domain contains subdomains related to {self.parent_domain_name}.
 
 <NodeGraph />
 """
-            index_file = domain_path / "index.mdx"
+            index_file = parent_domain_path / "index.mdx"
             with open(index_file, "w") as f:
                 f.write(index_content)
 
-            self.log(f"Created domain: {domain_name}")
+            self.log(f"Created parent domain: {self.parent_domain_name}")
+            self.created_parent_domain = True
 
-        return domain_path
+        return parent_domain_path
+
+    def create_subdomain_structure(self, subdomain_name: str) -> Path:
+        """Create subdomain directory structure under parent domain."""
+        # First ensure parent domain exists
+        parent_domain_path = self.create_parent_domain_structure()
+
+        subdomain_slug = self.sanitize_name(subdomain_name)
+        subdomains_dir = parent_domain_path / "subdomains"
+        subdomains_dir.mkdir(parents=True, exist_ok=True)
+
+        subdomain_path = subdomains_dir / subdomain_slug
+
+        if not subdomain_path.exists():
+            subdomain_path.mkdir(parents=True, exist_ok=True)
+
+            # Create index.mdx for subdomain
+            index_content = f"""---
+id: {subdomain_slug}
+name: {subdomain_name}
+version: 0.0.1
+summary: |
+    {subdomain_name} subdomain
+---
+
+## Overview
+
+This subdomain contains services related to {subdomain_name}.
+
+<NodeGraph />
+"""
+            index_file = subdomain_path / "index.mdx"
+            with open(index_file, "w") as f:
+                f.write(index_content)
+
+            self.log(f"Created subdomain: {subdomain_name}")
+
+        return subdomain_path
+
+    def create_domain_structure(self, domain_name: str) -> Path:
+        """DEPRECATED: Use create_subdomain_structure instead. Kept for backward compatibility."""
+        return self.create_subdomain_structure(domain_name)
 
     def create_service_structure(
-        self, domain_path: Path, service_name: str, asyncapi_data: Dict[str, Any], domain_name: str = None
+        self, subdomain_path: Path, service_name: str, asyncapi_data: Dict[str, Any], subdomain_name: str = None
     ) -> Path:
-        """Create service directory structure."""
+        """Create service directory structure under a subdomain."""
         service_slug = self.sanitize_name(service_name)
-        # Services should be under a 'services' folder within the domain
-        # Structure: domains/{Domain Name}/services/{Service Name}/
-        services_dir = domain_path / "services"
+        # Services should be under a 'services' folder within the subdomain
+        # Structure: domains/{Parent Domain}/subdomains/{Subdomain}/services/{Service Name}/
+        services_dir = subdomain_path / "services"
         services_dir.mkdir(parents=True, exist_ok=True)
         service_path = services_dir / service_slug
 
@@ -172,7 +221,7 @@ id: {service_slug}
 name: {service_name}
 version: {version}
 summary: |
-  {description}
+    {description}
 """
 
         # Add owners if available
@@ -220,7 +269,8 @@ summary: |
         # Extract event details
         summary = message_data.get("summary", event_name)
         description = message_data.get("description", "")
-        content_type = message_data.get("contentType", "application/cloudevents+json")
+        content_type = message_data.get(
+            "contentType", "application/cloudevents+json")
 
         # Determine if it's a published or subscribed event
         event_type = "published" if action == "send" else "received"
@@ -231,7 +281,8 @@ summary: |
 
         # Strip the https://notify.nhs.uk/cloudevents prefix to make it relative
         if schema_path:
-            schema_path = schema_path.replace("https://notify.nhs.uk/cloudevents", "")
+            schema_path = schema_path.replace(
+                "https://notify.nhs.uk/cloudevents", "")
 
         # Create event folder and index.mdx (EventCatalog expects events/eventname/index.mdx)
         event_dir = events_dir / event_slug
@@ -256,15 +307,20 @@ summary: |
                     self.log(f"Copied schema file: {schema_filename}", "DEBUG")
 
                     # Also copy the bundled version if it exists
-                    bundled_schema_file = source_schema_file.parent / source_schema_file.name.replace('.schema.', '.bundle.schema.')
+                    bundled_schema_file = source_schema_file.parent / \
+                        source_schema_file.name.replace(
+                            '.schema.', '.bundle.schema.')
                     if bundled_schema_file.exists():
                         bundled_schema_filename = bundled_schema_file.name
                         dest_bundled_schema_file = event_dir / bundled_schema_filename
                         try:
-                            shutil.copy2(bundled_schema_file, dest_bundled_schema_file)
-                            self.log(f"Copied bundled schema file: {bundled_schema_filename}", "DEBUG")
+                            shutil.copy2(bundled_schema_file,
+                                        dest_bundled_schema_file)
+                            self.log(
+                                f"Copied bundled schema file: {bundled_schema_filename}", "DEBUG")
                         except Exception as e:
-                            self.log(f"Error copying bundled schema file {bundled_schema_file}: {e}", "WARNING")
+                            self.log(
+                                f"Error copying bundled schema file {bundled_schema_file}: {e}", "WARNING")
                             bundled_schema_filename = None
 
                     # Parse the schema file to look for dataschema
@@ -278,31 +334,40 @@ summary: |
                             if "const" in dataschema_prop:
                                 data_schema_url = dataschema_prop["const"]
                                 # Strip the prefix to get relative path
-                                data_schema_path = data_schema_url.replace("https://notify.nhs.uk/cloudevents", "")
+                                data_schema_path = data_schema_url.replace(
+                                    "https://notify.nhs.uk/cloudevents", "")
 
                                 # Copy the data schema file
-                                relative_data_schema_path = data_schema_path.lstrip("/")
+                                relative_data_schema_path = data_schema_path.lstrip(
+                                    "/")
                                 source_data_schema_file = self.schema_base_path / relative_data_schema_path
 
                                 if source_data_schema_file.exists():
                                     data_schema_filename = source_data_schema_file.name
                                     dest_data_schema_file = event_dir / data_schema_filename
                                     try:
-                                        shutil.copy2(source_data_schema_file, dest_data_schema_file)
-                                        self.log(f"Copied data schema file: {data_schema_filename}", "DEBUG")
+                                        shutil.copy2(
+                                            source_data_schema_file, dest_data_schema_file)
+                                        self.log(
+                                            f"Copied data schema file: {data_schema_filename}", "DEBUG")
                                     except Exception as e:
-                                        self.log(f"Error copying data schema file {source_data_schema_file}: {e}", "WARNING")
+                                        self.log(
+                                            f"Error copying data schema file {source_data_schema_file}: {e}", "WARNING")
                                         data_schema_filename = None
                                 else:
-                                    self.log(f"Data schema file not found: {source_data_schema_file}", "WARNING")
+                                    self.log(
+                                        f"Data schema file not found: {source_data_schema_file}", "WARNING")
                     except Exception as e:
-                        self.log(f"Error parsing schema file {source_schema_file}: {e}", "WARNING")
+                        self.log(
+                            f"Error parsing schema file {source_schema_file}: {e}", "WARNING")
 
                 except Exception as e:
-                    self.log(f"Error copying schema file {source_schema_file}: {e}", "WARNING")
+                    self.log(
+                        f"Error copying schema file {source_schema_file}: {e}", "WARNING")
                     schema_filename = None
             else:
-                self.log(f"Schema file not found: {source_schema_file}", "WARNING")
+                self.log(
+                    f"Schema file not found: {source_schema_file}", "WARNING")
 
         # Create event markdown file
         frontmatter_parts = [
@@ -315,7 +380,8 @@ summary: |
         # Use bundled schema if available, otherwise use regular schema
         schema_path_for_frontmatter = bundled_schema_filename if bundled_schema_filename else schema_filename
         if schema_path_for_frontmatter:
-            frontmatter_parts.append(f"schemaPath: {schema_path_for_frontmatter}")
+            frontmatter_parts.append(
+                f"schemaPath: {schema_path_for_frontmatter}")
 
         event_content = f"""---
 {chr(10).join(frontmatter_parts)}
@@ -394,7 +460,8 @@ Schema Reference: [{schema_path}]({schema_path})
         self.channels_dir.mkdir(exist_ok=True)
 
         address = channel_data.get("address", channel_name)
-        description = channel_data.get("description", f"Channel: {channel_name}")
+        description = channel_data.get(
+            "description", f"Channel: {channel_name}")
 
         # Create channel folder and index.mdx (EventCatalog expects channels/channelname/index.mdx)
         channel_dir = self.channels_dir / channel_slug
@@ -407,7 +474,7 @@ name: {channel_name}
 version: 1.0.0
 address: {address}
 summary: |
-  {description}
+    {description}
 ---
 
 ## Overview
@@ -445,31 +512,32 @@ This channel carries the following messages:
 
         # Extract service information
         service_name = self.extract_service_name(asyncapi_data)
-        domain_name = self.extract_domain_from_service(service_name, asyncapi_data)
+        subdomain_name = self.extract_subdomain_from_service(
+            service_name, asyncapi_data)
         service_slug = self.sanitize_name(service_name)
-        domain_slug = self.sanitize_name(domain_name)
+        subdomain_slug = self.sanitize_name(subdomain_name)
 
-        # Create domain structure
-        domain_path = self.create_domain_structure(domain_name)
+        # Create subdomain structure (which also creates parent domain)
+        subdomain_path = self.create_subdomain_structure(subdomain_name)
 
         # Create service structure
         service_path = self.create_service_structure(
-            domain_path, service_name, asyncapi_data, domain_name
+            subdomain_path, service_name, asyncapi_data, subdomain_name
         )
 
-        # Track domain-service relationship
-        if domain_slug not in self.domain_services:
-            self.domain_services[domain_slug] = []
+        # Track subdomain-service relationship
+        if subdomain_slug not in self.subdomain_services:
+            self.subdomain_services[subdomain_slug] = []
 
-        # Add service to domain if not already there
+        # Add service to subdomain if not already there
         # Normalize version to semver (EventCatalog expects semver)
         raw_version = asyncapi_data.get("info", {}).get("version", "0.0.1")
         if not raw_version or not raw_version[0].isdigit() or raw_version.count('.') != 2:
             raw_version = "1.0.0"
 
         service_ref = {"id": service_slug, "version": raw_version}
-        if service_ref not in self.domain_services[domain_slug]:
-            self.domain_services[domain_slug].append(service_ref)
+        if service_ref not in self.subdomain_services[subdomain_slug]:
+            self.subdomain_services[subdomain_slug].append(service_ref)
 
         # Initialize service events tracking
         if service_slug not in self.service_events:
@@ -507,27 +575,33 @@ This channel carries the following messages:
                     event_ref = {"id": event_slug, "version": "1.0.0"}
                     if action == "send":
                         if event_ref not in self.service_events[service_slug]["sends"]:
-                            self.service_events[service_slug]["sends"].append(event_ref)
+                            self.service_events[service_slug]["sends"].append(
+                                event_ref)
                     else:
                         if event_ref not in self.service_events[service_slug]["receives"]:
-                            self.service_events[service_slug]["receives"].append(event_ref)
+                            self.service_events[service_slug]["receives"].append(
+                                event_ref)
 
                     self.create_event_structure(
                         service_path, msg_name, channel_address, msg_data, action
                     )
 
-    def update_domain_relationships(self) -> None:
-        """Update domain index files with service relationships."""
-        self.log("\nUpdating domain relationships...")
+    def update_subdomain_relationships(self) -> None:
+        """Update subdomain index files with service relationships."""
+        self.log("\nUpdating subdomain relationships...")
 
-        for domain_slug, services in self.domain_services.items():
-            domain_path = self.domains_dir / domain_slug / "index.mdx"
-            if not domain_path.exists():
-                self.log(f"Domain file not found: {domain_path}", "WARNING")
+        parent_domain_slug = self.sanitize_name(self.parent_domain_name)
+
+        for subdomain_slug, services in self.subdomain_services.items():
+            subdomain_path = self.domains_dir / parent_domain_slug / \
+                "subdomains" / subdomain_slug / "index.mdx"
+            if not subdomain_path.exists():
+                self.log(
+                    f"Subdomain file not found: {subdomain_path}", "WARNING")
                 continue
 
             # Read existing content
-            with open(domain_path, "r") as f:
+            with open(subdomain_path, "r") as f:
                 content = f.read()
 
             # Split frontmatter and markdown
@@ -539,7 +613,8 @@ This channel carries the following messages:
 
                     # Remove existing services section if present
                     import re
-                    frontmatter = re.sub(r'\nservices:.*?(?=\n\w+:|$)', '', frontmatter, flags=re.DOTALL)
+                    frontmatter = re.sub(
+                        r'\nservices:.*?(?=\n\w+:|$)', '', frontmatter, flags=re.DOTALL)
 
                     # Add updated services list
                     services_yaml = "\nservices:\n"
@@ -551,31 +626,44 @@ This channel carries the following messages:
 
                     # Write back
                     new_content = f"---{frontmatter}---{markdown_content}"
-                    with open(domain_path, "w") as f:
+                    with open(subdomain_path, "w") as f:
                         f.write(new_content)
 
-                    self.log(f"Updated domain: {domain_slug} with {len(services)} services")
+                    self.log(
+                        f"Updated subdomain: {subdomain_slug} with {len(services)} services")
+
+    def update_domain_relationships(self) -> None:
+        """DEPRECATED: Use update_subdomain_relationships instead. Kept for backward compatibility."""
+        self.update_subdomain_relationships()
 
     def update_service_relationships(self) -> None:
         """Update service index files with event relationships."""
         self.log("\nUpdating service relationships...")
 
+        parent_domain_slug = self.sanitize_name(self.parent_domain_name)
+        parent_domain_path = self.domains_dir / parent_domain_slug
+
         for service_slug, events in self.service_events.items():
-            # Find the service file - search in all domains
+            # Find the service file - search in all subdomains
             service_file = None
-            for domain_dir in self.domains_dir.glob("*"):
-                if not domain_dir.is_dir():
-                    continue
-                services_dir = domain_dir / "services"
-                if not services_dir.exists():
-                    continue
-                potential_file = services_dir / service_slug / "index.mdx"
-                if potential_file.exists():
-                    service_file = potential_file
-                    break
+
+            # Check if parent domain has subdomains directory
+            subdomains_dir = parent_domain_path / "subdomains"
+            if subdomains_dir.exists():
+                for subdomain_dir in subdomains_dir.glob("*"):
+                    if not subdomain_dir.is_dir():
+                        continue
+                    services_dir = subdomain_dir / "services"
+                    if not services_dir.exists():
+                        continue
+                    potential_file = services_dir / service_slug / "index.mdx"
+                    if potential_file.exists():
+                        service_file = potential_file
+                        break
 
             if not service_file:
-                self.log(f"Service file not found for: {service_slug}", "WARNING")
+                self.log(
+                    f"Service file not found for: {service_slug}", "WARNING")
                 continue
 
             # Read existing content
@@ -615,12 +703,14 @@ This channel carries the following messages:
                         with open(service_file, "w") as f:
                             f.write(new_content)
 
-                        self.log(f"Updated service: {service_slug} with {len(events['sends'])} sends, {len(events['receives'])} receives")
+                        self.log(
+                            f"Updated service: {service_slug} with {len(events['sends'])} sends, {len(events['receives'])} receives")
 
     def import_all(self) -> None:
         """Import all AsyncAPI files from the directory."""
         if not self.asyncapi_dir.exists():
-            self.log(f"AsyncAPI directory not found: {self.asyncapi_dir}", "ERROR")
+            self.log(
+                f"AsyncAPI directory not found: {self.asyncapi_dir}", "ERROR")
             sys.exit(1)
 
         # Find all AsyncAPI YAML files
@@ -663,19 +753,19 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Basic usage with default paths
-  python import_asyncapi.py
+    # Basic usage with default paths
+    python import_asyncapi.py
 
-  # Custom paths
-  python import_asyncapi.py \\
-    --asyncapi-dir /path/to/asyncapi/output \\
-    --eventcatalog-dir /path/to/eventcatalog
+    # Custom paths
+    python import_asyncapi.py \\
+        --asyncapi-dir /path/to/asyncapi/output \\
+        --eventcatalog-dir /path/to/eventcatalog
 
-  # Verbose output
-  python import_asyncapi.py --verbose
+    # Verbose output
+    python import_asyncapi.py --verbose
 
-  # Custom domain name
-  python import_asyncapi.py --domain "My Domain"
+    # Custom parent domain name
+    python import_asyncapi.py --parent-domain "My Parent Domain"
         """,
     )
 
@@ -698,10 +788,17 @@ Examples:
     )
 
     parser.add_argument(
-        "--domain",
+        "--parent-domain",
         type=str,
         default="Digital Letters",
-        help="Name of the domain to create (default: Digital Letters)",
+        help="Name of the parent domain (subdomains will be created under this) (default: Digital Letters)",
+    )
+
+    parser.add_argument(
+        "--domain",
+        type=str,
+        default=None,
+        help="DEPRECATED: Use --parent-domain instead",
     )
 
     parser.add_argument(
@@ -720,11 +817,18 @@ Examples:
 
     args = parser.parse_args()
 
+    # Handle deprecated --domain flag
+    parent_domain = args.parent_domain
+    if args.domain is not None:
+        print(
+            "Warning: --domain is deprecated, use --parent-domain instead", file=sys.stderr)
+        parent_domain = args.domain
+
     # Create importer and run
     importer = AsyncAPIImporter(
         asyncapi_dir=args.asyncapi_dir,
         eventcatalog_dir=args.eventcatalog_dir,
-        domain_name=args.domain,
+        parent_domain_name=parent_domain,
         verbose=args.verbose,
         schema_base_path=args.schema_base_path,
     )

@@ -23,12 +23,17 @@ deploy: # Deploy the project artefact to the target environment @Pipeline
 	# TODO: Implement the artefact deployment step
 
 clean:: # Clean-up project resources (main) @Operations
+	$(MAKE) -C docs clean
+	$(MAKE) -C src/cloudevents clean
+	$(MAKE) -C src/eventcatalogasyncapiimporter clean
+	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output
 	rm -f .version
 	# TODO: Implement project resources clean-up step
 
 config:: _install-dependencies version # Configure development environment (main) @Configuration
 	$(MAKE) -C docs install
 	$(MAKE) -C src/cloudevents install
+	$(MAKE) -C src/eventcatalogasyncapiimporter install
 
 serve-docs:
 	$(MAKE) -C docs s

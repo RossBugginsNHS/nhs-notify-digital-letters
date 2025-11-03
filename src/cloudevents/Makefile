@@ -52,13 +52,15 @@ deploy:
 	@echo "=== Deploying all schemas (version: $(PUBLISH_VERSION)) ==="
 	$(MAKE) clean
 	$(MAKE) -C $(CLOUDEVENTS_BASE_PATH) deploy PUBLISH_VERSION=$(PUBLISH_VERSION)
-	make build-docs
-	make update-readme
+	$(MAKE) build-docs
+	$(MAKE) update-readme
 	@echo ""
 	@echo "✅ Build complete: local schemas tested and distribution schemas ready!"
 
 clean::
 	@echo "=== Cleaning output/ and schemas/ directories ==="
+	npm run clear-cache
+	npm run cache-info
 	rm -rf $(OUTPUT_BASE_PATH)
 	rm -rf $(SCHEMAS_BASE_PATH)
 	rm -rf $(DOCS_BASE_PATH)

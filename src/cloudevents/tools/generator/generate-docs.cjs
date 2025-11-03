@@ -11,7 +11,14 @@ const path = require("path");
 const fs = require("fs");
 const JsonSchemaStaticDocs = require("json-schema-static-docs");
 
+// Dynamic import of ES module cache
+let getCachedSchema, setCachedSchema;
+
 (async () => {
+  // Import the TypeScript ES module cache at runtime
+  const cacheModule = await import("../cache/schema-cache.ts");
+  getCachedSchema = cacheModule.getCachedSchema;
+  setCachedSchema = cacheModule.setCachedSchema;
   // Parse command line arguments
   const args = process.argv.slice(2);
   if (args.length < 2) {
@@ -39,7 +46,17 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
 
   // Function to load external schemas from HTTP URLs
   const loadExternalSchema = async (uri) => {
-    console.log(`📥 Loading external schema: ${uri}`);
+    // Check persistent cache first
+    const cached = getCachedSchema(uri);
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        console.warn(`[CACHE] Failed to parse cached schema for ${uri}, fetching fresh copy`);
+      }
+    }
+
+    console.log(`� Loading external schema: ${uri}`);
 
     // Block metaschema self-references to prevent infinite loops
     if (uri.includes('json-schema.org/draft-07/schema') ||
@@ -57,15 +74,16 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
       const http = await import('http');
       const protocol = uri.startsWith('https://') ? https.default : http.default;
 
-      return new Promise((resolve, reject) => {
+      const schema = await new Promise((resolve, reject) => {
         const options = {
           headers: {
             'User-Agent': 'nhs-notify-schema-docs-generator/1.0',
             'Accept': 'application/json, application/schema+json, */*'
-          }
+          },
+          timeout: 10000 // Add 10 second timeout
         };
 
-        protocol.get(uri, options, (res) => {
+        const req = protocol.get(uri, options, (res) => {
           if (res.statusCode !== 200) {
             reject(new Error(`HTTP ${res.statusCode} when fetching ${uri}`));
             return;
@@ -77,15 +95,28 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
             try {
               const schema = JSON.parse(data);
               console.log(`   ✅ Successfully loaded schema from ${uri}`);
+
+              // Cache the raw response data (not the parsed schema)
+              setCachedSchema(uri, data);
+
               resolve(schema);
             } catch (e) {
               reject(new Error(`Failed to parse JSON from ${uri}: ${e.message}`));
             }
           });
-        }).on('error', (e) => {
+        });
+
+        req.on('error', (e) => {
           reject(new Error(`Failed to fetch ${uri}: ${e.message}`));
         });
+
+        req.on('timeout', () => {
+          req.destroy();
+          reject(new Error(`Request timeout when fetching ${uri}`));
+        });
       });
+
+      return schema;
     } catch (e) {
       throw new Error(`Failed to load external schema ${uri}: ${e.message}`);
     }
@@ -133,13 +164,19 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
 
   const loadSchemaRecursively = async (url) => {
     if (loadedUrls.has(url)) {
-      return; // Already loaded
+      return; // Already loaded or in progress
     }
 
-    loadedUrls.add(url);
+    loadedUrls.add(url); // Mark as in progress to prevent concurrent requests
 
     try {
       const schema = await loadExternalSchema(url);
+
+      // Skip if schema loading was blocked (returns false)
+      if (schema === false) {
+        return;
+      }
+
       externalSchemas[url] = schema;
 
       // Find and load any dependencies in this schema
@@ -151,7 +188,8 @@ const JsonSchemaStaticDocs = require("json-schema-static-docs");
       }
     } catch (e) {
       console.error(`   ❌ Failed to load ${url}: ${e.message}`);
-      console.error(`   Continuing with documentation generation (may fail validation)...`);
+      console.error(`   Continuing with documentation generation (may encounter validation issues)...`);
+      // Keep URL marked as loaded to prevent retry loops
     }
   };
 

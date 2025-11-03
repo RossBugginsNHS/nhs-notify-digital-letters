@@ -122,20 +122,45 @@ class TestAsyncAPIImporter(unittest.TestCase):
         self.assertEqual(service_name, "Test Service")
 
     def test_extract_domain_from_service(self):
-        """Test domain extraction from service metadata."""
+        """Test subdomain extraction from service metadata."""
         importer = AsyncAPIImporter(
             self.asyncapi_dir, self.eventcatalog_dir, verbose=False
         )
-        domain = importer.extract_domain_from_service(
+        subdomain = importer.extract_subdomain_from_service(
             "Test Service", self.sample_asyncapi
         )
-        self.assertEqual(domain, "Test Domain")
+        self.assertEqual(subdomain, "Test Domain")
+
+    def test_create_subdomain_structure(self):
+        """Test subdomain directory creation."""
+        importer = AsyncAPIImporter(
+            self.asyncapi_dir, self.eventcatalog_dir, parent_domain_name="Test Parent", verbose=False
+        )
+        subdomain_path = importer.create_subdomain_structure("Test SubDomain")
+
+        # Check that parent domain exists
+        parent_domain_path = self.eventcatalog_dir / "domains" / "test-parent"
+        self.assertTrue(parent_domain_path.exists())
+        self.assertTrue((parent_domain_path / "index.mdx").exists())
+
+        # Check that subdomain exists under parent
+        self.assertTrue(subdomain_path.exists())
+        self.assertTrue((subdomain_path / "index.mdx").exists())
+        self.assertEqual(subdomain_path.parent.name, "subdomains")
+        self.assertEqual(subdomain_path.parent.parent.name, "test-parent")
+
+        # Check index.mdx content
+        with open(subdomain_path / "index.mdx", "r") as f:
+            content = f.read()
+            self.assertIn("Test SubDomain", content)
+            self.assertIn("test-subdomain", content)
 
     def test_create_domain_structure(self):
-        """Test domain directory creation."""
+        """Test domain directory creation (backward compatibility)."""
         importer = AsyncAPIImporter(
-            self.asyncapi_dir, self.eventcatalog_dir, verbose=False
+            self.asyncapi_dir, self.eventcatalog_dir, parent_domain_name="Test Parent", verbose=False
         )
+        # This should call create_subdomain_structure
         domain_path = importer.create_domain_structure("Test Domain")
 
         self.assertTrue(domain_path.exists())
@@ -148,21 +173,21 @@ class TestAsyncAPIImporter(unittest.TestCase):
             self.assertIn("test-domain", content)
 
     def test_create_service_structure(self):
-        """Test service directory creation."""
+        """Test service directory creation under subdomain."""
         importer = AsyncAPIImporter(
-            self.asyncapi_dir, self.eventcatalog_dir, verbose=False
+            self.asyncapi_dir, self.eventcatalog_dir, parent_domain_name="Test Parent", verbose=False
         )
-        domain_path = importer.create_domain_structure("Test Domain")
+        subdomain_path = importer.create_subdomain_structure("Test SubDomain")
         service_path = importer.create_service_structure(
-            domain_path, "Test Service", self.sample_asyncapi, "Test Domain"
+            subdomain_path, "Test Service", self.sample_asyncapi, "Test SubDomain"
         )
 
-        # Services should be under domain/services/ (nested structure)
+        # Services should be under subdomain/services/ (nested structure)
         self.assertTrue(service_path.exists())
         self.assertTrue((service_path / "index.mdx").exists())
-        self.assertTrue((domain_path / "services").exists())
+        self.assertTrue((subdomain_path / "services").exists())
         self.assertEqual(service_path.parent.name, "services")
-        self.assertEqual(service_path.parent.parent, domain_path)
+        self.assertEqual(service_path.parent.parent, subdomain_path)
 
         # Check service is tracked
         self.assertIn("test-service", importer.created_services)
@@ -185,7 +210,7 @@ class TestAsyncAPIImporter(unittest.TestCase):
     def test_full_import(self):
         """Test full import process."""
         importer = AsyncAPIImporter(
-            self.asyncapi_dir, self.eventcatalog_dir, verbose=False
+            self.asyncapi_dir, self.eventcatalog_dir, parent_domain_name="Test Parent", verbose=False
         )
         importer.import_all()
 
@@ -193,13 +218,21 @@ class TestAsyncAPIImporter(unittest.TestCase):
         self.assertGreater(len(importer.created_services), 0)
         self.assertGreater(len(importer.created_channels), 0)
 
-        # Verify domain directory exists
+        # Verify parent domain directory exists
         domains_dir = self.eventcatalog_dir / "domains"
         self.assertTrue(domains_dir.exists())
 
-        # Verify at least one domain was created
-        domains = list(domains_dir.iterdir())
-        self.assertGreater(len(domains), 0)
+        # Verify parent domain was created
+        parent_domain_dir = domains_dir / "test-parent"
+        self.assertTrue(parent_domain_dir.exists())
+
+        # Verify subdomains directory exists under parent
+        subdomains_dir = parent_domain_dir / "subdomains"
+        self.assertTrue(subdomains_dir.exists())
+
+        # Verify at least one subdomain was created
+        subdomains = list(subdomains_dir.iterdir())
+        self.assertGreater(len(subdomains), 0)
 
 
 if __name__ == "__main__":
