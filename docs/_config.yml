@@ -23,7 +23,7 @@ title: NHS Notify Digital Letters
 description: >- # this means to ignore newlines until "baseurl:"
   Repository Template documentation for the NHS Notify Platform.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://nhsdigital.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 collections_dir: collections
 
