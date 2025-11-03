@@ -1,5 +1,5 @@
 ---
-title: external-supplier-api-print-status-updated
+title: external-supplier-api-letter-printed
 type: uk.nhs.notify.supplierapi.letter.printed.v1
 nice_name: EXTERNAL SupplierAPIPrintStatusUpdated
 service: Shared Event Bus

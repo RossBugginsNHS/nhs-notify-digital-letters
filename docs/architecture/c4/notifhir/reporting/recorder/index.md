@@ -11,15 +11,20 @@ author: Tom D'Roza
 diagrams: [c4code-tracker-listener, c4component-nhsapp-callback, sequence-nhsapp-callback]
 events-raised: []
 events-consumed: [
-    print-status-updated,
-    core-request-submitted,
-    mesh-inbox-message-received,
     mesh-inbox-message-downloaded,
-    pdm-resource-submitted,
-    viewer-digital-letter-read,
+    mesh-inbox-message-received,
+    mesh-status-report-sent,
+    messages-request-sent,
+    messages-request-submitted,
     pdm-resource-retries-exceeded,
+    pdm-resource-submitted,
+    print-printed,
     reporting-daily-report-generated,
-    mesh-status-report-sent]
+    viewer-digital-letter-read,
+    queue-item-enqueued,
+    queue-item-removed,
+    queue-item-dequeued
+    ]
 description: Listens to all events and generates up the report
 c4type: code
 

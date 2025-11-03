@@ -1,7 +1,7 @@
 ---
 
 title: Notify Callbacks
-parent: Message Client
+parent: Messages Client
 has_children: true
 is_not_draft: false
 last_modified_date: 2024-05-28

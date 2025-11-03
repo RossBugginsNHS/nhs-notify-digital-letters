@@ -1,6 +1,6 @@
 ---
 
-title: Message Client
+title: Messages Client
 parent:  NotiFHIR
 has_children: true
 is_not_draft: false

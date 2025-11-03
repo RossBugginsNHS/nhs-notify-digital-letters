@@ -10,6 +10,6 @@ owner: Ross Buggins
 author: Ross Buggins
 diagrams: []
 events-raised: [print-printed]
-events-consumed: [external-supplier-api-print-status-updated]
+events-consumed: [external-supplier-api-letter-printed]
 c4type: code
 ---

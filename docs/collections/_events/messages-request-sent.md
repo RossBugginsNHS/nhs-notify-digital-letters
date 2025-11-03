@@ -2,9 +2,9 @@
 title: messages-request-sent
 type: uk.nhs.notify.digital.letters.messages.request.sent.v1
 nice_name: MessageRequestSent
-service: Message Client
+service: Messages Client
 schema_envelope: https://notify.nhs.uk/cloudevents/schemas/digital-letters/2025-10-draft/events/uk.nhs.notify.digital.letters.messages.request.sent.v1
-schema_data: https://notify.nhs.uk/cloudevents/schemas/digital-letters/2025-10-draft/data/message.status.updated-data.v1.schema.yaml
+schema_data: https://notify.nhs.uk/cloudevents/schemas/digital-letters/2025-10-draft/data/messages.status.updated-data.v1.schema.yaml
 ---
 
 This is an event.
