@@ -26,16 +26,11 @@ runs:
     - name: Setup Pages
       id: pages
       uses: actions/configure-pages@v5
-    - name: Make config
-      working-directory: ./
-      # Outputs to the './_site' directory by default
-      shell: bash
-      run: make config
     - name: Build with Jekyll
       working-directory: ./docs
       # Outputs to the './_site' directory by default
       shell: bash
-      run: make build BASE_URL="${{ steps.pages.outputs.base_path }}" VERSION="${{ inputs.version }}"
+      run: make build-ci BASE_URL="${{ steps.pages.outputs.base_path }}" VERSION="${{ inputs.version }}"
       #run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
       env:
         JEKYLL_ENV: production
