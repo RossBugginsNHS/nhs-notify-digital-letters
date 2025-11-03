@@ -53,7 +53,6 @@ function renderCommonSchemas(common) {
     lines.push("## Common Schemas (Shared Across All Domains)");
     lines.push("");
     lines.push("_No common schemas defined yet._");
-    lines.push("");
     return lines.join("\n");
   }
   lines.push("## Common Schemas (Shared Across All Domains)");
@@ -194,11 +193,10 @@ function generateContent(index) {
 
   // Each domain
   for (const domain of index.domains) {
-    sections.push("");
     sections.push(renderDomain(domain));
   }
 
-  return sections.join("\n");
+  return sections.join("\n\n");
 }
 
 /**
@@ -234,7 +232,7 @@ function updateReadme(generatedContent) {
   const before = readme.substring(0, startIndex);
   const after = readme.substring(endIndex);
 
-  const newReadme = before + "\n" + generatedContent + "\n\n" + after;
+  const newReadme = before + "\n" + generatedContent + "\n" + after;
 
   fs.writeFileSync(README_FILE, newReadme, "utf8");
 
