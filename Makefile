@@ -13,8 +13,8 @@ dependencies: # Install dependencies needed to build and test the project @Pipel
 build: # Build the project artefact @Pipeline
 	$(MAKE) -C docs build
 
-serve:
-	$(MAKE) -C docs serve
+debug:
+	$(MAKE) -C docs debug
 
 publish: # Publish the project artefact @Pipeline
 	# TODO: Implement the artefact publishing step
