@@ -39,7 +39,7 @@ endef
 
 build: clean build-schemas copy-schema-docs copy-schema-yaml-docs copy-schemas build-eventcatalog build-docs show-build-output
 
-build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs build-docs copy-schemas show-build-output
+build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs copy-schemas build-eventcatalog build-docs show-build-output
 
 
 build-eventcatalog:
