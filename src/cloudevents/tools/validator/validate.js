@@ -304,7 +304,11 @@ async function loadExternalSchema(uri) {
   throw new Error(`Cannot load schema from URI: ${uri}`);
 }
 
-const ajv = new Ajv2020({ strict: false, loadSchema: loadExternalSchema });
+const ajv = new Ajv2020({ 
+  strict: false, 
+  loadSchema: loadExternalSchema,
+  verbose: true // Enable schema and parentSchema in error objects
+});
 addFormats(ajv);
 
 // Only add schemas by absolute file paths (ignore any relative $id in the schema files)
@@ -519,6 +523,54 @@ const data = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
       console.error("  Keyword:", err.keyword);
       if (err.params) console.error("  Params:", JSON.stringify(err.params));
       if (err.message) console.error("  Message:", err.message);
+      
+      // Extract helpful information from parentSchema (available with verbose: true)
+      if (err.parentSchema) {
+        const details = [];
+        if (err.parentSchema.name) {
+          details.push(`Name: ${err.parentSchema.name}`);
+        }
+        if (err.parentSchema.description) {
+          details.push(`Description: ${err.parentSchema.description}`);
+        }
+        if (err.parentSchema.pattern) {
+          details.push(`Pattern: ${err.parentSchema.pattern}`);
+        }
+        if (err.parentSchema.const !== undefined) {
+          details.push(`Expected const: ${JSON.stringify(err.parentSchema.const)}`);
+        }
+        if (err.parentSchema.enum) {
+          details.push(`Allowed values: ${JSON.stringify(err.parentSchema.enum)}`);
+        }
+        
+        if (details.length > 0) {
+          console.error("  Schema constraint details:");
+          for (const detail of details) {
+            console.error(`    ${detail}`);
+          }
+        }
+      }
+      
+      // Show the actual failing schema constraint value
+      if (err.schema && typeof err.schema === 'object') {
+        const schemaDetails = [];
+        if (err.schema.pattern) {
+          schemaDetails.push(`Pattern: ${err.schema.pattern}`);
+        }
+        if (err.schema.const !== undefined) {
+          schemaDetails.push(`Const: ${JSON.stringify(err.schema.const)}`);
+        }
+        if (err.schema.enum) {
+          schemaDetails.push(`Enum: ${JSON.stringify(err.schema.enum)}`);
+        }
+        
+        if (schemaDetails.length > 0) {
+          console.error("  Failing constraint:");
+          for (const detail of schemaDetails) {
+            console.error(`    ${detail}`);
+          }
+        }
+      }
       // Enrich nhs-number format failures with checksum details
       if (
         err.keyword === "format" &&
