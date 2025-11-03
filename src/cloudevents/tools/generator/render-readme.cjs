@@ -53,6 +53,7 @@ function renderCommonSchemas(common) {
     lines.push("## Common Schemas (Shared Across All Domains)");
     lines.push("");
     lines.push("_No common schemas defined yet._");
+    lines.push("");
     return lines.join("\n");
   }
   lines.push("## Common Schemas (Shared Across All Domains)");
@@ -196,7 +197,7 @@ function generateContent(index) {
     sections.push(renderDomain(domain));
   }
 
-  return sections.join("\n\n");
+  return sections.join("\n");
 }
 
 /**
