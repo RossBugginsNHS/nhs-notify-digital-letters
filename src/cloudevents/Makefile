@@ -22,6 +22,8 @@ TOOLS_BASE_PATH = $(shell mkdir -p $(MAKEFILE_DIR)tools && cd $(MAKEFILE_DIR)too
 config:: _install-dependencies version # Configure development environment (main) @Configuration
 	npm install
 
+install:
+		npm install
 build:
 	@echo "=== Building all schemas (version: $(PUBLISH_VERSION)) ==="
 	$(MAKE) -C $(CLOUDEVENTS_BASE_PATH) build PUBLISH_VERSION=$(PUBLISH_VERSION)

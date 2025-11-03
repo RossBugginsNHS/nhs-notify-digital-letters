@@ -31,7 +31,7 @@ install:
 	bundle install
 
 s serve:
-	npm run
+	npm run serve
 
 define baseurlparam =
 $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
