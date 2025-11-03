@@ -1,5 +1,5 @@
 
-build:
+build: clean
 	ls -la
 	make -C ../asyncapigenerator generate
 	make -C ../eventcatalogasyncapiimporter import
@@ -9,3 +9,8 @@ build:
 
 serve:
 	npm run dev
+
+clean:
+	rm -rf .eventcatalog-core
+	rm -rf dist
+	rm -rf node_modules
