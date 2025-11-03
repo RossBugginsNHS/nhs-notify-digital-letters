@@ -9,7 +9,7 @@ last_modified_date: 2024-05-28
 owner: Ross Buggins
 author: Ross Buggins
 diagrams: []
-events-raised: [print-status-updated]
+events-raised: [print-printed]
 events-consumed: [external-supplier-api-print-status-updated]
 c4type: code
 ---

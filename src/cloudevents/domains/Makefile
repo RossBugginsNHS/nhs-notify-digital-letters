@@ -110,7 +110,7 @@ test:
 	echo ""; \
 	echo "Individual test results:"; \
 	RESULTS_TMPFILE=$$(mktemp); \
-	echo "$$ALL_TEST_RESULTS" | grep "TEST_RESULT:" > $$RESULTS_TMPFILE; \
+	echo "$$ALL_TEST_RESULTS" | grep "TEST_RESULT:" | sort -u > $$RESULTS_TMPFILE; \
 	while IFS= read -r line; do \
 		if [ -n "$$line" ]; then \
 			RESULT=$$(echo "$$line" | sed 's/TEST_RESULT: //'); \

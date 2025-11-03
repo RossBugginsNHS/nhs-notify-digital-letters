@@ -114,7 +114,8 @@
     "chat.instructionsFilesLocations": {
       ".github": true,
       ".github/instructions": true
-    }
+    },
+    "terminal.integrated.scrollback": 10000
   },
   "extensions": {
     "recommendations": [

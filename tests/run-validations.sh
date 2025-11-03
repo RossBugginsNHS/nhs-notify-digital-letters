@@ -53,7 +53,8 @@ passed=0
 total=${#SCHEMAS[@]}
 index=1
 
-
+# Array to store individual test results
+test_results=()
 
 for schema_path in "${SCHEMAS[@]}"; do
     schema_name=$(get_schema_name "$schema_path")
@@ -71,13 +72,14 @@ for schema_path in "${SCHEMAS[@]}"; do
 
     if echo "$validation_output" | grep -q "Valid!"; then
         echo "✅ PASS"
-
+        test_results+=("PASS|$data_file_name|$schema_name")
         ((passed++))
     else
         echo "❌ FAIL"
         echo "Error Details:"
         # Show the actual error output
         echo "$validation_output" | grep -v "^>" | grep -v "^$" | head -50
+        test_results+=("FAIL|$data_file_name|$schema_name")
         failed=1
     fi
 
@@ -94,5 +96,15 @@ else
 fi
 echo "========================================"
 echo ""
+
+# Output machine-readable results for parent scripts
+# Format: VALIDATION_RESULTS: passed total failed_flag
+echo "VALIDATION_RESULTS: $passed $total $failed"
+
+# Output individual test results
+# Format: TEST_RESULT: status|event_name|schema_name
+for result in "${test_results[@]}"; do
+    echo "TEST_RESULT: $result"
+done
 
 exit $failed
