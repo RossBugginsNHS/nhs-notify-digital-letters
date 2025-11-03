@@ -11,13 +11,14 @@ author: Tom D'Roza
 diagrams: []
 events-raised: []
 events-consumed: [
-    core-request-submitted,
+    messages-request-sent,
+    messages-request-submitted,
     mesh-inbox-message-downloaded,
     mesh-inbox-message-received,
     mesh-status-report-sent,
     pdm-resource-retries-exceeded,
-    print-letter-available,
-    print-status-updated,
+    letter-available,
+    print-printed,
     reporting-daily-report-generated,
     viewer-digital-letter-read,
     ]

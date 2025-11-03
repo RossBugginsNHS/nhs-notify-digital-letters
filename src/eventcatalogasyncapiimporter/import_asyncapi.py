@@ -61,6 +61,8 @@ class AsyncAPIImporter:
         self.subdomain_services: Dict[str, List[Dict[str, str]]] = {}
         # service -> {sends: [], receives: []}
         self.service_events: Dict[str, Dict[str, List[Dict[str, str]]]] = {}
+        # Track all subdomains created
+        self.created_subdomains: Dict[str, str] = {}  # slug -> version
 
     def log(self, message: str, level: str = "INFO") -> None:
         """Log a message."""
@@ -184,6 +186,9 @@ This subdomain contains services related to {subdomain_name}.
                 f.write(index_content)
 
             self.log(f"Created subdomain: {subdomain_name}")
+
+        # Track the subdomain for parent domain relationships
+        self.created_subdomains[subdomain_slug] = "0.0.1"
 
         return subdomain_path
 
@@ -636,6 +641,50 @@ This channel carries the following messages:
         """DEPRECATED: Use update_subdomain_relationships instead. Kept for backward compatibility."""
         self.update_subdomain_relationships()
 
+    def update_parent_domain_relationships(self) -> None:
+        """Update parent domain index file with subdomain relationships."""
+        self.log("\nUpdating parent domain with subdomains...")
+
+        parent_domain_slug = self.sanitize_name(self.parent_domain_name)
+        parent_domain_path = self.domains_dir / parent_domain_slug / "index.mdx"
+
+        if not parent_domain_path.exists():
+            self.log(f"Parent domain file not found: {parent_domain_path}", "WARNING")
+            return
+
+        # Read existing content
+        with open(parent_domain_path, "r") as f:
+            content = f.read()
+
+        # Split frontmatter and markdown
+        if content.startswith("---"):
+            parts = content.split("---", 2)
+            if len(parts) >= 3:
+                frontmatter = parts[1]
+                markdown_content = parts[2]
+
+                # Remove existing domains section if present
+                import re
+                frontmatter = re.sub(
+                    r'\ndomains:.*?(?=\n\w+:|$)', '', frontmatter, flags=re.DOTALL)
+
+                # Add updated domains list (subdomains are referenced as "domains" in EventCatalog)
+                if self.created_subdomains:
+                    domains_yaml = "\ndomains:\n"
+                    for subdomain_slug in sorted(self.created_subdomains.keys()):
+                        version = self.created_subdomains[subdomain_slug]
+                        domains_yaml += f"  - id: {subdomain_slug}\n"
+                        domains_yaml += f"    version: {version}\n"
+
+                    frontmatter += domains_yaml
+
+                # Write back
+                new_content = f"---{frontmatter}---{markdown_content}"
+                with open(parent_domain_path, "w") as f:
+                    f.write(new_content)
+
+                self.log(f"Updated parent domain with {len(self.created_subdomains)} subdomains")
+
     def update_service_relationships(self) -> None:
         """Update service index files with event relationships."""
         self.log("\nUpdating service relationships...")
@@ -734,6 +783,7 @@ This channel carries the following messages:
             self.process_asyncapi_file(yaml_file)
 
         # Update relationships in frontmatter
+        self.update_parent_domain_relationships()
         self.update_domain_relationships()
         self.update_service_relationships()
 

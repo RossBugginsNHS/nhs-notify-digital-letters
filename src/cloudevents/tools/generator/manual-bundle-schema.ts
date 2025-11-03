@@ -42,63 +42,19 @@ function loadSchema(filePath: string): SchemaObject {
 }
 
 async function fetchExternalSchema(url: string): Promise<SchemaObject> {
-  // Check cache first
-  const cached = getCachedSchema(url);
+  // Check cache (which now handles fetching with retry)
+  const cached = await getCachedSchema(url);
   if (cached) {
     try {
       return JSON.parse(cached);
     } catch (error) {
-      console.warn(`[CACHE] Failed to parse cached schema for ${url}, fetching fresh copy`);
+      console.error(`[CACHE] Failed to parse cached schema for ${url}:`, error);
+      throw new Error(`Failed to parse schema from ${url}`);
     }
   }
 
-  return new Promise((resolve, reject) => {
-    console.log(`Fetching external schema: ${url}`);
-
-    const options = {
-      headers: {
-        'User-Agent': 'nhs-notify-schema-builder/1.0',
-        'Accept': 'application/json, application/schema+json, */*'
-      },
-      timeout: 10000 // 10 second timeout
-    };
-
-    const req = https.get(url, options, (res) => {
-      if (res.statusCode !== 200) {
-        reject(new Error(`HTTP ${res.statusCode} when fetching ${url}`));
-        return;
-      }
-
-      let data = '';
-
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-
-      res.on('end', () => {
-        try {
-          const schema = JSON.parse(data);
-          console.log(`Successfully fetched and parsed: ${url}`);
-
-          // Cache the response
-          setCachedSchema(url, data);
-
-          resolve(schema);
-        } catch (error) {
-          reject(new Error(`Failed to parse JSON from ${url}: ${error}`));
-        }
-      });
-    });
-
-    req.on('error', (error) => {
-      reject(new Error(`Failed to fetch ${url}: ${error.message}`));
-    });
-
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error(`Request timeout when fetching ${url}`));
-    });
-  });
+  // If cache returns null, fetching failed
+  throw new Error(`Failed to fetch schema from ${url} after retries`);
 }
 
 // Post-process: convert remaining relative file refs to external URLs

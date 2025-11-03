@@ -19,6 +19,42 @@ let getCachedSchema, setCachedSchema;
   const cacheModule = await import("../cache/schema-cache.ts");
   getCachedSchema = cacheModule.getCachedSchema;
   setCachedSchema = cacheModule.setCachedSchema;
+
+  // Store the original fetch function
+  const originalFetch = globalThis.fetch;
+
+  // Monkey-patch fetch to use our cache for schema requests
+  globalThis.fetch = async function(url, options) {
+    const urlString = url.toString();
+
+    // Only intercept schema-related HTTP(S) requests
+    if (urlString.startsWith('http://') || urlString.startsWith('https://')) {
+      console.log(`[FETCH INTERCEPT] Intercepted fetch request for: ${urlString}`);
+
+      // Check cache (which now includes in-memory caching and HTTP fetching with retry)
+      const cached = await getCachedSchema(urlString);
+      if (cached) {
+        console.log(`[FETCH INTERCEPT] ✓ Using cached schema`);
+        return new Response(cached, {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      // If cache returns null, it failed after retries
+      console.log(`[FETCH INTERCEPT] ✗ Failed to fetch schema`);
+      return new Response(JSON.stringify({ error: 'Failed to fetch schema' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Fall back to original fetch for non-HTTP(S) requests
+    return originalFetch.call(this, url, options);
+  };
+
+  console.log("[FETCH INTERCEPT] Global fetch monkey-patched to use cache");
+
   // Parse command line arguments
   const args = process.argv.slice(2);
   if (args.length < 2) {
@@ -46,80 +82,20 @@ let getCachedSchema, setCachedSchema;
 
   // Function to load external schemas from HTTP URLs
   const loadExternalSchema = async (uri) => {
-    // Check persistent cache first
-    const cached = getCachedSchema(uri);
+    // Check cache (which now includes in-memory caching and HTTP fetching)
+    const cached = await getCachedSchema(uri);
     if (cached) {
       try {
-        return JSON.parse(cached);
+        const schema = JSON.parse(cached);
+        return schema;
       } catch (e) {
-        console.warn(`[CACHE] Failed to parse cached schema for ${uri}, fetching fresh copy`);
+        console.warn(`[CACHE] Failed to parse cached schema for ${uri}:`, e.message);
       }
     }
 
-    console.log(`� Loading external schema: ${uri}`);
-
-    // Block metaschema self-references to prevent infinite loops
-    if (uri.includes('json-schema.org/draft-07/schema') ||
-        uri.includes('json-schema.org/draft/2020-12/schema')) {
-      console.log(`   🚫 BLOCKED: Metaschema self-reference detected for ${uri} - skipping to prevent infinite loop`);
-      return false; // Return false to indicate schema should be skipped
-    }
-
-    if (!uri.startsWith('http://') && !uri.startsWith('https://')) {
-      throw new Error(`Only HTTP(S) URLs supported for external schemas: ${uri}`);
-    }
-
-    try {
-      const https = await import('https');
-      const http = await import('http');
-      const protocol = uri.startsWith('https://') ? https.default : http.default;
-
-      const schema = await new Promise((resolve, reject) => {
-        const options = {
-          headers: {
-            'User-Agent': 'nhs-notify-schema-docs-generator/1.0',
-            'Accept': 'application/json, application/schema+json, */*'
-          },
-          timeout: 10000 // Add 10 second timeout
-        };
-
-        const req = protocol.get(uri, options, (res) => {
-          if (res.statusCode !== 200) {
-            reject(new Error(`HTTP ${res.statusCode} when fetching ${uri}`));
-            return;
-          }
-
-          let data = '';
-          res.on('data', (chunk) => { data += chunk; });
-          res.on('end', () => {
-            try {
-              const schema = JSON.parse(data);
-              console.log(`   ✅ Successfully loaded schema from ${uri}`);
-
-              // Cache the raw response data (not the parsed schema)
-              setCachedSchema(uri, data);
-
-              resolve(schema);
-            } catch (e) {
-              reject(new Error(`Failed to parse JSON from ${uri}: ${e.message}`));
-            }
-          });
-        });
-
-        req.on('error', (e) => {
-          reject(new Error(`Failed to fetch ${uri}: ${e.message}`));
-        });
-
-        req.on('timeout', () => {
-          req.destroy();
-          reject(new Error(`Request timeout when fetching ${uri}`));
-        });
-      });
-
-      return schema;
-    } catch (e) {
-      throw new Error(`Failed to load external schema ${uri}: ${e.message}`);
-    }
+    // Cache handles fetching, so if we get here and cached is null, it failed
+    console.log(`📥 Schema not available for: ${uri}`);
+    return null;
   };
 
   // Helper function to find all HTTP $ref references in a schema

@@ -29,8 +29,10 @@ Python
 rawContent
 sed
 service_sorted
+Someobject
 Syft
 Terraform
 toolchain
 Trufflehog
 yaml
+YAML

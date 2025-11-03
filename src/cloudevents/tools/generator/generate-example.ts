@@ -102,186 +102,25 @@ async function main() {
           console.log(`[GENERATE] HTTP: canRead returning ${isHttp}`);
           return isHttp;
         },
-        read(file: any) {
+        async read(file: any) {
           console.log(`\n========== HTTP REQUEST START ==========`);
           console.log(`[GENERATE] HTTP: Attempting to fetch URL`);
           console.log(`[GENERATE] HTTP: Full URL: ${file.url}`);
 
-          // Check cache first
-          const cached = getCachedSchema(file.url);
+          // Cache handles fetching with retry
+          const cached = await getCachedSchema(file.url);
           if (cached) {
             console.log(
-              `[GENERATE] HTTP: Using cached response, skipping network request`
+              `[GENERATE] HTTP: Using cached response (memory, file, or freshly fetched)`
             );
             console.log(`========== HTTP REQUEST (CACHED) ==========\n`);
-            return Promise.resolve(cached);
+            return cached;
           }
 
           console.log(
-            `[GENERATE] HTTP: Cache miss, proceeding with network request`
+            `[GENERATE] HTTP: Failed to fetch schema after retries`
           );
-          console.log(
-            `[GENERATE] HTTP: Protocol: ${
-              file.url.startsWith("https:") ? "HTTPS" : "HTTP"
-            }`
-          );
-          console.log(
-            `[GENERATE] HTTP: Request headers that will be sent:`,
-            JSON.stringify(
-              {
-                "User-Agent": "nhs-notify-schema-builder/1.0",
-                Accept: "application/json, application/schema+json, */*",
-              },
-              null,
-              2
-            )
-          );
-
-          // Generate equivalent curl command
-          const curlCommand = `curl -v \\
-  -H "User-Agent: nhs-notify-schema-builder/1.0" \\
-  -H "Accept: application/json, application/schema+json, */*" \\
-  "${file.url}"`;
-          console.log(
-            `\n[GENERATE] HTTP: Equivalent curl command:\n${curlCommand}\n`
-          );
-
-          try {
-            const promise = new Promise((resolve, reject) => {
-              const client = file.url.startsWith("https:") ? https : http;
-              const options = {
-                headers: {
-                  "User-Agent": "nhs-notify-schema-builder/1.0",
-                  Accept: "application/json, application/schema+json, */*",
-                },
-              };
-
-              console.log(
-                `[GENERATE] HTTP: Initiating request to: ${file.url}`
-              );
-
-              try {
-                const req = client.get(file.url, options, (res: any) => {
-                  console.log(`\n========== HTTP RESPONSE RECEIVED ==========`);
-                  console.log(
-                    `[GENERATE] HTTP: Response status code: ${res.statusCode}`
-                  );
-                  console.log(
-                    `[GENERATE] HTTP: Response status message: ${res.statusMessage}`
-                  );
-                  console.log(
-                    `[GENERATE] HTTP: Full response headers:`,
-                    JSON.stringify(res.headers, null, 2)
-                  );
-
-                  if (res.statusCode !== 200) {
-                    let body = "";
-                    res.on("data", (chunk: any) => {
-                      body += chunk;
-                    });
-                    res.on("end", () => {
-                      console.error(
-                        `\n========== HTTP REQUEST FAILED ==========`
-                      );
-                      console.error(
-                        `[GENERATE] HTTP: Request URL: ${file.url}`
-                      );
-                      console.error(
-                        `[GENERATE] HTTP: Response Status: ${res.statusCode} ${res.statusMessage}`
-                      );
-                      console.error(
-                        `[GENERATE] HTTP: Response Headers:`,
-                        JSON.stringify(res.headers, null, 2)
-                      );
-                      console.error(
-                        `[GENERATE] HTTP: Response Body (first 1000 chars):`,
-                        body.substring(0, 1000)
-                      );
-                      console.error(
-                        `========== HTTP REQUEST FAILED END ==========\n`
-                      );
-                      const error = new Error(`HTTP ERROR ${res.statusCode}`);
-                      reject(error);
-                    });
-                    return;
-                  }
-
-                  let data = "";
-                  res.on("data", (chunk: any) => {
-                    data += chunk;
-                  });
-                  res.on("end", () => {
-                    console.log(
-                      `[GENERATE] HTTP: Successfully fetched ${file.url} (${data.length} bytes)`
-                    );
-
-                    // Cache the response
-                    setCachedSchema(file.url, data);
-
-                    console.log(`========== HTTP REQUEST SUCCESS ==========\n`);
-                    resolve(data);
-                  });
-                });
-
-                req.on("error", (err: any) => {
-                  console.error(`\n========== HTTP NETWORK ERROR ==========`);
-                  console.error(
-                    `[GENERATE] HTTP: Network error occurred while fetching: ${file.url}`
-                  );
-                  console.error(`[GENERATE] HTTP: Error code:`, err.code);
-                  console.error(`[GENERATE] HTTP: Error message:`, err.message);
-                  console.error(`[GENERATE] HTTP: Error syscall:`, err.syscall);
-                  console.error(
-                    `[GENERATE] HTTP: Error hostname:`,
-                    err.hostname
-                  );
-                  console.error(
-                    `[GENERATE] HTTP: Full error details:`,
-                    JSON.stringify(err, Object.getOwnPropertyNames(err), 2)
-                  );
-                  console.error(
-                    `========== HTTP NETWORK ERROR END ==========\n`
-                  );
-                  reject(err);
-                });
-
-                req.on("timeout", () => {
-                  console.error(`\n========== HTTP TIMEOUT ==========`);
-                  console.error(
-                    `[GENERATE] HTTP: Request timeout for ${file.url}`
-                  );
-                  console.error(
-                    `[GENERATE] HTTP: Configured timeout: 10000 ms`
-                  );
-                  console.error(`========== HTTP TIMEOUT END ==========\n`);
-                  req.destroy();
-                  reject(new Error("Request timeout"));
-                });
-              } catch (err: any) {
-                console.error(`\n========== HTTP EXCEPTION ==========`);
-                console.error(
-                  `[GENERATE] HTTP: Exception occurred while creating request for: ${file.url}`
-                );
-                console.error(
-                  `[GENERATE] HTTP: Exception message:`,
-                  err.message
-                );
-                console.error(`[GENERATE] HTTP: Exception stack:`, err.stack);
-                console.error(`========== HTTP EXCEPTION END ==========\n`);
-                reject(err);
-              }
-            });
-
-            console.log(`[GENERATE] HTTP: Returning promise...`);
-            return promise;
-          } catch (outerErr: any) {
-            console.error(
-              `[GENERATE] HTTP: Exception in read() function:`,
-              outerErr.message
-            );
-            console.error(`[GENERATE] HTTP: Exception stack:`, outerErr.stack);
-            throw outerErr;
-          }
+          throw new Error(`Failed to fetch schema from ${file.url}`);
         },
       },
     },
