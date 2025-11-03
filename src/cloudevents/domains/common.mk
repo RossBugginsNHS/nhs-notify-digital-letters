@@ -7,6 +7,9 @@
 # in the schema files to discover all dependencies, ensuring version mismatches
 # are avoided (e.g., supplier-allocation 2025-12 correctly uses common 2025-11-draft).
 
+# Force bash as the shell for PIPESTATUS support
+SHELL := /bin/bash
+
 # Variables that must be set by the including Makefile:
 # - DOMAIN: The domain name (e.g., supplier-allocation, examples)
 # - PUBLISH_VERSION: The version directory (e.g., 2025-10)
@@ -179,6 +182,10 @@ test:
 	@if [ -n "$(EVENT_NAMES)" ]; then \
 		echo "Testing $(DOMAIN) events..."; \
 		FAILED=0; \
+		TOTAL_PASSED=0; \
+		TOTAL_TESTS=0; \
+		ALL_TEST_RESULTS=""; \
+		TMPFILE=$$(mktemp); \
 		for schema in $(EVENT_NAMES); do \
 			echo "Testing $$schema event..."; \
 			echo "Discovering schema dependencies for $$schema..."; \
@@ -188,14 +195,47 @@ test:
 				FAILED=1; \
 				continue; \
 			fi; \
+			set +e; \
 			$(ROOT_DIR)/tests/run-validations.sh \
 				$(ROOT_DIR)/output \
 				$(EVENTS_DIR)/$$schema-event.json \
 				$(OUTPUT_DIR)/events/$$schema.schema.json \
 				$(OUTPUT_DIR)/events/$$schema.bundle.schema.json \
 				$(OUTPUT_DIR)/events/$$schema.flattened.schema.json \
-				$$SCHEMA_DEPS || FAILED=1; \
+				$$SCHEMA_DEPS 2>&1 | tee $$TMPFILE; \
+			TEST_EXIT=$${PIPESTATUS[0]}; \
+			set -e; \
+			if [ $$TEST_EXIT -ne 0 ]; then \
+				FAILED=1; \
+			fi; \
+			RESULT=$$(grep "VALIDATION_RESULTS:" $$TMPFILE | tail -1); \
+			if [ -n "$$RESULT" ]; then \
+				PASSED=$$(echo "$$RESULT" | awk '{print $$2}'); \
+				TOTAL=$$(echo "$$RESULT" | awk '{print $$3}'); \
+				TOTAL_PASSED=$$((TOTAL_PASSED + PASSED)); \
+				TOTAL_TESTS=$$((TOTAL_TESTS + TOTAL)); \
+			fi; \
+			TEST_RESULTS=$$(grep "TEST_RESULT:" $$TMPFILE); \
+			if [ -n "$$TEST_RESULTS" ]; then \
+				ALL_TEST_RESULTS="$$ALL_TEST_RESULTS$$TEST_RESULTS"$$'\n'; \
+			fi; \
 		done; \
+		rm -f $$TMPFILE; \
+		echo ""; \
+		echo "========================================"; \
+		echo "Domain Summary: $(DOMAIN)"; \
+		echo "  Tests run: $$TOTAL_TESTS"; \
+		echo "  Passed: $$TOTAL_PASSED"; \
+		echo "  Failed: $$((TOTAL_TESTS - TOTAL_PASSED))"; \
+		if [ $$FAILED -eq 0 ]; then \
+			echo "  Status: ✅ All tests passed"; \
+		else \
+			echo "  Status: ❌ Some tests failed"; \
+		fi; \
+		echo "========================================"; \
+		echo ""; \
+		printf "$$ALL_TEST_RESULTS"; \
+		echo "DOMAIN_RESULTS: $(DOMAIN) $$TOTAL_PASSED $$TOTAL_TESTS $$FAILED"; \
 		exit $$FAILED; \
 	fi
 

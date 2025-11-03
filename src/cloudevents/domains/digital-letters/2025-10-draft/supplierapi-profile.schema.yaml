@@ -3,7 +3,7 @@ title: Temp Print Supplier Profile
 description: Temp standing for the real Print profile for digital letters
 type: object
 allOf:
-  - $ref: ./digital-letters-profile.schema.json
+  - $ref: https://notify.nhs.uk/cloudevents/schemas/common/2025-11-draft/nhs-notify-profile.schema.json
 properties:
   type:
     type: string
@@ -11,7 +11,7 @@ properties:
     allOf:
       - name: NHS Notify versioned event type pattern
         type: string
-        pattern: ^uk\.nhs\.notify\.digital\.letters\.supplierapi\.[a-z0-9]+(?:\.[a-z0-9]+)*\.v[0-9]+$
+        pattern: ^uk\.nhs\.notify\.supplierapi\.[a-z0-9]+(?:\.[a-z0-9]+)*\.v[0-9]+$
   source:
     type: string
     pattern: ^/nhs/england/notify/(production|staging|development|uat)/(primary|secondary|dev-[0-9]+)/(data-plane|control-plane)/supplierapi
