@@ -2,6 +2,9 @@
   "dependencies": {
     "@eventcatalog/core": "2.64.0"
   },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
   "name": "digital-letters",
   "private": true,
   "scripts": {

@@ -19,6 +19,8 @@ EVENT_CAT_ROOT_DIR = ../src/eventcatalog
 EVENT_CAT_INPUT_DIR = ../src/eventcatalog/dist
 EVENT_CAT_OUTPUT_DIR = eventcatalog
 
+BASE_URL_REMOVE_TRAILING_SLASH := $(patsubst %/,%,$(BASE_URL))
+EVENT_CAT_URL := $(BASE_URL_REMOVE_TRAILING_SLASH)/$(EVENT_CAT_OUTPUT_DIR)
 
 default: install
 
@@ -44,7 +46,7 @@ build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs copy-schemas b
 
 build-eventcatalog:
 	$(MAKE) build-eventcatalog-prereq
-	make -C $(EVENT_CAT_ROOT_DIR) build BASE_URL=$(BASE_URL)
+	make -C $(EVENT_CAT_ROOT_DIR) build BASE_URL=$(EVENT_CAT_URL)
 	$(MAKE) build-eventcatalog-copy
 
 build-eventcatalog-prereq:

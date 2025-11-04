@@ -31,3 +31,5 @@ dist
 
 node_modules
 public
+
+.preview
