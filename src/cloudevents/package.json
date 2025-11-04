@@ -1,0 +1,37 @@
+{
+  "dependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.0.0",
+    "ajv-formats": "^3.0.1",
+    "js-yaml": "^4.1.0",
+    "json-schema-faker": "^0.5.0-rc23",
+    "json-schema-ref-parser": "^9.0.9"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ajv-cli": "^5.0.0",
+    "json-schema-static-docs": "^0.28.1",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  },
+  "main": "generate-example.ts",
+  "name": "digital-letters-cloudevents-schemas",
+  "scripts": {
+    "build": "ts-node tools/builder/build-schema.ts",
+    "build-docs": "node tools/generator/generate-docs.cjs",
+    "bundle": "ts-node tools/generator/manual-bundle-schema.ts",
+    "bundle:old": "ts-node tools/generator/bundle-schema.ts",
+    "bundle:prefer-child": "ts-node tools/generator/bundle-schema-prefer-child.ts",
+    "cache-info": "ts-node tools/generator/generate-example.ts --cache-info",
+    "clear-cache": "ts-node tools/generator/generate-example.ts --clear-cache",
+    "generate": "ts-node tools/generator/generate-example.ts $@",
+    "lint": "echo 'no linting configured'",
+    "lint:fix": "echo 'no linting configured'",
+    "test:unit": "echo 'no unit test'",
+    "typecheck": "echo 'no typechecking configured'",
+    "update-readme": "node tools/generator/update-readme.cjs $@",
+    "validate": "node tools/validator/validate.js $@"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}

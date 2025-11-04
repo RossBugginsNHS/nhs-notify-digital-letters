@@ -11,7 +11,10 @@ dependencies: # Install dependencies needed to build and test the project @Pipel
 	# TODO: Implement installation of your project dependencies
 
 build: # Build the project artefact @Pipeline
-	(cd docs && make build)
+	$(MAKE) -C docs build
+
+debug:
+	$(MAKE) -C docs debug
 
 publish: # Publish the project artefact @Pipeline
 	# TODO: Implement the artefact publishing step
@@ -20,14 +23,21 @@ deploy: # Deploy the project artefact to the target environment @Pipeline
 	# TODO: Implement the artefact deployment step
 
 clean:: # Clean-up project resources (main) @Operations
+	$(MAKE) -C docs clean
+	$(MAKE) -C src/cloudevents clean
+	$(MAKE) -C src/eventcatalogasyncapiimporter clean
+	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output
 	rm -f .version
 	# TODO: Implement project resources clean-up step
 
 config:: _install-dependencies version # Configure development environment (main) @Configuration
-	(cd docs && make install)
+	$(MAKE) -C docs install
+	$(MAKE) -C src/cloudevents install
+	$(MAKE) -C src/eventcatalogasyncapiimporter install
 
 serve-docs:
-	(cd docs && make s)
+	$(MAKE) -C docs s
+
 version:
 	rm -f .version
 	make version-create-effective-file dir=.
