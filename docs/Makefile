@@ -44,7 +44,7 @@ build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs copy-schemas b
 
 build-eventcatalog:
 	$(MAKE) build-eventcatalog-prereq
-	make -C $(EVENT_CAT_ROOT_DIR) build
+	make -C $(EVENT_CAT_ROOT_DIR) build BASE_URL=$(BASE_URL)
 	$(MAKE) build-eventcatalog-copy
 
 build-eventcatalog-prereq:
