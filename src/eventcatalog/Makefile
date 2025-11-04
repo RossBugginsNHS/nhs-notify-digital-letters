@@ -2,7 +2,7 @@ BASE_URL ?= ""
 EVENT_CAT_PATH ?= "/eventcatalog"
 
 define baseurlparam =
-$(if $(BASE_URL),-- --base $(BASE_URL)$(EVENT_CAT_PATH),-- --base $(EVENT_CAT_PATH))
+$(if $(BASE_URL),-- --base=$(BASE_URL)$(EVENT_CAT_PATH),-- --base=$(EVENT_CAT_PATH))
 endef
 
 
