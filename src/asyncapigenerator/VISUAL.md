@@ -2,7 +2,7 @@
 
 ## Data Flow
 
-```
+```plain
 ┌─────────────────────────────────────────────────────────────────┐
 │                      EXISTING DOCUMENTATION                      │
 │                     (Single Source of Truth)                     │
@@ -55,7 +55,7 @@
 
 ### Events → AsyncAPI Channels
 
-```
+```plain
 INPUT: docs/collections/_events/mesh-inbox-message-received.md
 ┌────────────────────────────────────────────────────┐
 │ ---                                                │
@@ -85,7 +85,7 @@ OUTPUT: asyncapi-*.yaml
 
 ### Services → AsyncAPI Operations
 
-```
+```plain
 INPUT: docs/architecture/c4/notifhir/mesh/poller/index.md
 ┌────────────────────────────────────────────────────┐
 │ ---                                                │
@@ -118,7 +118,7 @@ OUTPUT: asyncapi-mesh-poller.yaml
 
 ## Architecture Layers
 
-```
+```plain
 ┌─────────────────────────────────────────────────────────┐
 │                    PRESENTATION LAYER                    │
 │  AsyncAPI Studio | HTML Docs | VS Code Preview         │
@@ -151,7 +151,7 @@ OUTPUT: asyncapi-mesh-poller.yaml
 
 ## Directory Structure
 
-```
+```plain
 nhs-notify-digital-letters/
 │
 ├── docs/                          # Documentation (INPUT)
@@ -199,7 +199,7 @@ nhs-notify-digital-letters/
 
 ## Usage Flow
 
-```
+```plain
 Developer Workflow:
 
 ┌────────────┐
@@ -231,7 +231,7 @@ Developer Workflow:
 
 The combined `asyncapi-all.yaml` provides a complete view:
 
-```
+```plain
 Services & Their Events:
 
 MESH Poller
@@ -253,7 +253,7 @@ Total: 22 unique events, 58 operations
 
 ## Tool Ecosystem Integration
 
-```
+```plain
                     AsyncAPI Specs
                           │
         ┌─────────────────┼─────────────────┐
@@ -280,7 +280,7 @@ Total: 22 unique events, 58 operations
 
 ## Generated File Stats
 
-```
+```plain
 File Size Breakdown:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 asyncapi-all.yaml                    44KB  (all services)
@@ -296,7 +296,7 @@ Total: 160KB across 26 files
 
 ## Benefits Visualization
 
-```
+```plain
 Before Generator:
 ┌───────────────────────────────┐
 │  Markdown Documentation       │  Human-readable only
@@ -323,7 +323,7 @@ After Generator:
 
 ## Success Metrics
 
-```
+```plain
 Generation Statistics:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Events Loaded:        22/22 (100%)  ✓
@@ -339,7 +339,7 @@ Status: PRODUCTION READY ✓
 
 ## Next Actions
 
-```
+```plain
 ✅ COMPLETED:
    ├─ Generator created and tested
    ├─ 26 AsyncAPI files generated

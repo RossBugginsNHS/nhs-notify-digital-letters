@@ -10,7 +10,7 @@ Create a Python tool that automatically imports AsyncAPI specifications into Eve
 
 1. **`import_asyncapi.py`** (15KB)
    - Main Python script with `AsyncAPIImporter` class
-   - Reads AsyncAPI YAML files
+   - Reads AsyncAPI yaml files
    - Generates EventCatalog structure (domains, services, events, channels)
    - Fully configurable with command-line arguments
    - Idempotent operation (safe to run multiple times)
@@ -39,49 +39,52 @@ Create a Python tool that automatically imports AsyncAPI specifications into Eve
 
 ### Documentation
 
-6. **`README.md`** (5.8KB)
+1. **`README.md`** (5.8KB)
    - Complete user documentation
    - All command-line options explained
    - Troubleshooting section
    - Integration guide
    - Makefile targets documented
 
-7. **`QUICKSTART.md`** (3.1KB)
+2. **`QUICKSTART.md`** (3.1KB)
    - Step-by-step getting started guide
    - Multiple usage examples (including Makefile)
    - Quick reference for common tasks
 
-8. **`OVERVIEW.md`** (5.5KB)
+3. **`OVERVIEW.md`** (5.5KB)
    - High-level project overview
    - Feature list
    - Quick reference
    - Architecture explanation
 
-9. **`PROJECT_SUMMARY.md`** (this file)
+4. **`PROJECT_SUMMARY.md`** (this file)
    - Comprehensive project documentation
    - Design decisions
    - Statistics and metrics
 
-10. **`CHECKLIST.md`**
+5. **`CHECKLIST.md`**
     - Step-by-step user checklist
     - Covers all usage scenarios
     - Troubleshooting steps
 
 ### Configuration
 
-11. **`config.sh.example`** (363B)
+1. **`config.sh.example`** (363B)
+
    - Configuration template
    - Shows all configurable options
    - Can be copied to `config.sh` for customization
 
-12. **`requirements.txt`** (14B)
+2. **`requirements.txt`** (14B)
+
    - Python dependencies (PyYAML)
    - Minimal dependencies for easy installation
 
-13. **`.gitignore`** (418B)
-    - Ignores Python artifacts
-    - Protects user-specific config files
-    - Standard Python gitignore patterns
+3. **`.gitignore`** (418B)
+
+   - Ignores Python artifacts
+   - Protects user-specific config files
+   - Standard Python gitignore patterns
 
 ## 🔄 How It Works
 
@@ -125,7 +128,7 @@ Create a Python tool that automatically imports AsyncAPI specifications into Eve
 Services are automatically grouped into domains based on:
 
 - Metadata in AsyncAPI (`x-service-metadata.parent`)
-- Service name patterns (mesh, pdm, reporting, etc.)
+- Service name patterns (mesh, PDM, reporting, etc.)
 - Fallback to "Core Services"
 
 ### 2. Event Type Detection
@@ -262,7 +265,7 @@ eventcatalog/digital-letters/
 ### Input
 
 - **Source**: `src/asyncapigenerator/output/`
-- **Format**: AsyncAPI 3.0 YAML files
+- **Format**: AsyncAPI 3.0 yaml files
 - **Pattern**: `asyncapi-*.yaml`
 
 ### Output
@@ -364,7 +367,7 @@ Test coverage includes:
 The code demonstrates:
 
 - Python file I/O and path handling
-- YAML parsing with PyYAML
+- yaml parsing with PyYAML
 - Object-oriented design
 - Command-line argument parsing
 - Unit testing with unittest
@@ -377,7 +380,7 @@ The code demonstrates:
 
 ### Why Python?
 
-- Easy YAML parsing
+- Easy yaml parsing
 - Cross-platform
 - Minimal dependencies
 - Good string manipulation

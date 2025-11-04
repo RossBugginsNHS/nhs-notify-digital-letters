@@ -5,7 +5,8 @@
 A Python-based AsyncAPI 3.0 specification generator that transforms your existing event documentation and service architecture into machine-readable API specifications.
 
 ### Location
-```
+
+```plain
 src/asyncapigenerator/
 ├── generate_asyncapi.py      # Main generator script
 ├── config.yaml                # Default configuration
@@ -29,6 +30,7 @@ src/asyncapigenerator/
 ## Key Features
 
 ### ✅ Fully Functional
+
 - Reads from `docs/collections/_events/*.md`
 - Reads from `docs/architecture/c4/notifhir/`
 - Generates AsyncAPI 3.0 specifications
@@ -38,6 +40,7 @@ src/asyncapigenerator/
 - Test suite included
 
 ### ✅ Production Ready
+
 - 22 events processed
 - 33 services analyzed
 - 26 AsyncAPI files generated
@@ -48,7 +51,8 @@ src/asyncapigenerator/
 ## Generated Output
 
 ### Statistics from Test Run
-```
+
+```plain
 Loaded: 22 events, 33 services
 Generated:
   - 25 per-service AsyncAPI files
@@ -58,6 +62,7 @@ Generated:
 ```
 
 ### Example Services
+
 - MESH Poller
 - PDM Uploader
 - Reporting
@@ -68,17 +73,20 @@ Generated:
 ## Usage Examples
 
 ### 1. Generate all specs
+
 ```bash
 cd src/asyncapigenerator
 python generate_asyncapi.py
 ```
 
 ### 2. Generate for specific service
+
 ```bash
 python generate_asyncapi.py --service "MESH Poller"
 ```
 
 ### 3. Use Makefile
+
 ```bash
 make generate
 make generate-service SERVICE="PDM Uploader"
@@ -87,6 +95,7 @@ make test
 ```
 
 ### 4. Custom configuration
+
 ```bash
 python generate_asyncapi.py --config my-config.yaml
 ```
@@ -96,6 +105,7 @@ python generate_asyncapi.py --config my-config.yaml
 ### Input Sources
 
 1. **Events** (`docs/collections/_events/*.md`)
+
    ```markdown
    ---
    title: mesh-inbox-message-received
@@ -108,6 +118,7 @@ python generate_asyncapi.py --config my-config.yaml
    ```
 
 2. **Services** (`docs/architecture/c4/notifhir/`)
+
    ```markdown
    ---
    title: MESH Poller
@@ -151,18 +162,21 @@ operations:
 ## Benefits
 
 ### Immediate
+
 - ✅ Machine-readable API specifications
 - ✅ AsyncAPI ecosystem access
 - ✅ Automated from existing docs
 - ✅ No manual maintenance needed
 
 ### Short-term
+
 - 🔄 CI/CD integration
 - 🔄 Code generation (TypeScript/Python)
 - 🔄 Contract testing
 - 🔄 Interactive documentation
 
 ### Long-term
+
 - 🔮 API registry/catalog
 - 🔮 Mock servers for development
 - 🔮 Automated client generation
@@ -171,16 +185,19 @@ operations:
 ## Next Steps
 
 ### Week 1
+
 1. ✅ Review generated AsyncAPI files
 2. ⏭️ Add to CI/CD pipeline
 3. ⏭️ Share with team
 
 ### Month 1
+
 1. Add server definitions (AWS EventBridge)
 2. Generate TypeScript types
 3. Integrate with lambda functions
 
 ### Quarter 1
+
 1. Generate HTML documentation
 2. Set up contract testing
 3. Create development mocks
@@ -188,6 +205,7 @@ operations:
 ## Configuration
 
 ### Default Paths (relative to `src/asyncapigenerator/`)
+
 ```yaml
 events_dir: ../../docs/collections/_events
 services_dir: ../../docs/architecture/c4/notifhir
@@ -196,6 +214,7 @@ output_dir: ./output
 ```
 
 ### Customizable
+
 - Input paths
 - Output directory
 - AsyncAPI version
@@ -205,12 +224,14 @@ output_dir: ./output
 ## Testing
 
 ### Run Tests
+
 ```bash
 python test_generator.py
 ```
 
 ### Test Coverage
-- ✅ Frontmatter parsing
+
+- ✅ frontmatter parsing
 - ✅ Event creation
 - ✅ Service creation
 - ✅ Channel generation
@@ -221,13 +242,15 @@ All tests passing! ✓
 ## Validation
 
 ### AsyncAPI CLI
+
 ```bash
 npm install -g @asyncapi/cli
 asyncapi validate output/asyncapi-mesh-poller.yaml
 ```
 
 ### AsyncAPI Studio
-Upload any generated file to: https://studio.asyncapi.com/
+
+Upload any generated file to: <https://studio.asyncapi.com/>
 
 ## Documentation
 
@@ -242,11 +265,13 @@ Upload any generated file to: https://studio.asyncapi.com/
 ## Known Warnings
 
 During generation, you may see warnings like:
-```
+
+```plain
 Warning: Event 'mesh-timer-schedule-expired' not found
 ```
 
 This occurs when:
+
 - Service references an event not in `docs/collections/_events/`
 - Event has been renamed or removed
 - Event name mismatch
@@ -256,6 +281,7 @@ This occurs when:
 ## Integration Options
 
 ### CI/CD
+
 ```yaml
 # GitHub Actions example
 - name: Generate AsyncAPI
@@ -268,6 +294,7 @@ This occurs when:
 ```
 
 ### Pre-commit Hook
+
 ```bash
 # .git/hooks/pre-commit
 cd src/asyncapigenerator
@@ -275,14 +302,16 @@ python generate_asyncapi.py
 ```
 
 ### Makefile Target (Root)
+
 ```makefile
 asyncapi:
-	cd src/asyncapigenerator && make generate
+ cd src/asyncapigenerator && make generate
 ```
 
 ## Comparison with Manual Approach
 
 ### Before (Your Custom Implementation)
+
 - ✅ Event documentation in markdown
 - ✅ Service architecture in C4 model
 - ✅ JSON schemas for validation
@@ -291,6 +320,7 @@ asyncapi:
 - ❌ Manual client code generation
 
 ### After (With AsyncAPI Generator)
+
 - ✅ Everything from before (preserved)
 - ✅ AsyncAPI 3.0 specifications
 - ✅ AsyncAPI ecosystem access
@@ -301,24 +331,30 @@ asyncapi:
 ## Technical Details
 
 ### Language
+
 Python 3.x
 
 ### Dependencies
-- PyYAML (YAML parsing)
+
+- PyYAML (yaml parsing)
 - jsonschema (schema validation)
 
 ### AsyncAPI Version
+
 3.0.0
 
 ### Event Format
+
 CloudEvents
 
 ### Architecture Pattern
+
 Event-driven, pub/sub
 
 ## Success Metrics
 
 From the test run:
+
 - ✅ 22/22 events loaded successfully
 - ✅ 33/33 services processed
 - ✅ 26 AsyncAPI files generated
@@ -330,13 +366,16 @@ From the test run:
 ## Support & Extension
 
 ### Adding Features
+
 See `ARCHITECTURE.md` for extension points:
+
 - Custom channel naming
 - Additional message metadata
 - Protocol bindings (EventBridge, Kafka)
 - Tags and groups
 
 ### Python API
+
 ```python
 from generate_asyncapi import AsyncAPIGenerator
 

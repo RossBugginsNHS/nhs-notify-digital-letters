@@ -18,7 +18,6 @@ author: Ross Buggins
 {% assign sorted_events = site.events | group_by: "service"  %}
 {% assign serviceSorteds = sorted_events | sort: "name" %}
 
-
 <h2>Events Summary</h2>
 
 {% for service_sorted in serviceSorteds %}
@@ -74,7 +73,6 @@ author: Ross Buggins
 
 {% endfor %}
 
-
 <h2>Events Detailed Information</h2>
 
 {% for service_sorted in serviceSorteds %}
@@ -94,8 +92,6 @@ author: Ross Buggins
         <th>Envelope</th>
         <th>Data</th>
     </tr>
-
-
 
 {% for event in nameSortedService %}
     <tr>

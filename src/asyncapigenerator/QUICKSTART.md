@@ -3,11 +3,13 @@
 ## Installation
 
 1. **Navigate to the generator directory:**
+
    ```bash
    cd src/asyncapigenerator
    ```
 
 2. **Install dependencies:**
+
    ```bash
    pip install -r requirements.txt
    # or
@@ -25,6 +27,7 @@ make generate
 ```
 
 This will create AsyncAPI specifications in `./output/`:
+
 - `asyncapi-all.yaml` - Combined spec for all services
 - `asyncapi-{service-name}.yaml` - Individual specs per service
 
@@ -113,6 +116,7 @@ operations:
 ### Combined AsyncAPI
 
 The `asyncapi-all.yaml` contains:
+
 - All unique event channels
 - All operations from all services
 - Complete event-driven architecture view
@@ -141,6 +145,7 @@ python test_generator.py
 ### Customize generation
 
 Edit `config.yaml` to change:
+
 - Source paths
 - Output directory
 - AsyncAPI metadata
@@ -158,16 +163,18 @@ Edit `config.yaml` to change:
 ### "Event X not found for service Y"
 
 This warning means a service references an event that doesn't exist in `docs/collections/_events/`. Either:
+
 - Add the missing event markdown file
 - Update the service's `events-raised` or `events-consumed` list
 
-### "No YAML schema files found"
+### "No yaml schema files found"
 
 Check that the paths in `config.yaml` are correct relative to the `src/asyncapigenerator` directory.
 
 ### Invalid AsyncAPI output
 
 Run validation:
+
 ```bash
 asyncapi validate output/asyncapi-mesh-poller.yaml
 ```
@@ -186,6 +193,7 @@ See `example_usage.py` for Python API examples.
 ## Support
 
 For issues or questions:
+
 1. Check the documentation files
 2. Review generated warnings
 3. Validate AsyncAPI output with `asyncapi validate`

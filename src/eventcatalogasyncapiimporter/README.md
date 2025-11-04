@@ -4,7 +4,7 @@ This tool imports AsyncAPI specifications into an EventCatalog structure, creati
 
 ## Overview
 
-The importer reads AsyncAPI YAML files and generates the appropriate EventCatalog directory structure with markdown files for:
+The importer reads AsyncAPI yaml files and generates the appropriate EventCatalog directory structure with markdown files for:
 
 - **Domains**: Logical groupings of services (e.g., MESH Services, PDM Services)
 - **Services**: Individual microservices defined in AsyncAPI specs
@@ -200,7 +200,7 @@ The Makefile provides convenient commands for common tasks:
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--asyncapi-dir` | Directory containing AsyncAPI YAML files | `src/asyncapigenerator/output` |
+| `--asyncapi-dir` | Directory containing AsyncAPI yaml files | `src/asyncapigenerator/output` |
 | `--eventcatalog-dir` | EventCatalog root directory | `src/eventcatalog/digital-letters` |
 | `--domain` | Name of the domain to create | `Digital Letters` |
 | `--schema-base-path` | Base path for schema files on local filesystem | None (schemas not copied) |

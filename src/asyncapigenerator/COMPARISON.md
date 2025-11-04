@@ -65,6 +65,7 @@ AsyncAPI opens up a rich ecosystem:
 ### 3. IDE Support
 
 AsyncAPI files get:
+
 - Autocomplete in VS Code/IntelliJ
 - Real-time validation
 - Jump-to-definition for schemas
@@ -135,6 +136,7 @@ operations:
 ### What This Generator Provides
 
 ✅ **Included**:
+
 - ✅ AsyncAPI 3.0 format
 - ✅ Channels (from event types)
 - ✅ Messages (from event definitions)
@@ -143,6 +145,7 @@ operations:
 - ✅ Service metadata
 
 ❌ **Not Included** (but could be added):
+
 - ❌ Server definitions (AWS EventBridge, etc.)
 - ❌ Bindings (EventBridge-specific configuration)
 - ❌ Security schemes
@@ -154,21 +157,25 @@ These could be added by extending the generator or manually editing the output.
 ## Migration Path
 
 ### Phase 1: Current State ✅
+
 - Generate AsyncAPI specs from existing documentation
 - Review and validate the output
 - Integrate into CI/CD
 
 ### Phase 2: Tooling Integration
+
 - Add server definitions for AWS EventBridge
 - Generate TypeScript clients for lambdas
 - Set up contract testing
 
 ### Phase 3: Advanced Features
+
 - Add request/reply patterns for synchronous operations
 - Implement mock servers for development
 - Generate OpenTelemetry instrumentation
 
 ### Phase 4: Documentation Unification
+
 - Replace some Jekyll docs with AsyncAPI-generated HTML
 - Create interactive API explorer
 - Publish to AsyncAPI registry
@@ -178,11 +185,13 @@ These could be added by extending the generator or manually editing the output.
 ### Time Saved
 
 **Before**:
+
 - Manual updates to event docs when events change
 - Manual client code generation
 - Manual validation of event contracts
 
 **After**:
+
 - Automated generation from single source of truth
 - Automated client generation via AsyncAPI tools
 - Automated validation in CI/CD
@@ -199,21 +208,25 @@ These could be added by extending the generator or manually editing the output.
 ## Recommendations
 
 ### Immediate (Week 1)
+
 1. ✅ Run the generator and review output
 2. Add AsyncAPI validation to CI/CD
 3. Share AsyncAPI specs with team
 
 ### Short-term (Month 1)
+
 1. Add server definitions for AWS EventBridge
 2. Generate TypeScript types for events
 3. Integrate with existing lambda functions
 
 ### Medium-term (Quarter 1)
+
 1. Migrate some documentation to AsyncAPI-generated HTML
 2. Set up contract testing with AsyncAPI
 3. Create development mock servers
 
 ### Long-term (Year 1)
+
 1. Full event catalog powered by AsyncAPI
 2. Automated code generation for all services
 3. Published API registry for NHS Notify events

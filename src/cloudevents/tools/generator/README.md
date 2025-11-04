@@ -6,8 +6,8 @@ This directory contains tools for automatically generating and updating the sche
 
 The README generation system consists of three scripts:
 
-1. **generate-readme-index.cjs** - Scans workspace structure and creates a YAML index
-2. **render-readme.cjs** - Renders README tables from the YAML index
+1. **generate-readme-index.cjs** - Scans workspace structure and creates a yaml index
+2. **render-readme.cjs** - Renders README tables from the yaml index
 3. **update-readme.cjs** - Wrapper that runs both scripts
 
 ## Usage
@@ -30,7 +30,7 @@ node src/tools/generator/update-readme.cjs
 
 1. **Scanning**: The generator scans:
 
-   - `src/{domain}/{version}/` for YAML schema files
+   - `src/{domain}/{version}/` for yaml schema files
    - `schemas/{domain}/{version}/events/` for bundled/flattened variants
    - `docs/{domain}/example-events/` for generated example event JSON/MD files
 
@@ -41,6 +41,7 @@ node src/tools/generator/update-readme.cjs
    - Metadata from `readme-metadata.yaml`
 
 3. **README Rendering**: Updates the section between markers in `README.md`:
+
    ```markdown
    <!-- AUTO-GENERATED-CONTENT:START -->
 
@@ -90,7 +91,7 @@ If README.md doesn't have the markers yet, add them around the section you want 
 
 ## File Structure
 
-```
+```plain
 cloudevents/
 ├── README.md                           # Main documentation (contains markers)
 ├── readme-metadata.yaml                # Customization metadata
@@ -105,7 +106,7 @@ cloudevents/
 
 ### When adding a new schema
 
-1. Create your YAML schema in `src/{domain}/{version}/`
+1. Create your yaml schema in `src/{domain}/{version}/`
 2. Run `make build deploy build-docs` to generate artifacts
 3. Run `make update-readme` to update tables
 4. Optionally edit `readme-metadata.yaml` to customize labels
@@ -127,7 +128,7 @@ The generated tables include:
 ### Common Schemas
 
 - Schema name
-- Source YAML path
+- Source yaml path
 - Published JSON schema path
 - Documentation markdown path
 - Purpose descriptions

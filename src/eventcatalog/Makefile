@@ -1,12 +1,11 @@
 BASE_URL ?= /
 BASE_URL_REMOVE_TRAILING_SLASH := $(patsubst %/,%,$(BASE_URL))
-EVENT_CAT_URL := $(BASE_URL_REMOVE_TRAILING_SLASH)/myotherdirectory
+EVENT_CAT_URL := $(BASE_URL_REMOVE_TRAILING_SLASH)
 baseurlparam := -- --base=$(EVENT_CAT_URL)
 
 show-info:
 	@echo "Base path is: $(EVENT_CAT_URL)"
 	@echo "Base param is: $(baseurlparam)"
-	@echo "Raw command will be: npx eventcatalog build $(baseurlparam)"
 
 rebuild-static: install-serve-static clean-static build-static serve-static
 

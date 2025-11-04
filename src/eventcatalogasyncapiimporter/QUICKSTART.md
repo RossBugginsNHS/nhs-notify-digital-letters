@@ -117,7 +117,7 @@ make import
 
 The importer will:
 
-1. Scan for AsyncAPI YAML files in the source directory
+1. Scan for AsyncAPI yaml files in the source directory
 2. Parse each file to extract services, events, and channels
 3. Create the EventCatalog directory structure:
    - Domains (logical groupings)

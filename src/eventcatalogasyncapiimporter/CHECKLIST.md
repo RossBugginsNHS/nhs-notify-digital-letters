@@ -78,14 +78,14 @@ Choose your configuration method:
 - [ ] Check services within domains
 - [ ] Check `events/` directories within services
 - [ ] Check `channels/` directory at root
-- [ ] Check markdown files have proper YAML frontmatter
+- [ ] Check markdown files have proper yaml frontmatter
 
 ## 🔍 Post-Import Verification
 
 ### Check Generated Files
 
 - [ ] Open a domain `index.md` file
-- [ ] Verify YAML frontmatter is present (id, name, version)
+- [ ] Verify yaml frontmatter is present (id, name, version)
 - [ ] Open a service `index.md` file
 - [ ] Verify service metadata is correct
 - [ ] Open an event markdown file
@@ -138,7 +138,7 @@ Choose your configuration method:
 - [ ] Check AsyncAPI directory path is correct
 - [ ] Check AsyncAPI files exist
 - [ ] Check file naming: `asyncapi-*.yaml`
-- [ ] Check file is valid YAML: `python -c "import yaml; yaml.safe_load(open('file.yaml'))"`
+- [ ] Check file is valid yaml: `python -c "import yaml; yaml.safe_load(open('file.yaml'))"`
 - [ ] Run with `--verbose` flag
 - [ ] Check for error messages in output
 

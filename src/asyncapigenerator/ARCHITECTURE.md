@@ -72,7 +72,7 @@ For each service:
 
 ## Output Structure
 
-```
+```plain
 output/
 ├── asyncapi-all.yaml                    # Combined spec for all services
 ├── asyncapi-mesh-poller.yaml            # Individual service specs
@@ -84,6 +84,7 @@ output/
 ### Per-Service AsyncAPI
 
 Each service gets its own AsyncAPI specification containing:
+
 - Only the channels for events it produces/consumes
 - Send operations for events it raises
 - Receive operations for events it consumes
@@ -92,6 +93,7 @@ Each service gets its own AsyncAPI specification containing:
 ### Combined AsyncAPI
 
 The combined specification contains:
+
 - All channels (one per unique event type)
 - All operations from all services
 - Useful for visualizing the entire event-driven architecture
@@ -101,6 +103,7 @@ The combined specification contains:
 ### Why AsyncAPI 3.0?
 
 AsyncAPI 3.0 provides:
+
 - Clear separation of channels and operations
 - Better support for request/reply patterns
 - Improved message reuse across channels
@@ -109,14 +112,16 @@ AsyncAPI 3.0 provides:
 ### Why Python?
 
 Python was chosen because:
+
 - Existing tooling (`cloudeventjekylldocs`) uses Python
-- Excellent YAML processing libraries
+- Excellent yaml processing libraries
 - Easy to extend and customize
 - Good for scripting and automation
 
 ### Why CloudEvents?
 
 The system already uses CloudEvents as the event format:
+
 - Standard envelope format
 - Clear separation of metadata and data
 - Wide ecosystem support
@@ -202,8 +207,9 @@ asyncapi validate output/asyncapi-mesh-poller.yaml
 
 AsyncAPI specs can be visualized using:
 
-1. **AsyncAPI Studio**: https://studio.asyncapi.com/
+1. **AsyncAPI Studio**: <https://studio.asyncapi.com/>
 2. **AsyncAPI Generator HTML template**:
+
    ```bash
    asyncapi generate fromTemplate output/asyncapi-mesh-poller.yaml @asyncapi/html-template
    ```

@@ -103,7 +103,7 @@ In CI/CD pipelines:
 - The cache starts empty on each build (clean environment)
 - First execution populates the cache
 - Subsequent steps in the same build benefit from the cache
-- Consider pre-populating cache in early build step if beneficial
+- Consider Pre-populating cache in early build step if beneficial
 
 You can persist cache between CI runs by:
 

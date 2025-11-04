@@ -14,28 +14,36 @@
 ### Core Files
 
 #### `generate_asyncapi.py` ⭐
-**Main AsyncAPI generator script**
+
+##### Main AsyncAPI generator script
+
 - Python script to generate AsyncAPI 3.0 specifications
 - Reads events, services, and schemas
-- Outputs AsyncAPI YAML files
+- Outputs AsyncAPI yaml files
 - ~500 lines of Python code
 - Executable: `python generate_asyncapi.py`
 
 #### `config.yaml`
-**Default configuration**
+
+##### Default configuration
+
 - Input/output paths
 - AsyncAPI metadata
 - Generation options
 - Used by default when running generator
 
 #### `requirements.txt`
-**Python dependencies**
+
+##### Python dependencies
+
 - PyYAML >= 6.0.1
 - jsonschema >= 4.20.0
 - Install with: `pip install -r requirements.txt`
 
 #### `Makefile`
-**Build automation**
+
+##### Build automation
+
 - `make install` - Install dependencies
 - `make generate` - Generate all AsyncAPI specs
 - `make generate-service SERVICE="name"` - Generate for one service
@@ -45,7 +53,9 @@
 ### Documentation Files
 
 #### `README.md`
-**Complete documentation (65 lines)**
+
+##### Complete documentation (65 lines)
+
 - Overview and installation
 - Usage examples
 - Configuration options
@@ -53,7 +63,9 @@
 - Development guidelines
 
 #### `QUICKSTART.md`
-**Quick start guide (195 lines)**
+
+##### Quick start guide (195 lines)
+
 - Installation steps
 - Basic usage
 - Viewing results (Studio, CLI, VS Code)
@@ -62,7 +74,9 @@
 - Examples
 
 #### `ARCHITECTURE.md`
-**Design documentation (220 lines)**
+
+##### Design documentation (220 lines)
+
 - Architecture overview
 - Component mapping
 - Design decisions
@@ -70,7 +84,9 @@
 - Future enhancements
 
 #### `COMPARISON.md`
-**AsyncAPI comparison (230 lines)**
+
+##### AsyncAPI comparison (230 lines)
+
 - Before vs After
 - Tooling ecosystem
 - Migration path
@@ -78,7 +94,9 @@
 - Recommendations
 
 #### `SUMMARY.md`
-**Executive summary (370 lines)**
+
+##### Executive summary (370 lines)
+
 - What was created
 - Key features
 - Usage examples
@@ -87,7 +105,9 @@
 - Next steps
 
 #### `VISUAL.md`
-**Visual overview (350 lines)**
+
+##### Visual overview (350 lines)
+
 - Data flow diagrams
 - Component mapping
 - Architecture layers
@@ -98,7 +118,9 @@
 ### Testing & Examples
 
 #### `test_generator.py`
-**Test suite**
+
+##### Test suite
+
 - Unit tests for generator
 - Test frontmatter parsing
 - Test channel generation
@@ -106,7 +128,9 @@
 - Run with: `python test_generator.py`
 
 #### `example_usage.py`
-**Usage examples**
+
+##### Usage examples
+
 - Basic usage
 - Custom paths
 - Single service generation
@@ -116,13 +140,17 @@
 ### Configuration
 
 #### `config.example.yaml`
-**Configuration template**
+
+##### Configuration template
+
 - All available options
 - Comments explaining each setting
 - Copy to create custom configs
 
 #### `.gitignore`
-**Git ignore rules**
+
+##### Git ignore rules
+
 - Ignores `output/` directory
 - Python cache files
 - IDE files
@@ -130,8 +158,10 @@
 ### Output Directory
 
 #### `output/` (generated)
-**Generated AsyncAPI specifications**
-- 26 YAML files (160KB total)
+
+##### Generated AsyncAPI specifications
+
+- 26 yaml files (160KB total)
 - 1 combined spec (`asyncapi-all.yaml`)
 - 25 per-service specs
 - Created by running generator
@@ -139,7 +169,7 @@
 
 ## File Sizes
 
-```
+```plain
 Core Files:
   generate_asyncapi.py      ~26KB  (500 lines)
   config.yaml              ~1KB
@@ -171,12 +201,14 @@ Total: ~93KB source + 160KB generated
 ## Usage Paths
 
 ### Beginner Path
+
 1. Read `QUICKSTART.md`
 2. Run `make install`
 3. Run `make generate`
 4. View `output/asyncapi-*.yaml`
 
 ### Developer Path
+
 1. Read `README.md`
 2. Review `generate_asyncapi.py`
 3. Check `example_usage.py`
@@ -184,12 +216,14 @@ Total: ~93KB source + 160KB generated
 5. Customize `config.yaml`
 
 ### Architect Path
+
 1. Read `SUMMARY.md`
 2. Review `ARCHITECTURE.md`
 3. Compare in `COMPARISON.md`
 4. Check `VISUAL.md` for diagrams
 
 ### Stakeholder Path
+
 1. Read `SUMMARY.md`
 2. Review `VISUAL.md`
 3. Check generated files in `output/`
@@ -222,16 +256,19 @@ asyncapi validate output/asyncapi-mesh-poller.yaml
 ## Dependencies
 
 ### Required
+
 - Python 3.x
 - PyYAML
 - jsonschema
 
 ### Optional
+
 - AsyncAPI CLI (for validation)
 - npm (to install AsyncAPI CLI)
 - VS Code + AsyncAPI Preview extension
 
 ### Input Sources
+
 - `docs/collections/_events/*.md` (22 files)
 - `docs/architecture/c4/notifhir/*/index.md` (34 files)
 - `schemas/digital-letters/` (referenced, not read)
@@ -239,7 +276,8 @@ asyncapi validate output/asyncapi-mesh-poller.yaml
 ## Generated Output
 
 ### Per-Service Files (25 files)
-```
+
+```plain
 asyncapi-mesh-poller.yaml
 asyncapi-pdm-uploader.yaml
 asyncapi-reporting.yaml
@@ -268,13 +306,14 @@ asyncapi-letter-viewer-callbacks.yaml
 ```
 
 ### Combined File (1 file)
-```
+
+```plain
 asyncapi-all.yaml  (44KB, all services combined)
 ```
 
 ## Statistics
 
-```
+```plain
 Source Files:
   Python:          3 files (~33KB)
   Documentation:   6 files (~61KB)
@@ -297,7 +336,8 @@ Input Processing:
 ## Related Files (Outside This Directory)
 
 ### Input Sources
-```
+
+```plain
 ../../docs/collections/_events/*.md
   - 22 event definition files
   - Markdown with YAML frontmatter
@@ -317,7 +357,9 @@ Input Processing:
 ## Integration Points
 
 ### CI/CD
+
 Add to `.github/workflows/`:
+
 ```yaml
 - name: Generate AsyncAPI
   run: |
@@ -332,14 +374,18 @@ Add to `.github/workflows/`:
 ```
 
 ### Pre-commit Hook
+
 Add to `.git/hooks/pre-commit`:
+
 ```bash
 cd src/asyncapigenerator
 python generate_asyncapi.py --config config.yaml
 ```
 
 ### Documentation Build
+
 Add to docs build process:
+
 ```bash
 cd src/asyncapigenerator
 make generate
@@ -349,6 +395,7 @@ cp output/asyncapi-all.yaml ../../docs/assets/
 ## Support & Resources
 
 ### Internal Documentation
+
 - `README.md` - Full documentation
 - `QUICKSTART.md` - Getting started
 - `ARCHITECTURE.md` - Technical design
@@ -357,12 +404,14 @@ cp output/asyncapi-all.yaml ../../docs/assets/
 - `VISUAL.md` - Visual diagrams
 
 ### External Resources
-- AsyncAPI Spec: https://www.asyncapi.com/docs/reference/specification/latest
-- AsyncAPI Studio: https://studio.asyncapi.com/
-- AsyncAPI CLI: https://github.com/asyncapi/cli
-- CloudEvents: https://cloudevents.io/
+
+- AsyncAPI Spec: <https://www.asyncapi.com/docs/reference/specification/latest>
+- AsyncAPI Studio: <https://studio.asyncapi.com/>
+- AsyncAPI CLI: <https://github.com/asyncapi/cli>
+- CloudEvents: <https://cloudevents.io/>
 
 ### Examples
+
 - `example_usage.py` - Python API usage
 - `output/*.yaml` - Generated examples
 - `config.example.yaml` - Configuration examples
@@ -370,18 +419,21 @@ cp output/asyncapi-all.yaml ../../docs/assets/
 ## Maintenance
 
 ### Regular Updates
+
 1. Run generator after event/service changes
 2. Validate output with AsyncAPI CLI
 3. Review warnings for missing events
 4. Update config.yaml if paths change
 
 ### Version Control
+
 - Track source files in git
 - Ignore `output/` directory (generated)
 - Commit config changes
 - Update VERSION in config when needed
 
 ### Testing
+
 - Run `test_generator.py` before committing
 - Validate generated AsyncAPI specs
 - Check for warnings in generator output
@@ -390,6 +442,7 @@ cp output/asyncapi-all.yaml ../../docs/assets/
 ## Future Enhancements
 
 Potential additions (not yet implemented):
+
 - [ ] Server definitions (AWS EventBridge)
 - [ ] Protocol bindings
 - [ ] Request/reply patterns
@@ -405,7 +458,7 @@ See `ARCHITECTURE.md` for extension points.
 
 ## Success Metrics
 
-```
+```plain
 ✅ Core Functionality:
    • Generator works: YES
    • Tests passing: YES
@@ -436,6 +489,7 @@ See `ARCHITECTURE.md` for extension points.
 ## Conclusion
 
 This directory contains a complete AsyncAPI generator implementation:
+
 - ✅ Fully functional
 - ✅ Well documented
 - ✅ Tested and validated
