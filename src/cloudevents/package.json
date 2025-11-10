@@ -3,6 +3,7 @@
     "@types/js-yaml": "^4.0.9",
     "ajv": "^8.0.0",
     "ajv-formats": "^3.0.1",
+    "fast-glob": "^3.3.2",
     "js-yaml": "^4.1.0",
     "json-schema-faker": "^0.5.0-rc23",
     "json-schema-ref-parser": "^9.0.9"
@@ -22,7 +23,7 @@
   "name": "digital-letters-cloudevents-schemas",
   "scripts": {
     "build": "ts-node tools/builder/build-schema.ts",
-    "build-docs": "node tools/generator/docs-generator/generate-docs.cjs",
+    "build-docs": "ts-node tools/generator/docs-generator/generate-docs-cli.ts",
     "bundle": "ts-node tools/generator/manual-bundler/manual-bundle-schema.ts",
     "bundle:old": "ts-node tools/generator/bundle-schema.ts",
     "bundle:prefer-child": "ts-node tools/generator/bundle-schema-prefer-child.ts",
@@ -37,7 +38,7 @@
     "test:unit": "jest --coverage; node -e \"const fs = require('fs'); fs.mkdirSync('.reports/unit/coverage', {recursive: true}); fs.copyFileSync('coverage/lcov.info', '.reports/unit/coverage/lcov.info');\"",
     "test:watch": "jest --watch",
     "typecheck": "echo 'no typechecking configured'",
-    "update-readme": "node tools/generator/readme-generator/update-readme.cjs $@",
+    "update-readme": "ts-node tools/generator/readme-generator/update-readme-cli.ts",
     "validate": "ts-node tools/validator/validate.ts $@"
   },
   "type": "module",

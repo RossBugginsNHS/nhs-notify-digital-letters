@@ -32,6 +32,9 @@ export class DocsGenerator {
       this.log('Input directory:', this.config.inputDir);
       this.log('Output directory:', this.config.outputDir);
 
+      // Set up fetch monkey-patch for schema caching
+      await this.setupFetchIntercept();
+
       // Find all schema files
       const schemaFiles = await this.findSchemaFiles(this.config.inputDir);
       this.log(`Found ${schemaFiles.length} schema file(s)`);
@@ -74,10 +77,54 @@ export class DocsGenerator {
   }
 
   /**
+   * Set up fetch intercept to use schema cache
+   */
+  private async setupFetchIntercept(): Promise<void> {
+    // Import the cache module
+    const cacheModule = await import('../../cache/schema-cache.ts');
+    const { getCachedSchema } = cacheModule;
+
+    // Store the original fetch function
+    const originalFetch = globalThis.fetch;
+
+    // Monkey-patch fetch to use our cache for schema requests
+    (globalThis as any).fetch = async function (url: any, options?: any) {
+      const urlString = url.toString();
+
+      // Only intercept schema-related HTTP(S) requests
+      if (urlString.startsWith('http://') || urlString.startsWith('https://')) {
+        console.log(`[FETCH INTERCEPT] Intercepted fetch request for: ${urlString}`);
+
+        // Check cache (which now includes in-memory caching and HTTP fetching with retry)
+        const cached = await getCachedSchema(urlString);
+        if (cached) {
+          console.log(`[FETCH INTERCEPT] ✓ Using cached schema`);
+          return new Response(cached, {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+
+        // If cache returns null, it failed after retries
+        console.log(`[FETCH INTERCEPT] ✗ Failed to fetch schema`);
+        return new Response(JSON.stringify({ error: 'Failed to fetch schema' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Fall back to original fetch for non-HTTP(S) requests
+      return originalFetch.call(this, url, options);
+    };
+
+    console.log('[FETCH INTERCEPT] Global fetch monkey-patched to use cache');
+  }
+
+  /**
    * Find all schema files in the input directory
    */
   async findSchemaFiles(dir: string): Promise<string[]> {
-    const fastGlob = require('fast-glob');
+    const fastGlob = (await import('fast-glob')).default;
     const files = await fastGlob(path.join(dir, '**/*.schema.{json,yml}'));
     return files;
   }
@@ -124,10 +171,63 @@ export class DocsGenerator {
     const schemas: Record<string, any> = {};
     const loadedUrls = new Set<string>();
 
-    // Note: In the full implementation, this would recursively load schemas
-    // For now, we return the structure for testing
+    // Import the cache module for loading external schemas
+    const cacheModule = await import('../../cache/schema-cache.ts');
+    const { getCachedSchema } = cacheModule;
+
+    // Function to load external schemas
+    const loadExternalSchema = async (uri: string): Promise<any> => {
+      const cached = await getCachedSchema(uri);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (e) {
+          console.warn(`[CACHE] Failed to parse cached schema for ${uri}:`, (e as Error).message);
+        }
+      }
+      console.log(`📥 Schema not available for: ${uri}`);
+      return null;
+    };
+
+    // Recursively load schemas
+    const loadSchemaRecursively = async (url: string): Promise<void> => {
+      if (loadedUrls.has(url)) {
+        return; // Already loaded or in progress
+      }
+
+      loadedUrls.add(url); // Mark as in progress to prevent concurrent requests
+
+      try {
+        const schema = await loadExternalSchema(url);
+
+        // Skip if schema loading failed
+        if (!schema) {
+          return;
+        }
+
+        schemas[url] = schema;
+
+        // Find and load any dependencies in this schema
+        const deps = this.findHttpRefs(schema);
+        for (const dep of deps) {
+          if (!loadedUrls.has(dep)) {
+            await loadSchemaRecursively(dep);
+          }
+        }
+      } catch (e) {
+        console.error(`   ❌ Failed to load ${url}: ${(e as Error).message}`);
+        console.error(`   Continuing with documentation generation (may encounter validation issues)...`);
+        // Keep URL marked as loaded to prevent retry loops
+      }
+    };
+
     if (externalRefs.size > 0) {
-      this.log(`\n🌐 Found ${externalRefs.size} external schema reference(s)`);
+      this.log(`\n🌐 Found ${externalRefs.size} external schema reference(s), pre-loading recursively...`);
+      for (const ref of externalRefs) {
+        await loadSchemaRecursively(ref);
+      }
+      this.log(`📦 Loaded ${loadedUrls.size} total external schema(s) including dependencies`);
+      this.log('');
     }
 
     return {
@@ -139,16 +239,67 @@ export class DocsGenerator {
 
   /**
    * Generate documentation using json-schema-static-docs
-   * Note: Simplified version for testing - full implementation uses actual library
    */
   async generateDocs(schemaLoadResult: SchemaLoadResult): Promise<void> {
-    // This would invoke the json-schema-static-docs library
-    // For testing purposes, we'll simulate the behavior
+    const JsonSchemaStaticDocs = (await import('json-schema-static-docs')).default;
+
+    // Dynamic import of the schema cache for external schema loading
+    const cacheModule = await import('../../cache/schema-cache.ts');
+    const { getCachedSchema } = cacheModule;
+
+    // Load external schema function
+    const loadExternalSchema = async (uri: string) => {
+      try {
+        const cached = getCachedSchema(uri);
+        if (cached) {
+          return cached;
+        }
+
+        // If not cached, fetch it
+        const response = await fetch(uri);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch ${uri}: ${response.statusText}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error(`Failed to load external schema from ${uri}:`, error);
+        throw error;
+      }
+    };
+
+    const generator = new JsonSchemaStaticDocs({
+      inputPath: this.config.inputDir,
+      outputPath: this.config.outputDir,
+      inputFileGlob: '**/*.schema.{yml,json}',
+      jsonSchemaVersion: 'https://json-schema.org/draft/2020-12/schema',
+      ajvOptions: {
+        allowUnionTypes: true,
+        strict: false,
+        strictSchema: false,
+        strictTypes: false,
+        strictTuples: false,
+        strictRequired: false,
+        validateSchema: false,
+        addUsedSchema: false,
+        loadSchema: loadExternalSchema,
+        schemas: Object.entries(schemaLoadResult.schemas).map(([uri, schema]) => {
+          return { ...schema, $id: uri };
+        }),
+        formats: {
+          'nhs-number': {
+            type: 'string',
+            validate: (s: string) =>
+              /^(?:[0-9]{10}|[0-9]{3}[- ]?[0-9]{3}[- ]?[0-9]{4})$/.test(s),
+          },
+        },
+      },
+    });
+
+    await generator.generate();
+
+    // Count the schema files processed
     const schemaFiles = await this.findSchemaFiles(this.config.inputDir);
     this.schemasProcessed = schemaFiles.length;
-
-    // In production, this would actually generate markdown files
-    // For now, we just track that it was called
   }
 
   /**

@@ -130,3 +130,13 @@ export async function handleCli(args: string[]): Promise<CliResult> {
     return { exitCode: 1, error: errorMessage };
   }
 }
+
+// Execute CLI if this module is run directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  handleCli(process.argv.slice(2)).then((result) => {
+    process.exit(result.exitCode);
+  }).catch((err) => {
+    console.error('Unexpected error:', err);
+    process.exit(1);
+  });
+}
