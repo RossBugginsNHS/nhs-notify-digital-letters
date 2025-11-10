@@ -33,3 +33,6 @@ coverage.xml
 *.coverage
 coverage/
 coverage-*/
+**/playwright-report
+**/test-results
+plugin-cache
