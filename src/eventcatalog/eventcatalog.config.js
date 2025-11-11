@@ -9,7 +9,7 @@ export default {
   // large catalogs may benefit from server side rendering
   output: 'static',
   // By default set to false, add true to get urls ending in /
-  trailingSlash: false,
+  trailingSlash: true,
   // Change to make the base url of the site different, by default https://{website}.com/docs,
   // changing to /company would be https://{website}.com/company/docs,
   base: '/eventcatalog',
