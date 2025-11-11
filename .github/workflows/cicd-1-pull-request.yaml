@@ -164,7 +164,8 @@ jobs:
       APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
   publish-stage: # Recommended maximum execution time is 10 minutes
     name: "Publish stage"
-    needs: [metadata, acceptance-stage]
+    #needs: [metadata, acceptance-stage]
+    needs: [build-stage]
     uses: ./.github/workflows/stage-5-publish.yaml
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     with:
