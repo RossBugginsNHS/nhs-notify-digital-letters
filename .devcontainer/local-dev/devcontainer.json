@@ -2,7 +2,7 @@
   "containerEnv": {
     "GITHUBMONITOR": "false",
     "MAKECONFIG": "true",
-    "SHOWWELCOME": "true",
+    "SHOWWELCOME": "false",
     "UPDATEFROMTEMPLATE": "false"
   },
   "image": "ghcr.io/nhsdigital/nhs-notify-devcontainer-loaded:1.0.19",
