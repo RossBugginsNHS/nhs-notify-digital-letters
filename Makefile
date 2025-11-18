@@ -9,7 +9,11 @@ include scripts/init.mk
 
 quick-start: config clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
-dependencies: _install-dependencies version # Configure development environment (main) @Configuration
+install-apt-packages:
+	@echo "Installing apt packages listed in packages.txt..."
+	apt-get update && cat packages.txt | xargs apt-get install -y || echo "Couldn't get apt packages, continuing..."
+
+dependencies: install-apt-packages _install-dependencies version # Configure development environment (main) @Configuration
 	@echo "Installing project dependencies..."
 	@echo "Installing documentation dependencies..."
 	$(MAKE) -C docs install
