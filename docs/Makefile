@@ -32,6 +32,10 @@ install:
 	@echo "Installing documentation site dependencies..."
 	asdf current || "failed to get asdf current"
 	npm install
+	@echo "ASDF data dir: $$ASDF_DATA_DIR"
+	@echo "PATH: $$PATH"
+	@echo "Looking for bundle:"
+	whereis bundle || echo "bundle not found"
 	bundle config set --local path vendor/bundle
 	bundle install
 	$(MAKE) -C $(SRC_BASE_DIR) install
