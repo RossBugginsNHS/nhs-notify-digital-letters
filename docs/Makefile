@@ -16,7 +16,7 @@ SCHEMA_DOCS_OUTPUT_DIR = $(BASE_DOCS_OUTPUT_DIR)
 SCHEMA_YAML_DOCS_OUTPUT_DIR = _data/schema
 SHELL = /bin/bash
 
-EVENT_CAT_ROOT_DIR = $(SRC_BASE_DIR)/ventcatalog
+EVENT_CAT_ROOT_DIR = $(SRC_BASE_DIR)/eventcatalog
 EVENT_CAT_INPUT_DIR = $(SRC_BASE_DIR)/eventcatalog/dist
 EVENT_CAT_OUTPUT_DIR = eventcatalog
 

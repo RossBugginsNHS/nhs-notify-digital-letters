@@ -1,0 +1,4 @@
+{
+  "image": "ghcr.io/devcontainers/templates/ubuntu:2.0.0",
+  "name": "Ubuntu 24"
+}

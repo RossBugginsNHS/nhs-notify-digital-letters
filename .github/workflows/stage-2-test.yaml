@@ -90,6 +90,16 @@ jobs:
         run: |
           make dependencies
 
+      - name: "Node version root"
+        run: |
+          node --version
+
+      - name: "Node version cloud events"
+        run: |
+          node --version
+        working-directory: "./src/cloudevents"
+
+
       - name: "Generate dependencies"
         run: |
           npm run generate-dependencies --workspaces --if-present
