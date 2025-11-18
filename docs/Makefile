@@ -31,25 +31,7 @@ h help:
 	@egrep '^\S|^$$' Makefile
 
 install:
-	@echo "Installing documentation site dependencies..."
-	node --version
-	ruby --version
-	asdf current || "failed to get asdf current"
-	@echo "ASDF data dir: $$ASDF_DATA_DIR"
-	@echo "PATH: $$PATH"
-	whereis npm || echo "npm not found"
-	npm install
-	whereis gem || echo "gem not found"
-	gem install bundler
-	@echo "ASDF data dir: $$ASDF_DATA_DIR"
-	@echo "PATH: $$PATH"
-	@echo "Looking for bundler:"
-	whereis bundler || echo "bundler not found"
-	bundler config set --local path vendor/bundle
-	bundler install
-	$(MAKE) -C $(SRC_BASE_DIR) install
-
-
+	./install.sh $(SRC_BASE_DIR)
 
 s serve:
 	npm run serve

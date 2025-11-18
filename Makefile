@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 # This file is for you! Edit it to implement your own hooks (make targets) into
 # the project as automated steps to be executed on locally and in the CD pipeline.
 
@@ -9,10 +11,8 @@ include scripts/init.mk
 
 quick-start: dependancies clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
-
 dependencies:
 	./dependancies.sh
-
 
 test-docs:
 	$(MAKE) -C docs test

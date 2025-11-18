@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # run-validations.sh
 # Runs validation tests against multiple schemas

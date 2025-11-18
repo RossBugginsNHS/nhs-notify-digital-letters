@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
 install_apt_deps(){
   echo "====================== INSTALL APT DEPS =============================="

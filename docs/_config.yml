@@ -191,6 +191,7 @@ exclude:
   - package.json
   - Makefile
   - packages.txt
+  - install.sh
 
 #   - .sass-cache/
 #   - .jekyll-cache/
