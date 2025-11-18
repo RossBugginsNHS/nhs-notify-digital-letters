@@ -9,11 +9,14 @@ include scripts/init.mk
 
 quick-start: config clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
-dependencies: # Install dependencies needed to build and test the project @Pipeline
-	# TODO: Implement installation of your project dependencies
+dependencies: _install-dependencies version # Configure development environment (main) @Configuration
+	$(MAKE) -C docs install
+	$(MAKE) -C src/cloudevents install
+	$(MAKE) -C src/eventcatalogasyncapiimporter install
 
 test-docs:
 	$(MAKE) -C docs test
+
 build: # Build the project artefact @Pipeline
 	$(MAKE) -C docs build
 
@@ -21,10 +24,10 @@ debug:
 	$(MAKE) -C docs debug
 
 publish: # Publish the project artefact @Pipeline
-	# TODO: Implement the artefact publishing step
+	# Implement the artefact publishing step
 
 deploy: # Deploy the project artefact to the target environment @Pipeline
-	# TODO: Implement the artefact deployment step
+	# Implement the artefact deployment step
 
 clean:: # Clean-up project resources (main) @Operations
 	$(MAKE) -C docs clean
@@ -32,12 +35,8 @@ clean:: # Clean-up project resources (main) @Operations
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output
 	rm -f .version
-	# TODO: Implement project resources clean-up step
 
-config:: _install-dependencies version # Configure development environment (main) @Configuration
-	$(MAKE) -C docs install
-	$(MAKE) -C src/cloudevents install
-	$(MAKE) -C src/eventcatalogasyncapiimporter install
+config:: dependencies
 
 serve-docs:
 	$(MAKE) -C docs s
