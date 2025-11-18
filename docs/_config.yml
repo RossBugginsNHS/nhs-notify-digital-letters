@@ -190,6 +190,8 @@ exclude:
   - package-lock.json
   - package.json
   - Makefile
+  - packages.txt
+
 #   - .sass-cache/
 #   - .jekyll-cache/
 #   - gemfiles/

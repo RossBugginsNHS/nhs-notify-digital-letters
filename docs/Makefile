@@ -28,11 +28,15 @@ default: install
 h help:
 	@egrep '^\S|^$$' Makefile
 
-install:
+install: install-apt-packages
 	npm install
 	bundle config set --local path vendor/bundle
 	bundle install
 	$(MAKE) -C $(SRC_BASE_DIR) install
+
+install-apt-packages:
+	@echo "Installing apt packages listed in packages.txt..."
+	apt-get update && cat packages.txt | xargs apt-get install -y || echo "Couldn't get apt packages, continuing..."
 
 s serve:
 	npm run serve
