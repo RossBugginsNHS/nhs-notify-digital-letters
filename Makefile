@@ -30,10 +30,10 @@ deploy: # Deploy the project artefact to the target environment @Pipeline
 	# Implement the artefact deployment step
 
 clean:: # Clean-up project resources (main) @Operations
-	$(MAKE) -C docs clean
-	$(MAKE) -C src/cloudevents clean
-	$(MAKE) -C src/eventcatalogasyncapiimporter clean
-	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output
+	$(MAKE) -C docs clean && \
+	$(MAKE) -C src/cloudevents clean && \
+	$(MAKE) -C src/eventcatalogasyncapiimporter clean && \
+	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output && \
 	rm -f .version
 
 config:: _install-dependencies version
