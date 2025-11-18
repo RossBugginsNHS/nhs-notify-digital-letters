@@ -29,6 +29,8 @@ h help:
 	@egrep '^\S|^$$' Makefile
 
 install:
+	@echo "Installing documentation site dependencies..."
+	asdf current || "failed to get asdf current"
 	npm install
 	bundle config set --local path vendor/bundle
 	bundle install
