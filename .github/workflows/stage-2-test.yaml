@@ -68,13 +68,21 @@ jobs:
         uses: actions/checkout@v5
       - name: "Repo setup"
         run: |
-          npm ci
+          make config
+
       - name: "Generate dependencies"
         run: |
           npm run generate-dependencies --workspaces --if-present
+
       - name: "Run unit test suite"
         run: |
           make test-unit
+
+      - name: "Reports to correct location"
+        run: |
+          mkdir -p .reports
+          TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.."
+
       - name: "Save the result of fast test suite"
         uses: actions/upload-artifact@v4
         with:

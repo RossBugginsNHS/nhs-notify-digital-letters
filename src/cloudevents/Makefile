@@ -19,8 +19,7 @@ TOOLS_BASE_PATH = $(shell mkdir -p $(MAKEFILE_DIR)tools && cd $(MAKEFILE_DIR)too
 
 .PHONY: build publish publish-json publish-yaml generate test-domains deploy clean build-docs update-readme test test-unit coverage
 
-config:: _install-dependencies version # Configure development environment (main) @Configuration
-	npm install
+config: install
 
 install:
 		npm install

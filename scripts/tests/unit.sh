@@ -22,6 +22,8 @@ cd "$(git rev-parse --show-toplevel)"
 npm ci
 npm run test:unit --workspaces
 
+make -C docs test
+
 # moved to make test in docs. Planning for separate deployment of docs
 # # Python projects - asyncapigenerator
 # echo "Setting up and running asyncapigenerator tests..."
