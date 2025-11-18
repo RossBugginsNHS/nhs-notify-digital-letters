@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 .PHONY: help install install-dev generate generate-service clean test test-verbose coverage lint format clean-test
 
 help: ## Show this help message

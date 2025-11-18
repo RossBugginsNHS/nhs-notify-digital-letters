@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 # Makefile for cloudevents - orchestrates src/ subdomain Makefiles
 
 # Get absolute path of this Makefile's directory

@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 # Makefile for AsyncAPI to EventCatalog Importer
 #
 # Common tasks for running the importer, testing, and maintenance
