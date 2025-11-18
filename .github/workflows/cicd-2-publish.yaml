@@ -77,11 +77,12 @@ jobs:
           export IS_VERSION_PRERELEASE="${{ steps.variables.outputs.is_version_prerelease }}"
           make list-variables
 
-  publish-stage: # Recommended maximum execution time is 10 minutes
-    name: "Publish stage"
+  publish:
+    name: "Publish packages"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [metadata]
-    uses: ./.github/workflows/stage-5-publish.yaml
-    with:
+    env:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
       build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
@@ -90,3 +91,69 @@ jobs:
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
       is_version_prerelease: "${{ needs.metadata.outputs.is_version_prerelease }}"
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v5
+
+      - name: "Get artifacts: jekyll docs"
+        uses: actions/download-artifact@v5
+        with:
+          path: ./artifacts/jekyll-docs-${{ env.version }}
+          name: jekyll-docs-${{ env.version }}
+
+      - name: "Get artifacts: schema"
+        uses: actions/download-artifact@v5
+        with:
+          path: ./artifacts/schemas-${{ env.version }}
+          name: schemas-${{ env.version }}
+
+
+      - name: Draft Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+          IS_PRERELEASE: ${{ env.is_version_prerelease }}
+        run: |
+          PRERELEASE_FLAG=""
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+          gh release create \
+          "$VERSION" \
+          --draft \
+          --latest \
+          --title "$VERSION" \
+          --notes "Release of $VERSION" \
+          $PRERELEASE_FLAG
+
+      - name: "Upload jeykll docs release asset"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+        run: |
+          cp ./artifacts/jekyll-docs-$VERSION/artifact.tar $RUNNER_TEMP/jekyll-docs-$VERSION.tar
+          gh release upload \
+          "$VERSION" \
+          $RUNNER_TEMP/jekyll-docs-$VERSION.tar#jekyll-docs-$VERSION
+
+      - name: "Upload schema release asset"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+        run: |
+          cp ./artifacts/schemas-$VERSION/artifact.tar $RUNNER_TEMP/schemas-$VERSION.tar
+          gh release upload \
+          "$VERSION" \
+          $RUNNER_TEMP/schemas-$VERSION.tar#schemas-$VERSION
+
+
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+        run: gh release edit "$VERSION" --draft=false
