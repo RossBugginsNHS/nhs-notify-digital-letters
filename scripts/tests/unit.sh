@@ -19,11 +19,10 @@ cd "$(git rev-parse --show-toplevel)"
 
 # run tests
 
-npm ci
-npm run test:unit --workspaces
-
-make -C docs test
-
-# merge coverage reports
-mkdir -p .reports
+npm ci && \
+npm run test:unit --workspaces && \
+cd docs && \
+./test.sh && \
+cd .. && \
+mkdir -p .reports && \
 TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.."

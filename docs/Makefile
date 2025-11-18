@@ -41,7 +41,7 @@ $(if $(BASE_URL),-- --baseurl $(BASE_URL),-- --baseurl "")
 endef
 
 test:
-	$(MAKE) -C $(SRC_BASE_DIR) test
+	./test.sh $(SRC_BASE_DIR)
 
 build: clean build-schemas copy-schema-docs copy-schema-yaml-docs copy-schemas build-eventcatalog build-docs show-build-output
 

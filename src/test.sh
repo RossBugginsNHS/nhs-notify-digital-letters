@@ -1,6 +1,11 @@
 #! /bin/bash
 set -euo pipefail
 
-make -C ./asyncapigenerator coverage && \
-make -C ./eventcatalogasyncapiimporter coverage && \
-make -C ./cloudevents test
+cd ./asyncapigenerator && \
+./test.sh python3 && \
+cd .. && \
+cd ./eventcatalogasyncapiimporter && \
+./test.sh python3 && \
+cd .. && \
+cd ./cloudevents && \
+npm run test:unit
