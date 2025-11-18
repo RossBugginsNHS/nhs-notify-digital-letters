@@ -11,9 +11,11 @@ quick-start: config clean test-docs build serve-docs # Quick start target to set
 
 install-apt-packages:
 	@echo "Installing apt packages listed in packages.txt..."
-	apt-get update && cat packages.txt | xargs apt-get install -y || echo "Couldn't get apt packages, continuing..."
+	sudo apt-get update && cat packages.txt | xargs sudo apt-get install -y || echo "Couldn't get apt packages, continuing..."
 
-dependencies: install-apt-packages _install-dependencies version # Configure development environment (main) @Configuration
+dependencies: install-apt-packages _dependancies
+
+_dependancies: _install-dependencies version # Configure development environment (main) @Configuration
 	@echo "Installing project dependencies..."
 	@echo "Installing documentation dependencies..."
 	$(MAKE) -C docs install
@@ -21,6 +23,7 @@ dependencies: install-apt-packages _install-dependencies version # Configure dev
 	$(MAKE) -C src/cloudevents install
 	@echo "Installing Event Catalog AsyncAPI Importer source dependencies..."
 	$(MAKE) -C src/eventcatalogasyncapiimporter install
+
 
 test-docs:
 	$(MAKE) -C docs test
@@ -44,7 +47,7 @@ clean:: # Clean-up project resources (main) @Operations
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output
 	rm -f .version
 
-config:: dependencies
+config:: _dependancies
 
 serve-docs:
 	$(MAKE) -C docs s
