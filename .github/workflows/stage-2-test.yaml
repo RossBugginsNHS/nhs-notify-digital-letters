@@ -67,35 +67,40 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v5
 
-      - name: "Install pre requisites"
-        run: |
-          curl -LO https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz && \
-          tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C /usr/local/bin && \
-          chmod +x /usr/local/bin/asdf && \
-          pwd && \
-          ls -la &&\
-          /usr/local/bin/asdf --version && \
-          export ASDF_DATA_DIR=$$HOME/.asdf && \
-          export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH
+      # - name: "Install pre requisites"
+      #   run: |
+      #     curl -LO https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz && \
+      #     tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C /usr/local/bin && \
+      #     chmod +x /usr/local/bin/asdf && \
+      #     pwd && \
+      #     ls -la &&\
+      #     /usr/local/bin/asdf --version && \
+      #     export ASDF_DATA_DIR=$$HOME/.asdf && \
+      #     export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.267.0
-        with:
-          ruby-version: "3.4.7" # Not needed with a .ruby-version file
-          bundler-cache: false # runs 'bundle install' and caches installed gems automatically
-          #cache-version: 0 # Increment this number if you need to re-download cached gems
-          working-directory: "./docs"
+      # - name: Setup Ruby
+      #   uses: ruby/setup-ruby@v1.267.0
+      #   with:
+      #     ruby-version: "3.4.7" # Not needed with a .ruby-version file
+      #     bundler-cache: false # runs 'bundle install' and caches installed gems automatically
+      #     #cache-version: 0 # Increment this number if you need to re-download cached gems
+      #     working-directory: "./docs"
 
       - name: "Install dependencies"
+        shell: bash -l {0}
         run: |
           make dependencies
 
       - name: "Node version root"
+        shell: bash -l {0}
         run: |
+          asdf list
           node --version
 
       - name: "Node version cloud events"
+        shell: bash -l {0}
         run: |
+          asdf list
           node --version
         working-directory: "./src/cloudevents"
 
@@ -105,10 +110,12 @@ jobs:
           npm run generate-dependencies --workspaces --if-present
 
       - name: "Run unit test suite"
+        shell: bash -l {0}
         run: |
           make test-unit
 
       - name: "Reports to correct location"
+        shell: bash -l {0}
         run: |
           mkdir -p .reports
           TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.."
