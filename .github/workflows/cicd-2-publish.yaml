@@ -1,51 +1,16 @@
-name: "Docs 1. CI/CD pull request"
-
-# The total recommended execution time for the "CI/CD Pull Request" workflow is around 20 minutes.
+name: "CI/CD publish"
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - "**"
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [closed]
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: write
-
 jobs:
-  changes:
-    name: "Only run on docs change"
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-    - name: "Checkout code"
-      uses: actions/checkout@v5
-    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3
-      id: changes
-      with:
-        filters: |
-          docs:
-            - 'docs/**'
-          src:
-            - 'src/**'
-          workflows:
-            - '.github/workflows/docs-*'
-    outputs:
-      docs: ${{ steps.changes.outputs.docs }}
-      src: ${{ steps.changes.outputs.src }}
-      workflows: ${{ steps.changes.outputs.workflows }}
-
   metadata:
     name: "Set CI/CD metadata"
     runs-on: ubuntu-latest
     timeout-minutes: 1
-    needs: changes
-    if: ${{ needs.changes.outputs.docs == 'true' || needs.changes.outputs.src == 'true' || needs.changes.outputs.workflows == 'true'}}
-
     outputs:
       build_datetime_london: ${{ steps.variables.outputs.build_datetime_london }}
       build_datetime: ${{ steps.variables.outputs.build_datetime }}
@@ -111,10 +76,11 @@ jobs:
           export DOES_PULL_REQUEST_EXIST="${{ steps.pr_exists.outputs.does_pull_request_exist }}"
           export IS_VERSION_PRERELEASE="${{ steps.variables.outputs.is_version_prerelease }}"
           make list-variables
-  commit-stage: # Recommended maximum execution time is 2 minutes
-    name: "Commit stage"
+
+  publish-stage: # Recommended maximum execution time is 10 minutes
+    name: "Publish stage"
     needs: [metadata]
-    uses: ./.github/workflows/docs-stage-1-commit.yaml
+    uses: ./.github/workflows/stage-5-publish.yaml
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
@@ -123,32 +89,4 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
-  #    secrets: inherit
-  test-stage: # Recommended maximum execution time is 5 minutes
-    name: "Test stage"
-    needs: [metadata, commit-stage]
-    uses: ./.github/workflows/docs-stage-2-test.yaml
-    with:
-      build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
-      build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
-      build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
-      nodejs_version: "${{ needs.metadata.outputs.nodejs_version }}"
-      python_version: "${{ needs.metadata.outputs.python_version }}"
-      terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
-      version: "${{ needs.metadata.outputs.version }}"
-    secrets: #inherit
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  build-stage: # Recommended maximum execution time is 3 minutes
-    name: "Build stage"
-    needs: [metadata, test-stage]
-    uses: ./.github/workflows/docs-stage-3-build.yaml
-    if: needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')) || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-    with:
-      build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
-      build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
-      build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
-      nodejs_version: "${{ needs.metadata.outputs.nodejs_version }}"
-      python_version: "${{ needs.metadata.outputs.python_version }}"
-      terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
-      version: "${{ needs.metadata.outputs.version }}"
-  #    secrets: inherit
+      is_version_prerelease: "${{ needs.metadata.outputs.is_version_prerelease }}"
