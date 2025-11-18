@@ -9,11 +9,24 @@ include scripts/init.mk
 
 quick-start: config clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
-install-apt-packages:
+_install-apt-packages:
 	@echo "Installing apt packages listed in packages.txt..."
 	sudo apt-get update && cat packages.txt | xargs sudo apt-get install -y || echo "Couldn't get apt packages, continuing..."
 
-dependencies: install-apt-packages _dependancies
+_install-asdf:
+	curl -LO https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz && \
+	sudo tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C /usr/local/bin && \
+	sudo chmod +x /usr/local/bin/asdf && \
+	pwd && \
+	ls -la &&\
+	/usr/local/bin/asdf --version && \
+	export ASDF_DATA_DIR=$$HOME/.asdf && \
+	export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH && \
+	echo "export ASDF_DATA_DIR=$$HOME/.asdf" >> $$HOME/.bashrc && \
+	echo "export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH" >> $$HOME/.bashrc && \
+	asdf --version
+
+dependencies: _install-asdf _install-apt-packages _dependancies
 
 _dependancies: _install-dependencies version # Configure development environment (main) @Configuration
 	@echo "Installing project dependencies..."
