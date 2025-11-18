@@ -7,9 +7,10 @@ include scripts/init.mk
 
 # Example CI/CD targets are: dependencies, build, publish, deploy, clean, etc.
 
-quick-start: config clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
+quick-start: dependancies clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
-dependancies:
+
+dependencies:
 	./dependancies.sh
 
 
