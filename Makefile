@@ -54,14 +54,3 @@ ${VERBOSE}.SILENT: \
 	config \
 	dependencies \
 	deploy \
-
-asdf-manual-install:
-	@echo "testing manual installation"
-	curl -LO https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz && \
-	tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C /usr/local/bin && \
-	chmod +x /usr/local/bin/asdf && \
-	pwd && \
-	ls -la &&\
-	/usr/local/bin/asdf --version && \
-	export ASDF_DATA_DIR=$$HOME/.asdf && \
-	export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH
