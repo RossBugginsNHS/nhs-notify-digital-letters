@@ -34,9 +34,9 @@ dependencies: _install-asdf _install-apt-packages _dependancies
 _dependancies: _install-dependencies version # Configure development environment (main) @Configuration
 	@echo "Installing project dependencies..."
 	@echo "Installing documentation dependencies..."
-	@echo "ASDF data dir: $ASDF_DATA_DIR"
-	@echo "PATH: $PATH"
-
+	@echo "ASDF data dir: $$ASDF_DATA_DIR"
+	@echo "PATH: $$PATH"
+	asdf current || "failed to get asdf current"
 	$(MAKE) -C docs install
 	@echo "Installing CloudEvents source dependencies..."
 	$(MAKE) -C src/cloudevents install
