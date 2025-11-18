@@ -49,6 +49,7 @@ libxrandr2
 libxrender1
 libxss1
 libxtst6
+libyaml-dev
 libzstd-dev
 llvm
 lsb-release
