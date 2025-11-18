@@ -78,13 +78,13 @@ jobs:
       #     export ASDF_DATA_DIR=$$HOME/.asdf && \
       #     export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.267.0
-        with:
-          ruby-version: "3.4.7" # Not needed with a .ruby-version file
-          bundler-cache: false # runs 'bundle install' and caches installed gems automatically
-          #cache-version: 0 # Increment this number if you need to re-download cached gems
-          working-directory: "./docs"
+      # - name: Setup Ruby
+      #   uses: ruby/setup-ruby@v1.267.0
+      #   with:
+      #     ruby-version: "3.4.7" # Not needed with a .ruby-version file
+      #     bundler-cache: false # runs 'bundle install' and caches installed gems automatically
+      #     cache-version: 0 # Increment this number if you need to re-download cached gems
+      #     working-directory: "./docs"
 
       - name: "Install dependencies"
         shell: bash -l {0}

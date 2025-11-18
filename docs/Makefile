@@ -32,12 +32,14 @@ install:
 	@echo "Installing documentation site dependencies..."
 	asdf current || "failed to get asdf current"
 	npm install
+	whereis gem || echo "gem not found"
+	gem install bundler
 	@echo "ASDF data dir: $$ASDF_DATA_DIR"
 	@echo "PATH: $$PATH"
-	@echo "Looking for bundle:"
-	whereis bundle || echo "bundle not found"
-	bundle config set --local path vendor/bundle
-	bundle install
+	@echo "Looking for bundler:"
+	whereis bundler || echo "bundler not found"
+	bundler config set --local path vendor/bundle
+	bundler install
 	$(MAKE) -C $(SRC_BASE_DIR) install
 
 
