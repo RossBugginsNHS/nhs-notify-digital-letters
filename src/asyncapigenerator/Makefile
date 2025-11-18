@@ -33,7 +33,13 @@ test-verbose: ## Run tests with verbose output
 	pytest tests/ -vv -s
 
 coverage: ## Run tests with coverage report
-	cd ../.. && pytest src/asyncapigenerator/tests/ --cov=src/asyncapigenerator --cov-config=src/asyncapigenerator/pytest.ini --cov-report=html:src/asyncapigenerator/htmlcov --cov-report=term-missing --cov-report=xml:src/asyncapigenerator/coverage.xml
+	cd ../.. && \
+	echo "Current working directory: $$(pwd)" && \
+	ls -la $$HOME/.asdf/shims && \
+	asdf reshim python && \
+	whereis pytest && \
+	whereis python3 && \
+	pytest src/asyncapigenerator/tests/ --cov=src/asyncapigenerator --cov-config=src/asyncapigenerator/pytest.ini --cov-report=html:src/asyncapigenerator/htmlcov --cov-report=term-missing --cov-report=xml:src/asyncapigenerator/coverage.xml
 
 lint: ## Run linting
 	flake8 .
