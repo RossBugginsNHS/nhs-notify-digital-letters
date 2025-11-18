@@ -1,9 +1,13 @@
 install: config
 
 config:
+	@echo "------------------- CLOUD EVENTS -------------------"
 	$(MAKE) -C ./cloudevents install
+	@echo "------------------- ASYNC GENERATOR  -------------------"
 	$(MAKE) -C ./asyncapigenerator install-dev
+	@echo "------------------- CLOUD EVENT JEKYLL   -------------------"
 	$(MAKE) -C ./cloudeventjekylldocs install-dev
+	@echo "------------------- CLOUD EVENT IMPORTER   -------------------"
 	$(MAKE) -C ./eventcatalogasyncapiimporter install-dev
 
 test:

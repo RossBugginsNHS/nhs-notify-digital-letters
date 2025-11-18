@@ -77,7 +77,8 @@
       ".github/copilot-instructions.md": true,
       ".github/instructions": true
     },
-    "terminal.integrated.scrollback": 10000
+    "terminal.integrated.scrollback": 10000,
+    "shellcheck.run": "onSave"
   },
   "extensions": {
     "recommendations": [

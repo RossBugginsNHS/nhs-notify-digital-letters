@@ -9,39 +9,8 @@ include scripts/init.mk
 
 quick-start: config clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
-_install-apt-packages:
-	@echo "Installing apt packages listed in packages.txt..."
-	sudo apt-get update && cat packages.txt | xargs sudo apt-get install -y || echo "Couldn't get apt packages, continuing..."
-
-_install-asdf:
-	curl -LO https://github.com/asdf-vm/asdf/releases/download/v0.18.0/asdf-v0.18.0-linux-amd64.tar.gz && \
-	sudo tar -xvzf asdf-v0.18.0-linux-amd64.tar.gz -C /usr/local/bin && \
-	sudo chmod +x /usr/local/bin/asdf && \
-	rm asdf-v0.18.0-linux-amd64.tar.gz && \
-	pwd && \
-	ls -la && \
-	/usr/local/bin/asdf --version && \
-	export ASDF_DATA_DIR=$$HOME/.asdf && \
-	export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH && \
-	echo "export ASDF_DATA_DIR=$$HOME/.asdf" >> $$HOME/.bashrc && \
-	echo "export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH" >> $$HOME/.bashrc && \
-	echo "export ASDF_DATA_DIR=$$HOME/.asdf" >> $$HOME/.zshrc && \
-	echo "export PATH=$$ASDF_DATA_DIR/shims:$$ASDF_DATA_DIR/bin:/usr/local/bin:$$PATH" >> $$HOME/.zshrc && \
-	asdf --version
-
-dependencies: _install-asdf _install-apt-packages _dependancies
-
-_dependancies: _install-dependencies version # Configure development environment (main) @Configuration
-	@echo "Installing project dependencies..."
-	@echo "Installing documentation dependencies..."
-	@echo "ASDF data dir: $$ASDF_DATA_DIR"
-	@echo "PATH: $$PATH"
-	asdf current || "failed to get asdf current"
-	$(MAKE) -C docs install
-	@echo "Installing CloudEvents source dependencies..."
-	$(MAKE) -C src/cloudevents install
-	@echo "Installing Event Catalog AsyncAPI Importer source dependencies..."
-	$(MAKE) -C src/eventcatalogasyncapiimporter install
+dependancies:
+	./dependancies.sh
 
 
 test-docs:
@@ -66,7 +35,7 @@ clean:: # Clean-up project resources (main) @Operations
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output
 	rm -f .version
 
-config:: _dependancies
+config:: _install-dependencies version
 
 serve-docs:
 	$(MAKE) -C docs s

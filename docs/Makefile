@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 BASE_URL ?= "/"
 VERSION ?= ""
 SCHEMA_PATTERN = *.schema.json
@@ -30,7 +32,12 @@ h help:
 
 install:
 	@echo "Installing documentation site dependencies..."
+	node --version
+	ruby --version
 	asdf current || "failed to get asdf current"
+	@echo "ASDF data dir: $$ASDF_DATA_DIR"
+	@echo "PATH: $$PATH"
+	whereis npm || echo "npm not found"
 	npm install
 	whereis gem || echo "gem not found"
 	gem install bundler
