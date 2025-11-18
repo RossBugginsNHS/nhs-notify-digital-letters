@@ -66,6 +66,10 @@ jobs:
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
+
+      - name: "Pre reqs"
+        run: |
+          make asdf-manual-install
       - name: "Repo setup"
         run: |
           make config
