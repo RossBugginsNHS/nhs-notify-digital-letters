@@ -165,8 +165,8 @@ jobs:
 
   publish-stage: # Recommended maximum execution time is 10 minutes
     name: "Publish stage"
-    #needs: [metadata, acceptance-stage] #PUT THIS BACK WHEN ACCEPTANCE STAGE IS ENABLED
-    needs: [metadata, build-stage] #BYPASSING ACCEPTANCE STAGE
+    needs: [metadata, acceptance-stage]
+    #needs: [metadata, build-stage] #For forks where there is no dynamic environment stage
     uses: ./.github/workflows/stage-5-publish.yaml
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
     with:
