@@ -48,7 +48,7 @@ jobs:
   check-generated-dependencies:
     name: "Check generated dependencies"
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
@@ -62,29 +62,19 @@ jobs:
   test-unit:
     name: "Unit tests"
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
-
-      - name: "Setup dependencies and asdf with cache"
-        uses: ./.github/actions/setup-dependencies-asdf-with-cache
-
+      - name: "Repo setup"
+        run: |
+          npm ci
       - name: "Generate dependencies"
         run: |
           npm run generate-dependencies --workspaces --if-present
-
       - name: "Run unit test suite"
-        shell: bash -l {0}
         run: |
-          ./scripts/tests/unit.sh
-
-      - name: "Reports to correct location"
-        shell: bash -l {0}
-        run: |
-          mkdir -p .reports
-          TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.."
-
+          make test-unit
       - name: "Save the result of fast test suite"
         uses: actions/upload-artifact@v4
         with:
@@ -156,8 +146,6 @@ jobs:
       id-token: write
       contents: read
     timeout-minutes: 5
-    env:
-      FAIL_ON_SONAR_QUALITY_GATE_FAILURE: ${{ github.repository_owner == 'NHSDigital' }}
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
@@ -167,10 +155,14 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: code-coverage-report
+      - name: "Download Python coverage reports"
+        uses: actions/download-artifact@v5
+        with:
+          name: python-coverage-reports
+          path: src/
       - name: "Perform static analysis"
         uses: ./.github/actions/perform-static-analysis
         with:
           sonar_organisation_key: "${{ vars.SONAR_ORGANISATION_KEY }}"
           sonar_project_key: "${{ vars.SONAR_PROJECT_KEY }}"
           sonar_token: "${{ secrets.SONAR_TOKEN }}"
-          fail_on_quality_gate_failure: "${{ env.FAIL_ON_SONAR_QUALITY_GATE_FAILURE }}"

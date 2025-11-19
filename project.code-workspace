@@ -27,7 +27,7 @@
     "autoOpenWorkspace.enableAutoOpenIfSingleWorkspace": true,
     "githubCodeOwners.format.enabled": true,
     "workspace-terminals.switchTerminal": "never",
-    "workspace-terminals.auto": "never",
+    "workspace-terminals.auto": "always",
     "markdownlint.config": {
       "MD013": false,
       "MD024": { "siblings_only": true },
@@ -77,8 +77,7 @@
       ".github/copilot-instructions.md": true,
       ".github/instructions": true
     },
-    "terminal.integrated.scrollback": 10000,
-    "shellcheck.run": "onSave"
+    "terminal.integrated.scrollback": 10000
   },
   "extensions": {
     "recommendations": [

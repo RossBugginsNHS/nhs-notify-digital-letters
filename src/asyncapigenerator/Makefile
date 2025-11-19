@@ -1,6 +1,3 @@
-SHELL := /bin/bash
-PYTHON := python3
-
 .PHONY: help install install-dev generate generate-service clean test test-verbose coverage lint format clean-test
 
 help: ## Show this help message
@@ -35,10 +32,11 @@ test-verbose: ## Run tests with verbose output
 	pytest tests/ -vv -s
 
 coverage: ## Run tests with coverage report
-	./test.sh $(PYTHON)
+	cd ../.. && pytest src/asyncapigenerator/tests/ --cov=src/asyncapigenerator --cov-config=src/asyncapigenerator/pytest.ini --cov-report=html:src/asyncapigenerator/htmlcov --cov-report=term-missing --cov-report=xml:src/asyncapigenerator/coverage.xml
 
 lint: ## Run linting
 	flake8 .
+	mypy .
 
 format: ## Format code with black
 	black .

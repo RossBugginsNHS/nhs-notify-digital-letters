@@ -19,11 +19,9 @@ describe('schema-cache network operations', () => {
     }
   });
 
-  beforeAll(async () => {
-    console.log('[TEST] Starting HTTP server setup...');
+  beforeAll((done) => {
     // Create a local HTTP server for testing
     server = http.createServer((req, res) => {
-      console.log(`[TEST] Server received request for: ${req.url}`);
       // Handle different test scenarios based on URL path
       if (req.url === '/schema.json') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -52,28 +50,15 @@ describe('schema-cache network operations', () => {
       }
     });
 
-    await new Promise<void>((resolve, reject) => {
-      server.listen(0, '127.0.0.1', (err?: Error) => {
-        if (err) {
-          console.error('[TEST] Server failed to start:', err);
-          reject(err);
-          return;
-        }
-        const address = server.address() as AddressInfo;
-        serverUrl = `http://127.0.0.1:${address.port}`;
-        console.log(`[TEST] Server started successfully on ${serverUrl}`);
-        resolve();
-      });
+    server.listen(0, 'localhost', () => {
+      const address = server.address() as AddressInfo;
+      serverUrl = `http://localhost:${address.port}`;
+      done();
     });
   });
 
-  afterAll(async () => {
-    await new Promise<void>((resolve, reject) => {
-      server.close((err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
+  afterAll((done) => {
+    server.close(done);
   });
 
   beforeEach(() => {

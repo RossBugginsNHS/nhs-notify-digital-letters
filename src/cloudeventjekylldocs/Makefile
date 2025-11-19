@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 # Variables
 SCHEMA_SRC_DIR := ../../schemas
 OUTPUT_DIR := output

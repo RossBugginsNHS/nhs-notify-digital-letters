@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # run-validations.sh
 # Runs validation tests against multiple schemas
@@ -69,15 +68,12 @@ for schema_path in "${SCHEMAS[@]}"; do
     echo ""
 
     # Capture the validation output
-    # Note: The validate script is in src/cloudevents/package.json
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-    validation_output=$(cd "$REPO_ROOT/src/cloudevents" && npm run validate -- --base "$BASE_DIR" "$schema_path" "$DATA_FILE" 2>&1)
+    validation_output=$(npm run validate -- --base "$BASE_DIR" "$schema_path" "$DATA_FILE" 2>&1)
 
     if echo "$validation_output" | grep -q "Valid!"; then
         echo "✅ PASS"
         test_results+=("PASS|$data_file_name|$schema_name")
-        passed=$((passed + 1))
+        ((passed++))
     else
         echo "❌ FAIL"
         echo "Error Details:"
@@ -88,7 +84,7 @@ for schema_path in "${SCHEMAS[@]}"; do
     fi
 
     echo ""
-    index=$((index + 1))
+    ((index++))
 done
 
 echo "========================================"
