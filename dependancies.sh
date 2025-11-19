@@ -22,6 +22,12 @@ install_asdf(){
   echo "export PATH=$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:/usr/local/bin:$PATH" >> $HOME/.bashrc && \
   echo "export ASDF_DATA_DIR=$HOME/.asdf" >> $HOME/.zshrc && \
   echo "export PATH=$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:/usr/local/bin:$PATH" >> $HOME/.zshrc && \
+
+  # Make this natively available to GitHub Actions steps
+  echo "Adding ASDF to GITHUB_PATH and GITHUB_ENV..." && \
+  echo "ASDF_DATA_DIR=$HOME/.asdf" >> $GITHUB_ENV && \
+  echo "$ASDF_DATA_DIR/shims"  >> "$GITHUB_PATH" && \
+  echo "$ASDF_DATA_DIR/bin" >> "$GITHUB_PATH" && \
   asdf --version
 }
 
