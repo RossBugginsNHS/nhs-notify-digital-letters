@@ -6,7 +6,11 @@
 #
 # Usage:
 #   ./dependancies.sh                          # Normal operation
+#   ./dependancies.sh --skip-system-deps       # Only install project dependencies
 #   ASDF_HOME=/tmp/test ./dependancies.sh      # Testing with custom home
+#
+# Options:
+#   --skip-system-deps  Skip system packages and asdf setup, only install project deps
 #
 # Environment Variables:
 #   ASDF_HOME        - Home directory for RC files (default: $HOME)
@@ -19,6 +23,22 @@
 #   - curl, tar, make
 #
 set -euo pipefail
+
+# Parse command line arguments
+SKIP_SYSTEM_DEPS=false
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --skip-system-deps)
+      SKIP_SYSTEM_DEPS=true
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Usage: $0 [--skip-system-deps]"
+      exit 1
+      ;;
+  esac
+done
 
 # Constants
 readonly ASDF_INSTALL_PATH="/usr/local/bin/asdf"
@@ -188,16 +208,24 @@ verify_asdf_configuration(){
 
 install_project_dependencies()
 {
+  # Custom project-specific dependency installation
+  # Add your project-specific setup steps here (e.g., make install, npm install, etc.)
   echo "====================== INSTALL PROJECT DEPENDENCIES =============================="
   echo "Installing documentation dependencies..."
   make -C docs install
 }
 
 # Main execution flow
-install_apt_deps
-setup_asdf
-persist_asdf_env_to_shell_rc
-configure_asdf_for_github_actions
-install_asdf_plugins
-verify_asdf_configuration
+if [ "$SKIP_SYSTEM_DEPS" = false ]; then
+  echo "📦 Installing system dependencies..."
+  install_apt_deps
+  setup_asdf
+  persist_asdf_env_to_shell_rc
+  configure_asdf_for_github_actions
+  install_asdf_plugins
+  verify_asdf_configuration
+else
+  echo "⏭️  Skipping system dependencies..."
+fi
+
 install_project_dependencies
