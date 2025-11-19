@@ -131,19 +131,25 @@ configure_asdf_for_github_actions(){
 }
 
 setup_asdf_current_session(){
-  # Immediately set up environment in the current shell if asdf exists but isn't accessible
-  # Always set ASDF_DATA_DIR for subprocesses
+  # Always set up environment for current session and subprocesses
   export ASDF_DATA_DIR=$ASDF_HOME/.asdf
 
-  if [ -f "$ASDF_INSTALL_PATH" ] && ! command -v asdf &> /dev/null; then
-    echo "Setting up asdf environment for current shell session..."
+  # Always ensure asdf paths are in PATH for subprocesses (like make)
+  # Check if shims directory is already in PATH to avoid duplicates
+  if [[ ":$PATH:" != *":$ASDF_DATA_DIR/shims:"* ]]; then
     export PATH=$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:/usr/local/bin:$PATH
-  else
-    if [ -f "$ASDF_INSTALL_PATH" ]; then
-      echo "✅ asdf is already accessible from PATH"
+    echo "Added asdf to PATH for current session"
+  fi
+
+  # Report status
+  if [ -f "$ASDF_INSTALL_PATH" ]; then
+    if command -v asdf &> /dev/null; then
+      echo "✅ asdf is accessible from PATH"
     else
-      echo "ℹ️  asdf binary not yet installed, skipping current session setup"
+      echo "⚠️  asdf binary exists but not yet accessible via command"
     fi
+  else
+    echo "ℹ️  asdf binary not yet installed"
   fi
 }
 
