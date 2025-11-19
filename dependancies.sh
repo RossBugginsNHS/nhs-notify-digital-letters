@@ -1,4 +1,22 @@
 #!/bin/bash
+# Dependency installation script for NHS Notify Digital Letters
+#
+# Purpose: Installs system packages, asdf, asdf plugins, and project dependencies.
+#
+# Usage:
+#   ./dependancies.sh                          # Normal operation
+#   ASDF_HOME=/tmp/test ./dependancies.sh      # Testing with custom home
+#
+# Environment Variables:
+#   ASDF_HOME        - Home directory for RC files (default: $HOME)
+#   ASDF_DOWNLOAD_URL - URL for asdf tarball (default: GitHub release)
+#   ASDF_TEMP_DIR    - Temp directory for downloads (default: mktemp -d)
+#
+# Requirements:
+#   - packages.txt in current directory (optional)
+#   - sudo access
+#   - curl, tar, make
+#
 set -euo pipefail
 
 # Constants
@@ -102,10 +120,11 @@ persist_asdf_env_to_shell_rc(){
 configure_asdf_for_github_actions(){
   # Make this natively available to GitHub Actions steps
   if [ -n "${GITHUB_ENV:-}" ] && [ -n "${GITHUB_PATH:-}" ]; then
+    local asdf_data_dir="$ASDF_HOME/.asdf"
     echo "Adding ASDF to GITHUB_PATH and GITHUB_ENV..." && \
-    echo "ASDF_DATA_DIR=$ASDF_HOME/.asdf" >> "$GITHUB_ENV" && \
-    echo "$ASDF_DATA_DIR/shims"  >> "$GITHUB_PATH" && \
-    echo "$ASDF_DATA_DIR/bin" >> "$GITHUB_PATH"
+    echo "ASDF_DATA_DIR=$asdf_data_dir" >> "$GITHUB_ENV" && \
+    echo "$asdf_data_dir/shims"  >> "$GITHUB_PATH" && \
+    echo "$asdf_data_dir/bin" >> "$GITHUB_PATH"
   else
     echo "Not running in GitHub Actions, skipping GitHub environment setup"
   fi
