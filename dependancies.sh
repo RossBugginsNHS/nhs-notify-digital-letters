@@ -132,9 +132,11 @@ configure_asdf_for_github_actions(){
 
 setup_asdf_current_session(){
   # Immediately set up environment in the current shell if asdf exists but isn't accessible
+  # Always set ASDF_DATA_DIR for subprocesses
+  export ASDF_DATA_DIR=$ASDF_HOME/.asdf
+
   if [ -f "$ASDF_INSTALL_PATH" ] && ! command -v asdf &> /dev/null; then
     echo "Setting up asdf environment for current shell session..."
-    export ASDF_DATA_DIR=$ASDF_HOME/.asdf
     export PATH=$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:/usr/local/bin:$PATH
   else
     if [ -f "$ASDF_INSTALL_PATH" ]; then
