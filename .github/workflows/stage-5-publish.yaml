@@ -31,7 +31,10 @@ on:
         description: "Version of the software, set by the CI/CD pipeline workflow"
         required: true
         type: string
-
+      is_version_prerelease:
+        description: "Is this a semantically versioned pre release, set by the CI/CD pipeline workflow"
+        required: true
+        type: string
 
 jobs:
   metadata:
