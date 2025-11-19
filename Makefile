@@ -9,7 +9,13 @@ include scripts/init.mk
 
 # Example CI/CD targets are: dependencies, build, publish, deploy, clean, etc.
 
-quick-start: dependancies clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
+# make config: Config - this assumes all system dependencies are already installed, eg asdf etc. This is fine for default dev containers
+# make dependencies: If using a clean environment, eg ubuntu native container, you must run make dependencies first to install system dependencies, before then running make config
+
+quick-start: install clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
+
+install:
+	$(MAKE) -C docs install
 
 dependencies:
 	./dependancies.sh
@@ -37,6 +43,7 @@ clean:: # Clean-up project resources (main) @Operations
 	rm -f .version
 
 config:: _install-dependencies version
+	$(MAKE) install
 
 serve-docs:
 	$(MAKE) -C docs s
