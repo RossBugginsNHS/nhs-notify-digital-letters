@@ -6,5 +6,5 @@
     "UPDATEFROMTEMPLATE": "false"
   },
   "image": "ghcr.io/nhsdigital/nhs-notify-devcontainer-loaded-codespaces:1.0.19",
-  "name": "Digital Letters Codespaces"
+  "name": "Codespaces"
 }

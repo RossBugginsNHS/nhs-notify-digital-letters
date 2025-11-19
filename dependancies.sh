@@ -2,6 +2,7 @@
 # Dependency installation script for NHS Notify Digital Letters
 #
 # Purpose: Installs system packages, asdf, asdf plugins, and project dependencies.
+#          Works for both local development and GitHub Actions environments.
 #
 # Usage:
 #   ./dependancies.sh                          # Normal operation

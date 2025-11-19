@@ -67,13 +67,12 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@v5
 
-      - name: "Cache asdf and installed tools"
+      - name: "Restore asdf cache"
         id: cache-asdf
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.asdf
-            /usr/local/bin/asdf
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
           restore-keys: |
             ${{ runner.os }}-asdf-
@@ -90,6 +89,25 @@ jobs:
         shell: bash -l {0}
         run: |
           make dependencies
+
+      - name: "Save asdf cache"
+        id: save-asdf-cache
+        if: steps.cache-asdf.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ steps.cache-asdf.outputs.cache-primary-key }}
+
+      - name: "Check cache save status"
+        run: |
+          if [ "${{ steps.cache-asdf.outputs.cache-hit }}" == "true" ]; then
+            echo "ℹ️  Cache was restored from previous run - no save needed"
+          elif [ "${{ steps.save-asdf-cache.outcome }}" == "success" ]; then
+            echo "✅ Cache saved successfully for future runs! 💾"
+          else
+            echo "⚠️  Cache save was skipped or failed"
+          fi
 
       - name: "Node version root"
         shell: bash -l {0}
