@@ -1,20 +1,12 @@
-name: "1. CI/CD pull request"
-
-# The total recommended execution time for the "CI/CD Pull Request" workflow is around 20 minutes.
+name: "CI/CD publish"
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - "**"
   pull_request:
-    types: [opened, reopened]
+    types: [closed]
     branches:
       - main
+  workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: write
 
 jobs:
   metadata:
@@ -86,79 +78,84 @@ jobs:
           export DOES_PULL_REQUEST_EXIST="${{ steps.pr_exists.outputs.does_pull_request_exist }}"
           export IS_VERSION_PRERELEASE="${{ steps.variables.outputs.is_version_prerelease }}"
           make list-variables
-  commit-stage: # Recommended maximum execution time is 2 minutes
-    name: "Commit stage"
-    needs: [metadata]
-    uses: ./.github/workflows/stage-1-commit.yaml
-    with:
-      build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
-      build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
-      build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
-      nodejs_version: "${{ needs.metadata.outputs.nodejs_version }}"
-      python_version: "${{ needs.metadata.outputs.python_version }}"
-      terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
-      version: "${{ needs.metadata.outputs.version }}"
-  #    secrets: inherit
-  test-stage: # Recommended maximum execution time is 5 minutes
-    name: "Test stage"
-    needs: [metadata, commit-stage]
-    uses: ./.github/workflows/stage-2-test.yaml
-    with:
-      build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
-      build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
-      build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
-      nodejs_version: "${{ needs.metadata.outputs.nodejs_version }}"
-      python_version: "${{ needs.metadata.outputs.python_version }}"
-      terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
-      version: "${{ needs.metadata.outputs.version }}"
-    secrets: #inherit
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  build-stage: # Recommended maximum execution time is 3 minutes
-    name: "Build stage"
-    needs: [metadata, test-stage]
-    uses: ./.github/workflows/stage-3-build.yaml
-    if: needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')) || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-    with:
-      build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
-      build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
-      build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
-      nodejs_version: "${{ needs.metadata.outputs.nodejs_version }}"
-      python_version: "${{ needs.metadata.outputs.python_version }}"
-      terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
-      version: "${{ needs.metadata.outputs.version }}"
-  #    secrets: inherit
-  pr-create-dynamic-environment:
-    name: Trigger dynamic environment creation
-    needs: [metadata, build-stage]
+
+  publish:
+    name: "Publish packages"
     runs-on: ubuntu-latest
-    if: needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened'))
+    timeout-minutes: 10
+    needs: [metadata]
+    env:
+      build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
+      build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
+      build_epoch: "${{ needs.metadata.outputs.build_epoch }}"
+      nodejs_version: "${{ needs.metadata.outputs.nodejs_version }}"
+      python_version: "${{ needs.metadata.outputs.python_version }}"
+      terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
+      version: "${{ needs.metadata.outputs.version }}"
+      is_version_prerelease: "${{ needs.metadata.outputs.is_version_prerelease }}"
+
     steps:
-      - uses: actions/checkout@v5.0.0
-      - name: Trigger dynamic environment creation
+      - name: "Checkout code"
+        uses: actions/checkout@v5
+
+      - name: "Get artifacts: jekyll docs"
+        uses: actions/download-artifact@v5
+        with:
+          path: ./artifacts/jekyll-docs-${{ env.version }}
+          name: jekyll-docs-${{ env.version }}
+
+      - name: "Get artifacts: schema"
+        uses: actions/download-artifact@v5
+        with:
+          path: ./artifacts/schemas-${{ env.version }}
+          name: schemas-${{ env.version }}
+
+
+      - name: Draft Release
         env:
-          APP_PEM_FILE: ${{ secrets.APP_PEM_FILE }}
-          APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
-        shell: bash
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+          IS_PRERELEASE: ${{ env.is_version_prerelease }}
         run: |
-          .github/scripts/dispatch_internal_repo_workflow.sh \
-            --infraRepoName "$(echo ${{ github.repository }} | cut -d'/' -f2)" \
-            --releaseVersion "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" \
-            --targetWorkflow "dispatch-deploy-dynamic-env.yaml" \
-            --targetEnvironment "pr${{ needs.metadata.outputs.pr_number }}" \
-            --targetComponent "dl" \
-            --targetAccountGroup "nhs-notify-digital-letters-dev" \
-            --terraformAction "apply" \
-            --overrideProjectName "nhs" \
-            --overrideRoleName "nhs-main-acct-digital-letters-github-deploy" \
-            --overrides "branch_name=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-  acceptance-stage: # Recommended maximum execution time is 10 minutes
-    name: "Acceptance stage"
-    needs: [metadata, pr-create-dynamic-environment]
-    uses: ./.github/workflows/stage-4-acceptance.yaml
-    if: needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')) || (github.event_name == 'push' && github.ref == 'refs/heads/main')
-    with:
-      target_environment: "pr${{ needs.metadata.outputs.pr_number }}"
-      target_account_group: nhs-notify-digital-letters-dev
-    secrets:
-      APP_PEM_FILE: ${{ secrets.APP_PEM_FILE }}
-      APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
+          PRERELEASE_FLAG=""
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+          gh release create \
+          "$VERSION" \
+          --draft \
+          --latest \
+          --title "$VERSION" \
+          --notes "Release of $VERSION" \
+          $PRERELEASE_FLAG
+
+      - name: "Upload jeykll docs release asset"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+        run: |
+          cp ./artifacts/jekyll-docs-$VERSION/artifact.tar $RUNNER_TEMP/jekyll-docs-$VERSION.tar
+          gh release upload \
+          "$VERSION" \
+          $RUNNER_TEMP/jekyll-docs-$VERSION.tar#jekyll-docs-$VERSION
+
+      - name: "Upload schema release asset"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+        run: |
+          cp ./artifacts/schemas-$VERSION/artifact.tar $RUNNER_TEMP/schemas-$VERSION.tar
+          gh release upload \
+          "$VERSION" \
+          $RUNNER_TEMP/schemas-$VERSION.tar#schemas-$VERSION
+
+
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ env.version }}
+        run: gh release edit "$VERSION" --draft=false
