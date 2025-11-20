@@ -15,10 +15,10 @@ include scripts/init.mk
 quick-start: install clean test-docs build serve-docs # Quick start target to setup, build and serve docs @Pipeline
 
 install:
-	./dependancies.sh --skip-system-deps
+	./dependencies.sh --skip-system-deps
 
 dependencies:
-	./dependancies.sh
+	./dependencies.sh
 
 test-docs:
 	$(MAKE) -C docs test
