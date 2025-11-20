@@ -17,7 +17,7 @@ cd "$(git rev-parse --show-toplevel)"
 # tests from here. If you want to run other test suites, see the predefined
 # tasks in scripts/test.mk.
 
-# run tests
+# run testsscripts/tests/unit.sh
 
 npm ci && \
 npm run test:unit --workspaces && \
@@ -25,4 +25,6 @@ cd docs && \
 ./test.sh && \
 cd .. && \
 mkdir -p .reports && \
-TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.."
+TMPDIR="./.reports" ./node_modules/.bin/lcov-result-merger "**/.reports/unit/coverage/lcov.info" ".reports/lcov.info" --ignore "node_modules" --prepend-source-files --prepend-path-fix "../../.." && \
+echo "Combined converage is:" && \
+cat .reports/lcov.info
