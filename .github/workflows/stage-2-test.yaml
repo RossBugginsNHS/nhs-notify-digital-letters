@@ -101,10 +101,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-coverage-reports
-          path: |
-            src/asyncapigenerator/coverage.xml
-            src/cloudeventjekylldocs/coverage.xml
-            src/eventcatalogasyncapiimporter/coverage.xml
+          path: "**/coverage.xml"
   test-lint:
     name: "Linting"
     runs-on: ubuntu-latest
