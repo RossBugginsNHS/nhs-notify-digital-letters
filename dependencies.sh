@@ -5,9 +5,9 @@
 #          Works for both local development and GitHub Actions environments.
 #
 # Usage:
-#   ./dependancies.sh                          # Normal operation
-#   ./dependancies.sh --skip-system-deps       # Only install project dependencies
-#   ASDF_HOME=/tmp/test ./dependancies.sh      # Testing with custom home
+#   ./dependencies.sh                          # Normal operation
+#   ./dependencies.sh --skip-system-deps       # Only install project dependencies
+#   ASDF_HOME=/tmp/test ./dependencies.sh      # Testing with custom home
 #
 # Options:
 #   --skip-system-deps  Skip system packages and asdf setup, only install project deps
