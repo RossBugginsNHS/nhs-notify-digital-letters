@@ -54,7 +54,7 @@ install_apt_deps(){
   echo "====================== INSTALL APT DEPS =============================="
   echo "Installing apt packages listed in packages.txt..."
 
-  if [ ! -f "packages.txt" ]; then
+  if [[ ! -f "packages.txt" ]]; then
     echo "⚠️  packages.txt not found, skipping apt package installation"
     return 0
   fi
@@ -75,19 +75,19 @@ install_asdf(){
   # Download asdf
   echo "Downloading asdf to $tarball..."
   if ! curl -fsSL -o "$tarball" "$ASDF_DOWNLOAD_URL"; then
-    echo "❌ ERROR: Failed to download asdf from $ASDF_DOWNLOAD_URL"
+    echo "❌ ERROR: Failed to download asdf from $ASDF_DOWNLOAD_URL" >&2
     return 1
   fi
 
   # Extract to /usr/local/bin
   if ! sudo tar -xzf "$tarball" -C /usr/local/bin; then
-    echo "❌ ERROR: Failed to extract asdf"
+    echo "❌ ERROR: Failed to extract asdf" >&2
     return 1
   fi
 
   # Set executable permissions
   if ! sudo chmod +x "$ASDF_INSTALL_PATH"; then
-    echo "❌ ERROR: Failed to set permissions on asdf"
+    echo "❌ ERROR: Failed to set permissions on asdf" >&2
     return 1
   fi
 
@@ -99,7 +99,7 @@ configure_shell_rc_file() {
   local rc_file="$ASDF_HOME/$rc_name"
 
   # Skip if rc file doesn't exist (user probably doesn't use this shell)
-  if [ ! -f "$rc_file" ]; then
+  if [[ ! -f "$rc_file" ]]; then
     echo "ℹ️  $rc_name not found, skipping configuration"
     return 0
   fi
@@ -136,11 +136,12 @@ persist_asdf_env_to_shell_rc(){
   if ! $configured; then
     echo "⚠️  Warning: Failed to configure any shell RC files"
   fi
+  return 0
 }
 
 configure_asdf_for_github_actions(){
   # Make this natively available to GitHub Actions steps
-  if [ -n "${GITHUB_ENV:-}" ] && [ -n "${GITHUB_PATH:-}" ]; then
+  if [[ -n "${GITHUB_ENV:-}" && -n "${GITHUB_PATH:-}" ]]; then
     local asdf_data_dir="$ASDF_HOME/.asdf"
     echo "Adding ASDF to GITHUB_PATH and GITHUB_ENV..." && \
     echo "ASDF_DATA_DIR=$asdf_data_dir" >> "$GITHUB_ENV" && \
@@ -149,6 +150,7 @@ configure_asdf_for_github_actions(){
   else
     echo "Not running in GitHub Actions, skipping GitHub environment setup"
   fi
+  return 0
 }
 
 setup_asdf_current_session(){
@@ -163,7 +165,7 @@ setup_asdf_current_session(){
   fi
 
   # Report status
-  if [ -f "$ASDF_INSTALL_PATH" ]; then
+  if [[ -f "$ASDF_INSTALL_PATH" ]]; then
     if command -v asdf &> /dev/null; then
       echo "✅ asdf is accessible from PATH"
     else
@@ -172,11 +174,12 @@ setup_asdf_current_session(){
   else
     echo "ℹ️  asdf binary not yet installed"
   fi
+  return 0
 }
 
 setup_asdf(){
   # Check if asdf binary file exists in the installation location
-  if [ -f "$ASDF_INSTALL_PATH" ]; then
+  if [[ -f "$ASDF_INSTALL_PATH" ]]; then
     echo "====================== ASDF ALREADY INSTALLED =============================="
     echo "✅ asdf binary found at $ASDF_INSTALL_PATH"
   else
@@ -184,15 +187,17 @@ setup_asdf(){
     install_asdf
   fi
   setup_asdf_current_session
+  return 0
 }
 
 install_asdf_plugins(){
   echo "====================== INSTALL ASDF PLUGINS =============================="
   if ! make _install-dependencies; then
-    echo "❌ ERROR: Failed to install asdf plugins"
+    echo "❌ ERROR: Failed to install asdf plugins" >&2
     exit 1
   fi
   echo "✅ asdf plugins installed successfully"
+  return 0
 }
 
 verify_asdf_configuration(){
@@ -200,10 +205,11 @@ verify_asdf_configuration(){
   echo "ASDF data dir: ${ASDF_DATA_DIR:-not set}"
   echo "PATH: $PATH"
   if ! asdf current; then
-    echo "❌ ERROR: asdf is not fully configured. Cannot proceed with project dependencies installation."
+    echo "❌ ERROR: asdf is not fully configured. Cannot proceed with project dependencies installation." >&2
     exit 1
   fi
   echo "✅ asdf configuration verified successfully"
+  return 0
 }
 
 install_project_dependencies()
@@ -213,10 +219,11 @@ install_project_dependencies()
   echo "====================== INSTALL PROJECT DEPENDENCIES =============================="
   echo "Installing documentation dependencies..."
   make -C docs install
+  return 0
 }
 
 # Main execution flow
-if [ "$SKIP_SYSTEM_DEPS" = false ]; then
+if [[ "$SKIP_SYSTEM_DEPS" = false ]]; then
   echo "📦 Installing system dependencies..."
   install_apt_deps
   setup_asdf
