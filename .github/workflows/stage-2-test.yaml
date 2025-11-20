@@ -167,6 +167,11 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: code-coverage-report
+      - name: "Download Python coverage reports for SONAR"
+        uses: actions/download-artifact@v5
+        with:
+          name: python-coverage-reports
+          path: .
       - name: "Perform static analysis"
         uses: ./.github/actions/perform-static-analysis
         with:
