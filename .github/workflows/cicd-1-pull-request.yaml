@@ -116,7 +116,6 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
-      skip_scan_dependencies: "${{ needs.metadata.outputs.skip_scan_dependencies }}"
       ignore_sonar_failure: "${{ needs.metadata.outputs.ignore_sonar_failure }}"
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
