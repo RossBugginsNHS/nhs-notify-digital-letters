@@ -157,7 +157,7 @@ jobs:
       contents: read
     timeout-minutes: 5
     env:
-      FAIL_ON_SONAR_QUALITY_GATE_FAILURE: ${{ github.repository_owner == 'NHSDigital' }}
+      IGNORE_SONAR_FAILURE: ${{ vars.IGNORE_SONAR_FAILURE || 'false' }}
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
@@ -178,4 +178,4 @@ jobs:
           sonar_organisation_key: "${{ vars.SONAR_ORGANISATION_KEY }}"
           sonar_project_key: "${{ vars.SONAR_PROJECT_KEY }}"
           sonar_token: "${{ secrets.SONAR_TOKEN }}"
-          fail_on_quality_gate_failure: "${{ env.FAIL_ON_SONAR_QUALITY_GATE_FAILURE }}"
+          ignore_sonar_failure: "${{ env.IGNORE_SONAR_FAILURE }}"
