@@ -10,11 +10,10 @@ inputs:
   sonar_token:
     description: "Sonar token, the API key"
     required: false
+  # Note, conmpsite actions only support string inputs
   ignore_sonar_failure:
     description: "Whether to fail the build if the quality gate fails"
-    required: true
-    type: boolean
-    default: false
+    default: 'false'
 
 runs:
   using: "composite"
@@ -26,7 +25,7 @@ runs:
     - name: "Perform static analysis"
       shell: bash
       if: steps.check.outputs.secret_exist == 'true'
-      continue-on-error: ${{ inputs.ignore_sonar_failure }}
+      continue-on-error: ${{ fromJSON(inputs.ignore_sonar_failure) }}
       run: |
         export BRANCH_NAME=${GITHUB_HEAD_REF:-$(echo $GITHUB_REF | sed 's#refs/heads/##')}
         export SONAR_ORGANISATION_KEY=${{ inputs.sonar_organisation_key }}
