@@ -102,7 +102,7 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
-      skip_scan_dependencies: ${{ needs.metadata.outputs.skip_scan_dependencies }}
+      skip_scan_dependencies: ${{ fromJSON(needs.metadata.outputs.skip_scan_dependencies) }}
 
   test-stage: # Recommended maximum execution time is 5 minutes
     name: "Test stage"
@@ -116,7 +116,7 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
-      ignore_sonar_failure: ${{ needs.metadata.outputs.ignore_sonar_failure }}
+      ignore_sonar_failure: ${{ fromJSON(needs.metadata.outputs.ignore_sonar_failure) }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -176,7 +176,7 @@ jobs:
     name: "Publish stage"
     needs: [metadata, build-stage, acceptance-stage]
     uses: ./.github/workflows/stage-5-publish.yaml
-    if: ${{(!cancelled() && needs.metadata.outputs.skip_dynamic_acceptance && needs.build-stage.result == 'success') || (success() && github.event_name == 'push' && github.ref == 'refs/heads/main')}}
+    if: ${{(!cancelled() && fromJSON(needs.metadata.outputs.skip_dynamic_acceptance) && needs.build-stage.result == 'success') || (success() && github.event_name == 'push' && github.ref == 'refs/heads/main')}}
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
