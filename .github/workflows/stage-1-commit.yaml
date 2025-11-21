@@ -193,7 +193,7 @@ jobs:
       id-token: write
       contents: read
     timeout-minutes: 5
-    if: ${{ inputs.skip_scan_dependencies != false }}
+    if: ${{ inputs.skip_scan_dependencies != 'false' }}
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5

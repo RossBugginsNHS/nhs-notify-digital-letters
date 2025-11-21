@@ -19,6 +19,7 @@ permissions:
 env:
   SKIP_DYNAMIC_ACCEPTANCE:  ${{ fromJSON(vars.SKIP_DYNAMIC_ACCEPTANCE || 'false') }}
   SKIP_SCAN_DEPENDENCIES:  ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
+
 jobs:
   metadata:
     name: "Set CI/CD metadata"
@@ -101,6 +102,7 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
+      skip_scan_dependencies: "${{ github.env.SKIP_SCAN_DEPENDENCIES }}"
   #    secrets: inherit
   test-stage: # Recommended maximum execution time is 5 minutes
     name: "Test stage"
@@ -135,7 +137,7 @@ jobs:
     name: Trigger dynamic environment creation
     needs: [metadata, build-stage]
     runs-on: ubuntu-latest
-    if: github.env.SKIP_DYNAMIC_ACCEPTANCE != true  && (needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')))
+    if: github.env.SKIP_DYNAMIC_ACCEPTANCE != 'true'  && (needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')))
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Trigger dynamic environment creation
@@ -160,7 +162,7 @@ jobs:
     name: "Acceptance stage"
     needs: [metadata, pr-create-dynamic-environment]
     uses: ./.github/workflows/stage-4-acceptance.yaml
-    if: github.env.SKIP_DYNAMIC_ACCEPTANCE != true && (needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')) || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+    if: github.env.SKIP_DYNAMIC_ACCEPTANCE != 'true' && (needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')) || (github.event_name == 'push' && github.ref == 'refs/heads/main'))
     with:
       target_environment: "pr${{ needs.metadata.outputs.pr_number }}"
       target_account_group: nhs-notify-digital-letters-dev
@@ -172,7 +174,7 @@ jobs:
     name: "Publish stage"
     needs: [metadata, build-stage, acceptance-stage]
     uses: ./.github/workflows/stage-5-publish.yaml
-    if: (!cancelled() && github.env.SKIP_DYNAMIC_ACCEPTANCE == true && needs.build-stage.build-stage.outcome=='success' ) || ( success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: (!cancelled() && github.env.SKIP_DYNAMIC_ACCEPTANCE == 'true' && needs.build-stage.build-stage.outcome=='success' ) || ( success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
