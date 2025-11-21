@@ -10,7 +10,7 @@ import path from 'path';
 import { spawnSync } from 'child_process';
 
 const SCRIPT_PATH = path.join(__dirname, '..', 'validate.ts');
-const TEST_DIR = path.join(__dirname, 'temp-validate-cli-test');
+const TEST_DIR = path.join(__dirname, `temp-validate-cli-test-${process.pid}`);
 
 /**
  * Helper to run validator CLI and handle exit codes

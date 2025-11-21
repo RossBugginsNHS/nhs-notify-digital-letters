@@ -9,7 +9,7 @@ import path from 'path';
 import { DocsGenerator } from '../docs-generator/docs-generator.ts';
 import type { DocsGeneratorConfig } from '../docs-generator/docs-generator-types.ts';
 
-const TEST_DIR = path.join(__dirname, 'temp-docs-generator-test');
+const TEST_DIR = path.join(__dirname, `temp-docs-generator-test-${process.pid}`);
 const INPUT_DIR = path.join(TEST_DIR, 'input');
 const OUTPUT_DIR = path.join(TEST_DIR, 'output');
 

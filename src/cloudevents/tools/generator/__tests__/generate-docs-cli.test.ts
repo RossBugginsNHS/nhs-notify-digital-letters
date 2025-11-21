@@ -14,7 +14,7 @@ import {
   printUsage,
 } from '../docs-generator/generate-docs-cli.ts';
 
-const TEST_DIR = path.join(__dirname, 'temp-docs-cli-test');
+const TEST_DIR = path.join(__dirname, `temp-docs-cli-test-${process.pid}`);
 
 // Mock console methods
 const originalConsoleError = console.error;

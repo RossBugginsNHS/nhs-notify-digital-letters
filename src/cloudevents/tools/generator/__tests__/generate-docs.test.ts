@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { handleCli } from '../docs-generator/generate-docs-cli.ts';
 
-const TEST_DIR = path.join(__dirname, 'temp-generate-docs-test');
+const TEST_DIR = path.join(__dirname, `temp-generate-docs-test-${process.pid}`);
 const INPUT_DIR = path.join(TEST_DIR, 'input');
 const OUTPUT_DIR = path.join(TEST_DIR, 'output');
 

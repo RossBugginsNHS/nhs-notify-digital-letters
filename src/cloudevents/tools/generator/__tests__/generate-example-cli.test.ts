@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { handleCli } from '../example-generator/generate-example-cli.ts';
 
-const TEST_DIR = path.join(__dirname, 'temp-cli-test');
+const TEST_DIR = path.join(__dirname, `temp-cli-test-${process.pid}`);
 
 // Mock console.error to suppress error output during tests
 const originalConsoleError = console.error;

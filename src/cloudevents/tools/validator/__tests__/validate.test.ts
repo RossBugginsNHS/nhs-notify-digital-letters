@@ -4,13 +4,14 @@
  * For faster validation tests, see validator-integration.test.ts
  */
 
-import { beforeEach, afterEach, describe, expect, it } from '@jest/globals';
+import { beforeAll, beforeEach, afterEach, describe, expect, it } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 
 const SCRIPT_PATH = path.join(__dirname, '..', 'validate.ts');
-const TEST_DIR = path.join(__dirname, 'temp-validate-test');
+// Use process PID to ensure unique test directory for parallel test runs
+const TEST_DIR = path.join(__dirname, `temp-validate-test-${process.pid}`);
 
 /**
  * Helper to run validator CLI and handle exit codes
@@ -41,6 +42,12 @@ function runValidator(schemaPath: string, dataPath: string, baseDir?: string): {
 describe('validate.ts CLI', () => {
   // Reduced timeout since tsx is much faster than ts-node
   jest.setTimeout(20000); // 20 seconds per test
+
+  beforeAll(() => {
+    // Warm up npx cache by resolving tsx before any tests run
+    // This prevents the first test from timing out due to npx resolution overhead
+    spawnSync('npx', ['tsx', '--version'], { encoding: 'utf-8' });
+  });
 
   beforeEach(() => {
     // Create test directory

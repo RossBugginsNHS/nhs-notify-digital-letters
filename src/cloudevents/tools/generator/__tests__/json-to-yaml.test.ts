@@ -14,7 +14,7 @@ import yaml from 'js-yaml';
 import { JsonToYamlConverter } from '../json-to-yaml/json-to-yaml-converter.ts';
 import { handleCli } from '../json-to-yaml/json-to-yaml-cli.ts';
 
-const TEST_DIR = path.join(__dirname, 'temp-json-to-yaml-test');
+const TEST_DIR = path.join(__dirname, `temp-json-to-yaml-test-${process.pid}`);
 
 /**
  * Helper function for backward compatibility with old tests
