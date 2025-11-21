@@ -94,7 +94,7 @@ jobs:
         if: ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
         run: |
           echo "WARNING: Skipping dependency scan as per configuration."
-          echo "::warning title=Skipping dependency scan:: Skipping dependency scan as per configuration.
+          echo "::warning title=Skipping dependency scan:: Skipping dependency scan as per configuration."
           echo "⚠️⚠️ Skipping dependency scan as per configuration. ⚠️⚠️" >> $GITHUB_STEP_SUMMARY
 
       - name: "Warning on skip dynamic acceptance"
