@@ -192,12 +192,18 @@ jobs:
       id-token: write
       contents: read
     timeout-minutes: 5
-    if: ${{ !inputs.skip_scan_dependencies }}
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
+      - name: "Warn that skip scan dependencies failure is enabled"
+        if: ${{ inputs.skip_scan_dependencies }}
+        shell: bash
+        run: |
+          echo "WARNING: Skipping dependency scan as per configuration."
+          echo "::warning title=Skipping dependency scan:: Skipping dependency scan as per configuration."
       - name: "Scan dependencies"
         uses: ./.github/actions/scan-dependencies
+        if: ${{ !inputs.skip_scan_dependencies }}
         with:
           build_datetime: "${{ inputs.build_datetime }}"
           build_timestamp: "${{ inputs.build_timestamp }}"
