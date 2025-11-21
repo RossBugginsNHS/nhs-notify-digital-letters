@@ -18,7 +18,7 @@ permissions:
 
 env:
   SKIP_DYNAMIC_ACCEPTANCE:  ${{ fromJSON(vars.SKIP_DYNAMIC_ACCEPTANCE || 'false') }}
-
+  SKIP_SCAN_DEPENDENCIES:  ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
 jobs:
   metadata:
     name: "Set CI/CD metadata"
