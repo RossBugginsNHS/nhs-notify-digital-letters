@@ -188,6 +188,7 @@ jobs:
   scan-dependencies:
     name: "Scan dependencies"
     runs-on: ubuntu-latest
+    needs: [count-lines-of-code]
     permissions:
       id-token: write
       contents: read
