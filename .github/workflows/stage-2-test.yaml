@@ -182,4 +182,4 @@ jobs:
           sonar_organisation_key: "${{ vars.SONAR_ORGANISATION_KEY }}"
           sonar_project_key: "${{ vars.SONAR_PROJECT_KEY }}"
           sonar_token: "${{ secrets.SONAR_TOKEN }}"
-          ignore_sonar_failure: "${{ inputs.ignore_sonar_failure }}"
+          ignore_sonar_failure: "${{ inputs.ignore_sonar_failure}}"
