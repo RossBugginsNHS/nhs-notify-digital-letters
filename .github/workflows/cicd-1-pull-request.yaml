@@ -89,6 +89,28 @@ jobs:
           export DOES_PULL_REQUEST_EXIST="${{ steps.pr_exists.outputs.does_pull_request_exist }}"
           export IS_VERSION_PRERELEASE="${{ steps.variables.outputs.is_version_prerelease }}"
           make list-variables
+
+      - name: "Warning on skip scan dependencies"
+        if: ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
+        run: |
+          echo "WARNING: Skipping dependency scan as per configuration."
+          echo "::warning title=Skipping dependency scan:: Skipping dependency scan as per configuration.
+          echo "⚠️⚠️ Skipping dependency scan as per configuration. ⚠️⚠️" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Warning on skip dynamic acceptance"
+        if: ${{ fromJSON(vars.SKIP_DYNAMIC_ACCEPTANCE || 'false') }}
+        run: |
+          echo "WARNING: Skipping dynamic acceptance as per configuration."
+          echo "::warning title=Skipping dynamic acceptance:: Skipping dynamic acceptance as per configuration."
+          echo "⚠️⚠️ Skipping dynamic acceptance as per configuration. ⚠️⚠️" >> $GITHUB_STEP_SUMMARY
+
+      - name: "Warning on ignore sonar failure"
+        if: ${{ fromJSON(vars.IGNORE_SONAR_FAILURE || 'false') }}
+        run: |
+          echo "WARNING: SonarQube failures will be ignored as per configuration."
+          echo "::warning title=Stopping for Sonar failure is disabled:: SonarQube failures will be ignored as per configuration."
+          echo "⚠️⚠️ SonarQube failures will be ignored as per configuration. ⚠️⚠️" >> $GITHUB_STEP_SUMMARY
+
   commit-stage: # Recommended maximum execution time is 2 minutes
     name: "Commit stage"
     needs: [metadata]
