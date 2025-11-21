@@ -169,7 +169,7 @@ jobs:
   count-lines-of-code:
     name: "Count lines of code"
     runs-on: ubuntu-latest
-    permissions:t' }}
+    permissions:
       id-token: write
       contents: read
     timeout-minutes: 5
