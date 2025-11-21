@@ -172,7 +172,7 @@ jobs:
     name: "Publish stage"
     needs: [metadata, build-stage, acceptance-stage]
     uses: ./.github/workflows/stage-5-publish.yaml
-    if: (!cancelled() && github.env.SKIP_DYNAMIC_ACCEPTANCE == true && needs.build-stage.build-stage.outcome=='success' ) && (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: (!cancelled() && github.env.SKIP_DYNAMIC_ACCEPTANCE == true && needs.build-stage.build-stage.outcome=='success' ) || ( success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
