@@ -28,8 +28,8 @@ runs:
         path: ./artifacts/schemas-${{ inputs.version }}
         name: schemas-${{ inputs.version }}
 
-
     - name: Draft Release
+      shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
@@ -43,6 +43,7 @@ runs:
         ${{ inputs.is_version_prerelease == 'true' && '--prerelease' || '' }}
 
     - name: "Upload jeykll docs release asset"
+      shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
@@ -53,6 +54,7 @@ runs:
         $RUNNER_TEMP/jekyll-docs-${{ inputs.version }}.tar#jekyll-docs-${{ inputs.version }}
 
     - name: "Upload schema release asset"
+      shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
@@ -64,6 +66,7 @@ runs:
 
 
     - name: Publish Release
+      shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
