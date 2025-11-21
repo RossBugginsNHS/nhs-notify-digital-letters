@@ -33,7 +33,7 @@ on:
         type: string
       skip_scan_dependencies:
         description: "Whether to skip scanning dependencies"
-        required: false
+        required: true
         type: boolean
         default: false
 

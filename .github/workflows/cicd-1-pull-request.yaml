@@ -35,6 +35,7 @@ jobs:
       pr_number: ${{ steps.pr_exists.outputs.pr_number }}
       skip_scan_dependencies: ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
       skip_dynamic_acceptance: ${{ fromJSON(vars.SKIP_DYNAMIC_ACCEPTANCE || 'false') }}
+      ignore_sonar_failure: ${{ fromJSON(vars.IGNORE_SONAR_FAILURE || 'false') }}
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
@@ -102,7 +103,7 @@ jobs:
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
       skip_scan_dependencies: "${{ needs.metadata.outputs.skip_scan_dependencies }}"
-  #    secrets: inherit
+
   test-stage: # Recommended maximum execution time is 5 minutes
     name: "Test stage"
     needs: [metadata, commit-stage]
@@ -115,8 +116,11 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
-    secrets: #inherit
+      skip_scan_dependencies: "${{ needs.metadata.outputs.skip_scan_dependencies }}"
+      ignore_sonar_failure: "${{ needs.metadata.outputs.ignore_sonar_failure }}"
+    secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   build-stage: # Recommended maximum execution time is 3 minutes
     name: "Build stage"
     needs: [metadata, test-stage]
@@ -131,12 +135,12 @@ jobs:
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
 
-  #    secrets: inherit
+
   pr-create-dynamic-environment:
     name: Trigger dynamic environment creation
     needs: [metadata, build-stage]
     runs-on: ubuntu-latest
-    if: needs.metadata.outputs.skip_dynamic_acceptance != true  && (needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')))
+    if: !needs.metadata.outputs.skip_dynamic_acceptance && (needs.metadata.outputs.does_pull_request_exist == 'true' || (github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')))
     steps:
       - uses: actions/checkout@v5.0.0
       - name: Trigger dynamic environment creation
@@ -173,7 +177,7 @@ jobs:
     name: "Publish stage"
     needs: [metadata, build-stage, acceptance-stage]
     uses: ./.github/workflows/stage-5-publish.yaml
-    if: (!cancelled() && needs.metadata.outputs.skip_dynamic_acceptance == true && needs.build-stage.result == 'success') || (success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: (!cancelled() && needs.metadata.outputs.skip_dynamic_acceptance && needs.build-stage.result == 'success') || (success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"

@@ -31,6 +31,11 @@ on:
         description: "Version of the software, set by the CI/CD pipeline workflow"
         required: true
         type: string
+      ignore_sonar_failure:
+        description: "Whether to ignore SonarQube analysis failure"
+        required: true
+        type: boolean
+        default: false
     secrets:
       SONAR_TOKEN:
         description: 'Require SONAR_TOKEN'
@@ -156,8 +161,7 @@ jobs:
       id-token: write
       contents: read
     timeout-minutes: 5
-    env:
-      IGNORE_SONAR_FAILURE: ${{ vars.IGNORE_SONAR_FAILURE || 'false' }}
+
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v5
@@ -178,4 +182,4 @@ jobs:
           sonar_organisation_key: "${{ vars.SONAR_ORGANISATION_KEY }}"
           sonar_project_key: "${{ vars.SONAR_PROJECT_KEY }}"
           sonar_token: "${{ secrets.SONAR_TOKEN }}"
-          ignore_sonar_failure: "${{ env.IGNORE_SONAR_FAILURE }}"
+          ignore_sonar_failure: "${{ inputs.ignore_sonar_failure}}"
