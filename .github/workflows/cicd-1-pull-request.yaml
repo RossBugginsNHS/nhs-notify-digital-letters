@@ -17,8 +17,9 @@ permissions:
   contents: write
 
 env:
-  SKIP_DYNAMIC_ACCEPTANCE:  ${{ fromJSON(vars.SKIP_DYNAMIC_ACCEPTANCE || 'false') }}
-  SKIP_SCAN_DEPENDENCIES:  ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
+  LOCAL_SKIP_DYNAMIC_ACCEPTANCE:  ${{ fromJSON(vars.SKIP_DYNAMIC_ACCEPTANCE || 'false') }}
+  LOCAL_SKIP_SCAN_DEPENDENCIES:  ${{ fromJSON(vars.SKIP_SCAN_DEPENDENCIES || 'false') }}
+
 
 jobs:
   metadata:
@@ -94,6 +95,7 @@ jobs:
     name: "Commit stage"
     needs: [metadata]
     uses: ./.github/workflows/stage-1-commit.yaml
+
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
@@ -102,7 +104,7 @@ jobs:
       python_version: "${{ needs.metadata.outputs.python_version }}"
       terraform_version: "${{ needs.metadata.outputs.terraform_version }}"
       version: "${{ needs.metadata.outputs.version }}"
-      skip_scan_dependencies: "${{ github.env.SKIP_SCAN_DEPENDENCIES }}"
+      skip_scan_dependencies: "${{ vars.LOCAL_SKIP_SCAN_DEPENDENCIES }}"
   #    secrets: inherit
   test-stage: # Recommended maximum execution time is 5 minutes
     name: "Test stage"
@@ -174,7 +176,7 @@ jobs:
     name: "Publish stage"
     needs: [metadata, build-stage, acceptance-stage]
     uses: ./.github/workflows/stage-5-publish.yaml
-    if: (!cancelled() && github.env.SKIP_DYNAMIC_ACCEPTANCE == 'true' && needs.build-stage.build-stage.outcome=='success' ) || ( success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: (!cancelled() && vars.LOCAL_SKIP_DYNAMIC_ACCEPTANCE == 'true' && needs.build-stage.build-stage.outcome=='success' ) || ( success() && github.event_name == 'push' && github.ref == 'refs/heads/main')
     with:
       build_datetime: "${{ needs.metadata.outputs.build_datetime }}"
       build_timestamp: "${{ needs.metadata.outputs.build_timestamp }}"
