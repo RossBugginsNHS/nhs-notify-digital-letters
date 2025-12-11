@@ -55,7 +55,8 @@ clean:: # Clean-up project resources (main) @Operations
 	$(MAKE) -C src/cloudevents clean && \
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean && \
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output && \
-	rm -f .version
+	rm -f .version && \
+	rm -rf node_modules
 
 config:: _install-dependencies version
 	$(MAKE) install

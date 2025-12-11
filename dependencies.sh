@@ -212,6 +212,18 @@ verify_asdf_configuration(){
   return 0
 }
 
+npm_root_install()
+{
+  echo "Installing npm dependencies..."
+  if ! npm install; then
+    echo "❌ ERROR: npm install failed" >&2
+    exit 1
+  fi
+  echo "✅ npm dependencies installed successfully"
+  return 0
+}
+
+
 install_project_dependencies()
 {
   # Custom project-specific dependency installation
@@ -219,8 +231,10 @@ install_project_dependencies()
   echo "====================== INSTALL PROJECT DEPENDENCIES =============================="
   echo "Installing documentation dependencies..."
   make -C docs install
+  npm_root_install
   return 0
 }
+
 
 # Main execution flow
 if [[ "$SKIP_SYSTEM_DEPS" = false ]]; then
