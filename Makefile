@@ -13,11 +13,14 @@ include scripts/init.mk
 # make dependencies: If using a clean environment, eg ubuntu native container, you must run make dependencies first to install system dependencies, before then running make config
 
 quick-start: # Quick start target to setup, build and serve docs @Pipeline
-	$(MAKE) install && \
-	$(MAKE) clean && \
-	$(MAKE) test-docs && \
+	$(MAKE) clean-and-test && \
 	$(MAKE) build && \
 	$(MAKE) serve-docs
+
+clean-and-test: # Quick start target to setup, build and serve docs @Pipeline
+	$(MAKE) install && \
+	$(MAKE) clean && \
+	$(MAKE) test-docs
 
 install:
 	./dependencies.sh --skip-system-deps

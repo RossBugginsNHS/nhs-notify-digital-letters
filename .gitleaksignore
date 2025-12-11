@@ -16,3 +16,7 @@ cc74128e4207833109339e96f3aaebf3cd40dd65:src/TESTING_PLAN.md:ipv4:2507
 39af95d4a48f3f2f4e5404da6cfe4a1350f25abe:utils/utils/src/__tests__/key-generation/get-private-key.test.ts:private-key:23
 39af95d4a48f3f2f4e5404da6cfe4a1350f25abe:utils/utils/src/__tests__/key-generation/get-private-key.test.ts:private-key:30
 39af95d4a48f3f2f4e5404da6cfe4a1350f25abe:utils/utils/src/__tests__/key-generation/get-private-key.test.ts:private-key:46
+d1c0a37078cbed4fbedae044e5cbafac71717af0:utils/utils/src/__tests__/key-generation/validate-private-key.test.ts:private-key:7
+d1c0a37078cbed4fbedae044e5cbafac71717af0:utils/utils/src/__tests__/key-generation/get-private-key.test.ts:private-key:23
+d1c0a37078cbed4fbedae044e5cbafac71717af0:utils/utils/src/__tests__/key-generation/get-private-key.test.ts:private-key:30
+d1c0a37078cbed4fbedae044e5cbafac71717af0:utils/utils/src/__tests__/key-generation/get-private-key.test.ts:private-key:46
