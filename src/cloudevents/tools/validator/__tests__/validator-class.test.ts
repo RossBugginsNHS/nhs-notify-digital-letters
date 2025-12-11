@@ -8,7 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { Validator } from '../validator';
 
-const TEST_DIR = path.join(__dirname, 'temp-validator-class-test');
+const TEST_DIR = path.join(__dirname, `temp-validator-class-test-${process.pid}`);
 
 describe('Validator class', () => {
   beforeEach(() => {
