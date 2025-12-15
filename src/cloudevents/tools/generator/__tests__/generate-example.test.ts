@@ -10,9 +10,9 @@ import { execSync } from 'child_process';
 import http from 'http';
 
 const SCRIPT_PATH = path.join(__dirname, '..', 'example-generator', 'generate-example.ts');
-const TEST_DIR = path.join(__dirname, 'temp-generate-example-test');
-// Use npx to run tsx, which will find it in the root workspace
-const TS_NODE_CMD = 'npx tsx';
+const TEST_DIR = path.join(__dirname, `temp-generate-example-test-${process.pid}`);
+// Use npx to run ts-node, which will find it in the root workspace
+const TS_NODE_CMD = 'npx ts-node';
 
 describe('generate-example.ts', () => {
   let server: http.Server | undefined;

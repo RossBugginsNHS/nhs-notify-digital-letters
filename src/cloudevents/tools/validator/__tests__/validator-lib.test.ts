@@ -28,7 +28,7 @@ import {
   formatAllValidationErrors,
 } from '../validator-lib';
 
-const TEST_DIR = path.join(__dirname, 'temp-validator-lib-test');
+const TEST_DIR = path.join(__dirname, `temp-validator-lib-test-${process.pid}`);
 
 describe('validator-lib', () => {
   beforeEach(() => {
