@@ -212,27 +212,61 @@ verify_asdf_configuration(){
   return 0
 }
 
+set_version()
+{
+  make version
+}
+
+
+install_project_dependencies_core_digital_letters()
+{
+  # Make this natively available to GitHub Actions steps
+  if [[ -n "${GITHUB_ENV:-}" && -n "${GITHUB_PATH:-}" ]]; then
+    npm ci
+  else
+    npm install
+  fi
+  return 0
+
+}
+
+install_project_dependencies_docs()
+{
+    # Docs instalation here
+  make -C docs install
+}
+
+
+
 install_project_dependencies()
 {
   # Custom project-specific dependency installation
   # Add your project-specific setup steps here (e.g., make install, npm install, etc.)
   echo "====================== INSTALL PROJECT DEPENDENCIES =============================="
   echo "Installing documentation dependencies..."
-  make -C docs install
+
+  install_project_dependencies_core_digital_letters
+  install_project_dependencies_docs
+
   return 0
 }
 
-# Main execution flow
-if [[ "$SKIP_SYSTEM_DEPS" = false ]]; then
-  echo "📦 Installing system dependencies..."
-  install_apt_deps
-  setup_asdf
-  persist_asdf_env_to_shell_rc
-  configure_asdf_for_github_actions
-  install_asdf_plugins
-  verify_asdf_configuration
-else
-  echo "⏭️  Skipping system dependencies..."
-fi
+install_deps_if_requested()
+{
+  # Main execution flow
+  if [[ "$SKIP_SYSTEM_DEPS" = false ]]; then
+    echo "📦 Installing system dependencies..."
+    install_apt_deps
+    setup_asdf
+    persist_asdf_env_to_shell_rc
+    configure_asdf_for_github_actions
+    install_asdf_plugins
+    verify_asdf_configuration
+  else
+    echo "⏭️  Skipping system dependencies..."
+  fi
+}
 
+install_deps_if_requested
+set_version
 install_project_dependencies
