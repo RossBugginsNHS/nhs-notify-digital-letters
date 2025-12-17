@@ -43,9 +43,21 @@ endef
 test:
 	./test.sh $(SRC_BASE_DIR)
 
-build: clean build-schemas copy-schema-docs copy-schema-yaml-docs copy-schemas build-eventcatalog build-docs show-build-output
+build:
+	$(MAKE) build-schemas && \
+	$(MAKE) build-common
 
-build-ci: build-schemas-ci copy-schema-docs copy-schema-yaml-docs copy-schemas build-eventcatalog build-docs show-build-output
+build-ci:
+	$(MAKE) build-schemas-ci && \
+	$(MAKE) build-common
+
+build-common:
+	$(MAKE) copy-schema-docs && \
+	$(MAKE) copy-schema-yaml-docs && \
+	$(MAKE) copy-schemas && \
+	$(MAKE) build-eventcatalog && \
+	$(MAKE) build-docs
+
 
 build-eventcatalog:
 	$(MAKE) build-eventcatalog-prereq

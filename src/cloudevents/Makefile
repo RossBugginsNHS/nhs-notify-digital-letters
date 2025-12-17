@@ -34,6 +34,7 @@ coverage: # Run tests with coverage @Testing
 	npm run test:coverage
 
 build:
+	$(MAKE) install
 	@echo "=== Building all schemas (version: $(PUBLISH_VERSION)) ==="
 	$(MAKE) -C $(CLOUDEVENTS_BASE_PATH) build PUBLISH_VERSION=$(PUBLISH_VERSION)
 
@@ -60,6 +61,7 @@ test-domains:
 deploy:
 	@echo "=== Deploying all schemas (version: $(PUBLISH_VERSION)) ==="
 	$(MAKE) clean
+	$(MAKE) install
 	$(MAKE) -C $(CLOUDEVENTS_BASE_PATH) deploy PUBLISH_VERSION=$(PUBLISH_VERSION)
 	$(MAKE) build-docs
 	$(MAKE) update-readme
@@ -68,6 +70,7 @@ deploy:
 
 clean::
 	@echo "=== Cleaning output/ and schemas/ directories ==="
+	npm i
 	npm run clear-cache
 	npm run cache-info
 	rm -rf $(OUTPUT_BASE_PATH)
