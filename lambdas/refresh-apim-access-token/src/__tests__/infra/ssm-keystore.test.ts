@@ -53,9 +53,7 @@ describe('SSMKeyStore', () => {
       } catch (error) {
         caught = error;
       }
-      expect(caught).toMatchInlineSnapshot(
-        `[Error: Error fetching private key.]`,
-      );
+      expect(caught).toMatchSnapshot();
     });
   });
 
@@ -69,35 +67,7 @@ describe('SSMKeyStore', () => {
         token_type: 'fake_token_type',
       });
 
-      expect(mocks.ssm.send.mock.calls).toMatchInlineSnapshot(`
-        [
-          [
-            PutParameterCommand {
-              "deserialize": [Function],
-              "input": {
-                "Name": "fake_access_token_parameter_name",
-                "Overwrite": true,
-                "Value": "{"access_token":"fake_access_token","expires_at":1674778100,"token_type":"fake_token_type"}",
-              },
-              "middlewareStack": {
-                "add": [Function],
-                "addRelativeTo": [Function],
-                "applyToStack": [Function],
-                "clone": [Function],
-                "concat": [Function],
-                "identify": [Function],
-                "identifyOnResolve": [Function],
-                "remove": [Function],
-                "removeByTag": [Function],
-                "resolve": [Function],
-                "use": [Function],
-              },
-              "schema": undefined,
-              "serialize": [Function],
-            },
-          ],
-        ]
-      `);
+      expect(mocks.ssm.send.mock.calls).toMatchSnapshot();
     });
 
     it('throws its own error if there is an error from SSM Parameter Store', async () => {
@@ -119,9 +89,7 @@ describe('SSMKeyStore', () => {
       } catch (error) {
         caught = error;
       }
-      expect(caught).toMatchInlineSnapshot(
-        `[Error: Unable to store Access Token in SSM Parameter Store.]`,
-      );
+      expect(caught).toMatchSnapshot();
     });
   });
 
@@ -138,34 +106,7 @@ describe('SSMKeyStore', () => {
 
       const result = await keystore.getAPIKey();
 
-      expect(mocks.ssm.send.mock.calls).toMatchInlineSnapshot(`
-        [
-          [
-            GetParameterCommand {
-              "deserialize": [Function],
-              "input": {
-                "Name": "fake_api_key_parameter_name",
-                "WithDecryption": true,
-              },
-              "middlewareStack": {
-                "add": [Function],
-                "addRelativeTo": [Function],
-                "applyToStack": [Function],
-                "clone": [Function],
-                "concat": [Function],
-                "identify": [Function],
-                "identifyOnResolve": [Function],
-                "remove": [Function],
-                "removeByTag": [Function],
-                "resolve": [Function],
-                "use": [Function],
-              },
-              "schema": undefined,
-              "serialize": [Function],
-            },
-          ],
-        ]
-      `);
+      expect(mocks.ssm.send.mock.calls).toMatchSnapshot();
       expect(result).toEqual(expected);
     });
 
@@ -183,9 +124,7 @@ describe('SSMKeyStore', () => {
       } catch (error) {
         caught = error;
       }
-      expect(caught).toMatchInlineSnapshot(
-        `[Error: Unable to retrieve APIM API Key from SSM Parameter Store.]`,
-      );
+      expect(caught).toMatchSnapshot();
     });
 
     it('errors if there is no parameter value returned from SSM Parameter Store', async () => {
@@ -204,9 +143,7 @@ describe('SSMKeyStore', () => {
       } catch (error) {
         caught = error;
       }
-      expect(caught).toMatchInlineSnapshot(
-        `[Error: Unable to retrieve APIM API Key from SSM Parameter Store.]`,
-      );
+      expect(caught).toMatchSnapshot();
     });
   });
 });
