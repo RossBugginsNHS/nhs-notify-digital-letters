@@ -1,3 +1,6 @@
+SHELL := /bin/bash
+PYTHON := python3
+
 .PHONY: help install install-dev generate generate-service clean test test-verbose coverage lint format clean-test
 
 help: ## Show this help message
@@ -23,7 +26,13 @@ generate-service: ## Generate AsyncAPI for a specific service (use SERVICE=name)
 	python generate_asyncapi.py --config config.yaml --service "$(SERVICE)"
 
 clean: ## Remove generated output files
+	@echo "Cleaning Async API Generator"
 	rm -rf output/
+	rm -rf .reports
+	rm -rf htmlcov
+	rm -rf output
+	rm -f .coverage
+	rm -f coverage.xml
 
 test: ## Run unit tests
 	pytest tests/ -v
@@ -32,11 +41,10 @@ test-verbose: ## Run tests with verbose output
 	pytest tests/ -vv -s
 
 coverage: ## Run tests with coverage report
-	cd ../.. && pytest src/asyncapigenerator/tests/ --cov=src/asyncapigenerator --cov-config=src/asyncapigenerator/pytest.ini --cov-report=html:src/asyncapigenerator/htmlcov --cov-report=term-missing --cov-report=xml:src/asyncapigenerator/coverage.xml
+	./test.sh $(PYTHON)
 
 lint: ## Run linting
 	flake8 .
-	mypy .
 
 format: ## Format code with black
 	black .

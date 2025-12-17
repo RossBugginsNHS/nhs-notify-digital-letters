@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 # Variables
 SCHEMA_SRC_DIR := ../../schemas
 OUTPUT_DIR := output
@@ -92,7 +93,14 @@ build-docs-legacy: check-deps
 # Clean output directory
 clean:
 	@echo "Cleaning output directories..."
-	@rm -rf $(OUTPUT_DIR) docs_legacy
+	@rm -rf $(OUTPUT_DIR)
+	@rm -rf docs_legacy
+	@rm -rf htmlcov
+	@rm -rf .reports
+	@rm -rf output
+	@rm -f coverage.xml
+	@rm -f .coverage
+	@rm -rf .pytest_cache
 	@echo "Clean complete!"
 
 # Show help

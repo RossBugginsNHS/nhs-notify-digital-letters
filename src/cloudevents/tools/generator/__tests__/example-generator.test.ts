@@ -12,7 +12,7 @@ const GENERATE_EXAMPLE_SCRIPT = path.join(__dirname, '../example-generator/gener
 const CACHE_DIR = path.join(__dirname, '../../cache/.cache');
 import { ExampleGenerator } from '../example-generator/example-generator.ts';
 
-const TEST_DIR = path.join(__dirname, 'temp-example-generator-test');
+const TEST_DIR = path.join(__dirname, `temp-example-generator-test-${process.pid}`);
 
 describe('ExampleGenerator', () => {
   let generator: ExampleGenerator;

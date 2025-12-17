@@ -9,7 +9,8 @@ repos:
         exclude: |
           (?x)^(
             docs/assets/aws-icons-mermaid.json |
-            src/eventcatalog/package-lock.json
+            src/eventcatalog/package-lock.json |
+            package-lock.json
           )$
       - id: check-symlinks
       - id: detect-private-key
