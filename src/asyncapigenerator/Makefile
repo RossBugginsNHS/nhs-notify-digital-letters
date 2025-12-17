@@ -26,7 +26,13 @@ generate-service: ## Generate AsyncAPI for a specific service (use SERVICE=name)
 	python generate_asyncapi.py --config config.yaml --service "$(SERVICE)"
 
 clean: ## Remove generated output files
+	@echo "Cleaning Async API Generator"
 	rm -rf output/
+	rm -rf .reports
+	rm -rf htmlcov
+	rm -rf output
+	rm -f .coverage
+	rm -f coverage.xml
 
 test: ## Run unit tests
 	pytest tests/ -v

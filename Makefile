@@ -53,8 +53,11 @@ deploy: # Deploy the project artefact to the target environment @Pipeline
 clean:: # Clean-up project resources (main) @Operations
 	$(MAKE) -C docs clean && \
 	$(MAKE) -C src/cloudevents clean && \
+	$(MAKE) -C src/cloudeventjekylldocs clean && \
+	$(MAKE) -C src/asyncapigenerator clean && \
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean && \
 	$(MAKE) -C src/eventcatalogasyncapiimporter clean-output && \
+	$(MAKE) -C src/eventcatalog clean && \
 	rm -f .version
 
 config:: _install-dependencies version

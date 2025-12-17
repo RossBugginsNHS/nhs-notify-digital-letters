@@ -45,3 +45,6 @@ clean:
 	rm -rf dist
 	rm -rf node_modules
 	rm -rf .preview
+	rm -rf public
+	rm -rf domains
+	rm -rf channels

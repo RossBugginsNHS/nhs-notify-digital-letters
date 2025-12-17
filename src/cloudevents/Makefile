@@ -75,6 +75,9 @@ clean::
 	rm -rf $(DOCS_BASE_PATH)
 	rm -rf .version
 	rm -f version.json
+	rm -rf node_modules
+	rm -rf .reports
+	rm -rf coverage
 	@echo ""
 
 build-docs:

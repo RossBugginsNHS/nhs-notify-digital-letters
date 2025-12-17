@@ -82,7 +82,7 @@ jobs:
       - name: "Run unit test suite"
         shell: bash -l {0}
         run: |
-          ./scripts/tests/unit.sh
+          make test-unit
 
       - name: "Reports to correct location"
         shell: bash -l {0}
