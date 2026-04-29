@@ -32,11 +32,12 @@ data "aws_iam_policy_document" "kms" {
     }
 
     actions = [
-      "kms:Encrypt*",
-      "kms:Decrypt*",
+      "kms:Encrypt",
+      "kms:Decrypt",
       "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:Describe*"
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:DescribeKey"
     ]
 
     resources = ["*"]
@@ -55,8 +56,9 @@ data "aws_iam_policy_document" "kms" {
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:Describe*"
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:DescribeKey"
     ]
 
     resources = ["*"]
@@ -108,8 +110,9 @@ data "aws_iam_policy_document" "kms" {
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:Describe*"
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:DescribeKey"
     ]
 
     resources = ["*"]

@@ -109,7 +109,7 @@ resource "aws_s3_bucket_cors_configuration" "static_assets" {
   cors_rule {
     allowed_headers = ["Authorization"]
     allowed_methods = ["GET"]
-    allowed_origins = ["*"]
+    allowed_origins = ["https://${local.root_domain_name}"]
     expose_headers  = ["ETag"]
     max_age_seconds = 300
   }
