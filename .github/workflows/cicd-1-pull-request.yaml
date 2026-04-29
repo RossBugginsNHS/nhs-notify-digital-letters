@@ -14,8 +14,8 @@ on:
 
 permissions:
   id-token: write
-  contents: write
-  packages: write
+  contents: read
+  packages: read
 
 jobs:
   metadata:

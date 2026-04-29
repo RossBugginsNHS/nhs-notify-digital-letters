@@ -83,7 +83,6 @@ get_docker_file() {
 
 # Main
 tmp_dir=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
-chmod 777 "$tmp_dir"
 trap 'ret=$?;cleanup;exit $ret' EXIT
 
 GOSS_PATH="${GOSS_PATH:-$(which goss 2> /dev/null || true)}"
